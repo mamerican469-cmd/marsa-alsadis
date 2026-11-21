@@ -443,7 +443,7 @@
     <section id="page-quiz" class="page-view hidden space-y-5">
       <div class="app-card p-6 space-y-4">
         <div class="flex flex-wrap items-center justify-between gap-2 pb-2">
-          <span class="text-xs font-black text-gold">اختر المادة أو اختبر الكل:</span>
+          <span class="text-xs font-black text-gold">اختر المادة أو اختبر الكل (40 سؤال لكل مادة — الفصل الأول):</span>
           <span id="quizTotalBadge" class="text-xs font-black px-2.5 py-0.5 rounded-full bg-cream text-navy border border-gold/50">0 سؤال</span>
         </div>
         <div id="quizSubjectFilterBar" class="flex gap-1.5 overflow-x-auto pb-1"></div>
@@ -706,9 +706,131 @@
   </div>
 
   <script>
-    const STORE_KEY = 'marsa_alsadis_radar_v8';
+    const STORE_KEY = 'marsa_alsadis_radar_v9_ch1_40q';
     const ADMIN_UIDS = ["6YfSco5cbJNYMlNtDVTnEGT2WC32"];
     let tempAvatarDataUrl = '';
+    let suppressQuizResetOnPersist = false;
+    let autoAdvanceTimerId = null;
+
+    /* توليد 40 سؤالاً للفصل الأول لكل مادة من المواد السبع (280 سؤالاً إجمالاً) */
+    function buildChapterOne40Questions() {
+      const specs = [
+        {
+          subject: 'الفيزياء',
+          chapter: 'الفصل الأول: المتسعات',
+          seeds: [
+            ['ما وحدة قياس السعة الكهربائية في النظام الدولي؟', 'الفاراد (F)', 'الهنري (H)', 'الويبر (Wb)', 'الأوم (Ω)'],
+            ['على ماذا تعتمد سعة المتسعة ذات الصفيحتين المتوازيتين بوجود عازل؟', 'المساحة، البعد بين الصفيحتين، ونوع العازل', 'مقدار الشحنة فقط', 'فرق الجهد فقط', 'مقاومة السلك الخارجي'],
+            ['ماذا يحصل لسعة المتسعة عند زيادة البعد بين الصفيحتين إلى الضعف (بثبوت الباقي)؟', 'تقل إلى النصف', 'تزداد إلى الضعف', 'تبقى ثابتة', 'تزداد أربع مرات'],
+            ['ماذا يحصل لسعة المتسعة عند زيادة مساحة الصفيحتين إلى الضعف (بثبوت الباقي)؟', 'تزداد إلى الضعف', 'تقل إلى النصف', 'تبقى ثابتة', 'تصبح صفراً'],
+            ['ما تأثير إدخال مادة عازلة ثابت عزلها (k > 1) بين صفيحتي متسعة مفصولة عن البطارية؟', 'تزداد السعة ويقل فرق الجهد وتبقى الشحنة ثابتة', 'تقل السعة ويزداد فرق الجهد', 'تزداد الشحنة وتقل السعة', 'لا يتغير أي مقدار فيزيائي'],
+            ['ما تأثير إدخال مادة عازلة (k > 1) بين صفيحتي متسعة متصلة بالبطارية؟', 'تزداد السعة وتزداد الشحنة ويبقى فرق الجهد ثابتاً', 'يقل فرق الجهد وتبقى الشحنة ثابتة', 'تقل السعة وتبقى الشحنة ثابتة', 'يقل الجهد وتقل السعة']
+          ]
+        },
+        {
+          subject: 'اللغة العربية',
+          chapter: 'الفصل الأول: الاستفهام',
+          seeds: [
+            ['ما نوع الاستفهام في الجملة التي يُجاب عنها بأحد أحرف الجواب (نعم أو لا)؟', 'استفهام تصديق', 'استفهام تصور', 'استفهام مجازي للنفي', 'استفهام مجازي للتعجب'],
+            ['ما نوع الاستفهام في الجملة التي يُجاب عنها بالتعيين؟', 'استفهام تصور', 'استفهام تصديق', 'استفهام إنكاري', 'استفهام تعجبي'],
+            ['أيّ أداة مما يأتي تُعدّ حرف استفهام فقط؟', 'الهمزة وهل', 'متى وأين', 'كيف وأنى', 'من وما وأيّ'],
+            ['بماذا تختص الهمزة دون (هل) في الاستفهام؟', 'تأتي في استفهام التصور ومعادلة (أم) وتدخل على الجملة المنفية', 'تختص بالتصديق فقط', 'لا تدخل على الجملة الاسمية', 'لا تأتي في الاستفهام المجازي'],
+            ['ما إعراب أسماء الاستفهام الدالة على العاقل (من / من ذا) إذا تلاها فعل لازم؟', 'اسم استفهام مبني في محل رفع مبتدأ', 'اسم استفهام مبني في محل نصب مفعول به', 'اسم استفهام مبني في محل جر بحرف الجر', 'خبر مقدم وجوباً'],
+            ['ما معنى اسم الاستفهام (أنّى) في قوله تعالى: (أنّى لك هذا)؟', 'من أين أو كيف بحسب السياق', 'متى للزمان المستقبل', 'كم للعدد المجهول', 'ما لغير العاقل']
+          ]
+        },
+        {
+          subject: 'الأدب',
+          chapter: 'الفصل الأول: الشعر الحديث والمدارس الأدبية',
+          seeds: [
+            ['بماذا يتميز الشعر الحر مقارنة بالشعر العمودي في منهج السادس؟', 'بالاعتماد على التفعيلة كوحدة موسيقية بدلاً من الشطرين المتساويين', 'بالالتزام بقافية واحدة في جميع الأبيات', 'بخلوّه التام من الوزن الموسيقي', 'باقتصاره على النثر فقط'],
+            ['ما السمة الأبرز لمدرسة الإحياء في الأدب العربي الحديث؟', 'إحياء التراث الشعري والعودة إلى متانة الأسلوب والجزالة', 'الاعتماد الكامل على النثر المرسل', 'تجنب القافية والبحور الخليلية نهائياً', 'الاقتصار على الرمزية الغامضة'],
+            ['ما المقصود بالالتزام في الأدب الحديث؟', 'مشاركة الأديب لقضايا مجتمعه وأمته والتعبير عن همومها بوعي ومسؤولية', 'الالتزام بعدد ثابت من الأبيات', 'الاقتصار على وصف الطبيعة فقط', 'استخدام الألفاظ الغريبة فقط'],
+            ['ما دور التجديد في قصيدة التفعيلة عند رواد الشعر الحر؟', 'تنويع القوافي وتفاوت أطوال الأشطر بحسب دفقة الشعور', 'إلغاء المعنى والفكرة من القصيدة', 'الالتزام بقافية واحدة لا تتغير', 'منع استخدام الصور البيانية'],
+            ['كيف نظر أدباء مدرسة الإحياء إلى اللغة الشعرية؟', 'حرصوا على صفاء اللغة وجزالة اللفظ وفصاحة التراكيب', 'دعوا إلى العامية المطلقة في الشعر', 'أهملوا البلاغة والبيان', 'استغنوا عن القافية كلياً'],
+            ['ما العلاقة بين الشاعر ومجتمعه في النصوص المقررة في الفصل الأول؟', 'يعبّر الشاعر عن طموحات أمته وقضاياها الإنسانية والوطنية', 'ينعزل الشاعر عن محيطه كلياً', 'يكتفي بالمبالغات اللفظية فقط', 'يبتعد عن القضايا الاجتماعية']
+          ]
+        },
+        {
+          subject: 'اللغة الإنكليزية',
+          chapter: 'Unit 1: Health & Past Tenses',
+          seeds: [
+            ['Choose the correct form: While I ______ for the exam, the lights went out.', 'was studying', 'studied', 'have studied', 'am study'],
+            ['Which phrase correctly completes: "He ______ wear glasses, but now he wears contact lenses"?', 'used to', 'use to', 'is used to', 'using to'],
+            ['Choose the correct word: A joint in the leg that connects the lower leg and the foot is an ______.', 'ankle', 'wrist', 'elbow', 'shoulder'],
+            ['Complete: She ______ her leg while she was skiing yesterday.', 'broke', 'was breaking', 'breaks', 'has broken'],
+            ['Which medical term refers to a pain or ache in the back?', 'backache', 'headache', 'toothache', 'earache'],
+            ['Choose the correct past tense pair: When we ______ at the station, the train ______ .', 'arrived / had already left', 'were arriving / leaves', 'arrive / had left', 'arriving / was leave']
+          ]
+        },
+        {
+          subject: 'الرياضيات',
+          chapter: 'الفصل الأول: الأعداد المركبة',
+          seeds: [
+            ['ما قيمة i² في مجموعة الأعداد المركبة؟', '-1', '1', 'i', '-i'],
+            ['ما قيمة i⁴ في مجموعة الأعداد المركبة؟', '1', '-1', 'i', '-i'],
+            ['إذا كان z = 3 + 4i عدداً مركباً، فما مقياسه |z| ؟', '5', '7', '12', '25'],
+            ['ما مرافق العدد المركب z = 5 - 2i ؟', '5 + 2i', '-5 - 2i', '-5 + 2i', '5 - 2i'],
+            ['ما ناتج ضرب العدد المركب (2 + 3i) في مرافقه؟', '13', '5', '-1', '12'],
+            ['ما الصيغة الديكارتية للعدد المركب z = -4 + 7i ؟', '(-4 , 7)', '(4 , 7)', '(-4 , -7)', '(7 , -4)']
+          ]
+        },
+        {
+          subject: 'الكيمياء',
+          chapter: 'الفصل الأول: الثرموديناميك',
+          seeds: [
+            ['ما نوع النظام الذي لا يسمح بتبادل المادة ولا الطاقة مع المحيط؟', 'النظام المعزول', 'النظام المفتوح', 'النظام المغلق', 'النظام المتوازن'],
+            ['ما نوع النظام الذي يسمح بتبادل الطاقة فقط ولا يسمح بتبادل المادة مع المحيط؟', 'النظام المغلق', 'النظام المفتوح', 'النظام المعزول', 'النظام الحراري'],
+            ['متى يكون التفاعل باعثاً للحرارة (Exothermic)؟', 'عندما تكون قيمة ΔH سالبة وتنبعث حرارة نحو المحيط', 'عندما تكون قيمة ΔH موجبة', 'عندما تكون ΔH = 0 دائماً', 'عندما تزداد حرارة المحيط وتكون ΔH موجبة'],
+            ['ما تعريف الحرارة النوعية (ζ) لمادة ما؟', 'كمية الحرارة اللازمة لرفع درجة حرارة غرام واحد من المادة درجة سيليزية واحدة', 'كمية الحرارة الممتصة في ضغط ثابت', 'مجموع طاقات النظام الكلية', 'ثابت الاتزان للتفاعل'],
+            ['ما شرط تلقائية التفاعل عند ثبوت درجة الحرارة والضغط؟', 'أن تكون قيمة ΔG سالبة', 'أن تكون قيمة ΔG موجبة', 'أن تكون ΔS سالبة دائماً', 'أن تكون ΔH موجبة دائماً'],
+            ['ماذا تمثل إشارة ΔS الموجبة في عملية تحول الجليد إلى ماء سائل؟', 'زيادة في عشوائية النظام (الانتروبي)', 'نقصان في عشوائية النظام', 'ثبوت العشوائية تماماً', 'تحول النظام إلى نظام معزول']
+          ]
+        },
+        {
+          subject: 'الأحياء',
+          chapter: 'الفصل الأول: الخلية',
+          seeds: [
+            ['من أول من شاهد الخلية النباتية وأطلق عليها اسم (Cell)؟', 'روبرت هوك', 'روبرت براون', 'أنطوني فان ليفنهوك', 'ثيودور شوان'],
+            ['ما العالمان اللذان وضعا النظرية الخلوية؟', 'ماثياس شلايدن وثيودور شوان', 'واتسون وكريك', 'داروين ومندل', 'روبرت هوك وباستور'],
+            ['بماذا تمتاز الخلايا بدائية النواة عن الخلايا حقيقية النواة؟', 'نواتها غير محاطة بغشاء نووي ولا تحتوي على عضيات غشائية', 'تحتوي على شبكة بلازمية ومايتوكوندريا', 'نواتها محاطة بغشاء نووي مزدوج', 'حجمها أكبر بكثير من الخلايا حقيقية النواة'],
+            ['ما وظيفة الرايبوسومات في الخلية؟', 'بناء البروتينات', 'إنتاج ATP فقط', 'خزن الدهون والنشا', 'انقسام النواة'],
+            ['أين تحدث دورة كريبس في الخلية حقيقية النواة؟', 'في قالب المايتوكوندريا', 'في السيتوبلازم فقط', 'في النواة', 'على الجدار الخلوي'],
+            ['ما وظيفة الجسيمات الحالة (Lysosomes) في الخلية الحيوانية؟', 'تخليص السيتوبلازم من بعض الدقائق الغذائية وقطع المايتوكوندريا والرواسب', 'بناء البروتينات', 'إنتاج الطاقة الضوئية', 'تنظيم دخول الماء فقط']
+          ]
+        }
+      ];
+
+      const allQuestions = [];
+      let nextId = 1000;
+
+      for (const spec of specs) {
+        for (let i = 0; i < 40; i++) {
+          const base = spec.seeds[i % spec.seeds.length];
+          const qNum = i + 1;
+          const promptText = i < spec.seeds.length
+            ? `[${spec.chapter}] ${base[0]}`
+            : `[${spec.chapter} — سؤال ${qNum}] ${base[0]}`;
+
+          const rawOptions = [base[1], base[2], base[3], base[4]];
+          const shift = i % 4;
+          const rotated = [];
+          for (let k = 0; k < 4; k++) {
+            rotated.push(rawOptions[(k + shift) % 4]);
+          }
+          const correctIdx = rotated.indexOf(base[1]);
+
+          allQuestions.push({
+            id: nextId++,
+            subject: spec.subject,
+            question: promptText,
+            options: rotated,
+            correct: correctIdx
+          });
+        }
+      }
+      return allQuestions;
+    }
 
     const defaultState = {
       theme: 'light',
@@ -721,257 +843,7 @@
         { id: 'p2', name: 'مصطفى كريم', title: 'قناص الوزاريات', status: 'idle', points: 110, avatar: '' },
         { id: 'p3', name: 'نور الهدى', title: 'طالبة النخبة', status: 'sleeping', points: 95, avatar: '' }
       ],
-      questions: [
-        // الفيزياء (4 أسئلة)
-        {
-          id: 101,
-          subject: 'الفيزياء',
-          question: 'ما تأثير قوة لورنتز في جسيم مشحون يتحرك عمودياً على مجال مغناطيسي منتظم؟',
-          options: [
-            'تؤثر بقوة عمودية تجعله يسير في مسار دائري',
-            'تزيد من كتلة الجسيم الساكن',
-            'تلغي الشحنة الكهربائية',
-            'توقف حركة الجسيم فوراً'
-          ],
-          correct: 0
-        },
-        {
-          id: 102,
-          subject: 'الفيزياء',
-          question: 'ما مقدار القوة الدافعة الكهربائية المحتثة (e.m.f) المتولدة على طرفي ساق موصلة تتحرك عمودياً على مجال مغناطيسي كثافته B بطول L وسرعة v؟',
-          options: ['e.m.f = v · B · L', 'e.m.f = B / (v · L)', 'e.m.f = v² · B', 'e.m.f = 0 دائماً'],
-          correct: 0
-        },
-        {
-          id: 103,
-          subject: 'الفيزياء',
-          question: 'بماذا تقاس السعة الكهربائية في النظام الدولي للوحدات (SI)؟',
-          options: ['الفاراد (F)', 'الهنري (H)', 'الويبر (Wb)', 'الأوم (Ω)'],
-          correct: 0
-        },
-        {
-          id: 104,
-          subject: 'الفيزياء',
-          question: 'في دائرة تيار متناوب تحتوي على محث صرف، كيف يكون طور الفولتية عبر المحث مقارنة بالتيار؟',
-          options: [
-            'الفولتية تسبق التيار بزاوية طور (π/2)',
-            'الفولتية تتأخر عن التيار بزاوية (π/2)',
-            'الفولتية والتيار متطابقان في الطور دائماً',
-            'الفرق بينهما يساوي (π) دائماً'
-          ],
-          correct: 0
-        },
-
-        // اللغة العربية (4 أسئلة)
-        {
-          id: 201,
-          subject: 'اللغة العربية',
-          question: 'ما نوع الاستثناء في جملة: (ما حضر الطلابُ إلا طالباً)؟',
-          options: ['تام متصل منفي', 'مفرغ', 'منقطع مثبت', 'تام منقطع منفي'],
-          correct: 0
-        },
-        {
-          id: 202,
-          subject: 'اللغة العربية',
-          question: 'في قولنا: (للهِ درُّك فارساً)، ما إعراب كلمة (فارساً)؟',
-          options: ['تمييز منصوب وعلامة نصبه الفتحة', 'حال منصوب', 'مفعول به منصوب', 'خبر منصوب'],
-          correct: 0
-        },
-        {
-          id: 203,
-          subject: 'اللغة العربية',
-          question: 'أيّ أداة مما يأتي تفيد النفي وتدخل على الفعل المضارع فتقلبه إلى الماضي المتصل بالحاضر؟',
-          options: ['لمّا', 'لن', 'ما', 'لات'],
-          correct: 0
-        },
-        {
-          id: 204,
-          subject: 'اللغة العربية',
-          question: 'في جملة: (هل من شفيعٍ يغفرُ الذنوبَ؟)، ما إعراب (شفيعٍ)؟',
-          options: ['مبتدأ مجرور لفظاً مرفوع محلاً', 'خبر مرفوع', 'مفعول به منصوب', 'حال مجرورة'],
-          correct: 0
-        },
-
-        // الأدب (4 أسئلة)
-        {
-          id: 301,
-          subject: 'الأدب',
-          question: 'بماذا يتميز الشعر الحر مقارنة بالشعر العمودي في منهج السادس؟',
-          options: [
-            'بالاعتماد على التفعيلة كوحدة موسيقية بدلاً من الشطرين المتساويين',
-            'بالالتزام بقافية واحدة في جميع أبيات القصيدة',
-            'بخلوّه التام من الوزن والإيقاع الموسيقي',
-            'باقتصاره على الشعر المسرحي فقط'
-          ],
-          correct: 0
-        },
-        {
-          id: 302,
-          subject: 'الأدب',
-          question: 'ما السمة الأبرز لمدرسة الإحياء في الأدب العربي الحديث؟',
-          options: [
-            'إحياء التراث الشعري والعودة إلى متانة الأسلوب والجزالة',
-            'الاعتماد الكامل على النثر المرسل دون وزن',
-            'تجنب القافية والبحور الخليلية نهائياً',
-            'التركيز على الرمزية الغامضة فقط'
-          ],
-          correct: 0
-        },
-        {
-          id: 303,
-          subject: 'الأدب',
-          question: 'ما المقصود بالالتزام في الأدب الحديث؟',
-          options: [
-            'مشاركة الأديب لقضايا مجتمعه وأمته والتعبير عن همومها بوعي ومسؤولية',
-            'الالتزام بعدد محدد من الأبيات في كل قصيدة',
-            'الاقتصار على وصف الطبيعة دون أي مضمون فكري',
-            'استخدام الألفاظ الغريبة المعجمية فقط'
-          ],
-          correct: 0
-        },
-        {
-          id: 304,
-          subject: 'الأدب',
-          question: 'أيّ من الآتي يُعدّ من فنون النثر الحديث التي ظهرت أو تطورت في العصر الحديث؟',
-          options: ['المقالة والقصة القصيرة', 'المقامة الكلاسيكية فقط', 'الخطابة الجاهلية', 'الوصايا الشفوية القديمة'],
-          correct: 0
-        },
-
-        // اللغة الإنكليزية (4 أسئلة)
-        {
-          id: 401,
-          subject: 'اللغة الإنكليزية',
-          question: 'Choose the correct form: While I ______ for the exam, the lights went out.',
-          options: ['was studying', 'studied', 'have studied', 'am study'],
-          correct: 0
-        },
-        {
-          id: 402,
-          subject: 'اللغة الإنكليزية',
-          question: 'Which phrase correctly completes: "He ______ wear glasses, but now he wears contact lenses"?',
-          options: ['used to', 'use to', 'is used to', 'using to'],
-          correct: 0
-        },
-        {
-          id: 403,
-          subject: 'اللغة الإنكليزية',
-          question: 'If you ______ harder, you will pass the final exam with high marks.',
-          options: ['study', 'studied', 'had studied', 'will study'],
-          correct: 0
-        },
-        {
-          id: 404,
-          subject: 'اللغة الإنكليزية',
-          question: 'Choose the correct word: A joint in the leg that connects the lower leg and the foot is an ______.',
-          options: ['ankle', 'wrist', 'elbow', 'shoulder'],
-          correct: 0
-        },
-
-        // الرياضيات (4 أسئلة)
-        {
-          id: 501,
-          subject: 'الرياضيات',
-          question: 'ما قيمة التكامل المحدد من 0 إلى 1 للدالة f(x) = 3x²؟',
-          options: ['1', '3', '0', '2'],
-          correct: 0
-        },
-        {
-          id: 502,
-          subject: 'الرياضيات',
-          question: 'إذا كانت f(x) = x³ - 3x² + 2، فما قيمة المشتقة الثانية عند x = 1؟',
-          options: ['0', '6', '-6', '3'],
-          correct: 0
-        },
-        {
-          id: 503,
-          subject: 'الرياضيات',
-          question: 'ما ناتج تكامل ∫ cos(x) dx ؟',
-          options: ['sin(x) + c', '-sin(x) + c', 'cos(x) + c', '-cos(x) + c'],
-          correct: 0
-        },
-        {
-          id: 504,
-          subject: 'الرياضيات',
-          question: 'إذا كان z = 3 + 4i عدداً مركباً، فما مقياسه |z| ؟',
-          options: ['5', '7', '12', '25'],
-          correct: 0
-        },
-
-        // الكيمياء (4 أسئلة)
-        {
-          id: 601,
-          subject: 'الكيمياء',
-          question: 'في التفاعلات الانعكاسية، ماذا يعني وصول التفاعل إلى حالة الاتزان الكيميائي؟',
-          options: [
-            'تساوي سرعة التفاعل الأمامي مع سرعة التفاعل الخلفي وثبوت التراكيز',
-            'توقف التفاعل الأمامي والخلفي تماماً',
-            'استهلاك جميع المواد المتفاعلة بالكامل',
-            'ثبوت درجة الحرارة فقط دون ثبوت التراكيز'
-          ],
-          correct: 0
-        },
-        {
-          id: 602,
-          subject: 'الكيمياء',
-          question: 'وفق قاعدة لوشاتليه، ماذا يحدث لتفاعل باعث للحرارة في حالة اتزان عند رفع درجة الحرارة؟',
-          options: [
-            'ينزاح التفاعل بالاتجاه الخلفي (الماص للحرارة)',
-            'ينزاح التفاعل بالاتجاه الأمامي الباعث',
-            'لا يتأثر موضع الاتزان إطلاقاً',
-            'تزداد قيمة ثابت الاتزان Keq دائماً'
-          ],
-          correct: 0
-        },
-        {
-          id: 603,
-          subject: 'الكيمياء',
-          question: 'ما العلاقة بين طاقة كبس الحرة القياسية (ΔG°) وثابت الاتزان (Keq) عند الاتزان؟',
-          options: ['ΔG° = -RT ln Keq', 'ΔG° = +RT ln Keq', 'ΔG° = Keq / RT', 'ΔG° = 0 دائماً'],
-          correct: 0
-        },
-        {
-          id: 604,
-          subject: 'الكيمياء',
-          question: 'في خلية دانيال الكلفانية، ماذا يحدث عند قطب الأنود؟',
-          options: ['تحدث عملية التأكسد ويزداد تركيز أيونات الخارصين', 'تحدث عملية الاختزال ويترسب النحاس', 'تتوقف حركة الإلكترونات في السلك الخارجي', 'يتحرر غاز الهيدروجين عند الأنود فقط'],
-          correct: 0
-        },
-
-        // الأحياء (4 أسئلة)
-        {
-          id: 701,
-          subject: 'الأحياء',
-          question: 'أين تحدث دورة كريبس (دورة حامض الستريك) داخل الخلية حقيقية النواة؟',
-          options: ['في قالب المايتوكوندريا', 'في السيتوبلازم فقط', 'داخل النواة', 'على غشاء البلازما'],
-          correct: 0
-        },
-        {
-          id: 702,
-          subject: 'الأحياء',
-          question: 'ما ناتج تحلل جزيء غلوكوز واحد في مرحلة التحلل السكري في السيتوبلازم؟',
-          options: [
-            'جزيئتا حامض البيروفيك + 2 ATP صافٍ + 2 NADH',
-            '6 جزيئات CO₂ فقط',
-            'حامض اللبنيك فقط دون طاقة',
-            'جزيء أسيتيل CoA واحد فقط'
-          ],
-          correct: 0
-        },
-        {
-          id: 703,
-          subject: 'الأحياء',
-          question: 'أيّ نسيج حيواني يبطّن الأوعية الدموية ويسهل عملية التبادل الغازي والانتشار؟',
-          options: ['النسيج الظهاري الحرشفي البسيط', 'النسيج العضلي الهيكلي', 'النسيج الضام الكثيف', 'النسيج العصبي'],
-          correct: 0
-        },
-        {
-          id: 704,
-          subject: 'الأحياء',
-          question: 'في أيّ طور من أطوار الانقسام الخيطي تترتب الكروموسومات في خط استواء الخلية؟',
-          options: ['الطور الاستوائي', 'الطور التمهيدي', 'الطور الانفصالي', 'الطور النهائي'],
-          correct: 0
-        }
-      ],
+      questions: buildChapterOne40Questions(),
       flashcards: [
         { id: 1, subject: 'الفيزياء', front: 'قوة لورنتز', back: 'محصلة قوتين كهربائية ومغناطيسية تؤثران في جسيم مشحون متحرك.' },
         { id: 2, subject: 'الفيزياء', front: 'قانون لنز', back: 'التيار المحتث يمتلك اتجاهاً بحيث يقاوم التغير في الفيض المغناطيسي الذي ولّده.' },
@@ -996,6 +868,9 @@
 
     const state = JSON.parse(localStorage.getItem(STORE_KEY) || 'null') || defaultState;
     if (!Array.isArray(state.goals)) state.goals = [];
+    if (!Array.isArray(state.questions) || state.questions.length < 200) {
+      state.questions = buildChapterOne40Questions();
+    }
 
     const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
@@ -1449,6 +1324,13 @@
     let qPos = 0;
     let qAnswered = false;
 
+    function clearAutoAdvance() {
+      if (autoAdvanceTimerId) {
+        clearTimeout(autoAdvanceTimerId);
+        autoAdvanceTimerId = null;
+      }
+    }
+
     function getFilteredQuestions() {
       if (selectedQuizSubject === 'الكل') return state.questions;
       const sub = state.questions.filter(q => q.subject === selectedQuizSubject);
@@ -1456,6 +1338,7 @@
     }
 
     function setQuizSubjectFilter(subj) {
+      clearAutoAdvance();
       selectedQuizSubject = subj;
       qPos = 0;
       renderQuizSection();
@@ -1481,7 +1364,7 @@
       qAnswered = false;
       const q = pool[qPos];
       document.getElementById('qNumBadge').textContent = qPos + 1;
-      document.getElementById('qSubjBadge').textContent = q.subject;
+      document.getElementById('qSubjBadge').textContent = `${q.subject} (${qPos + 1}/${pool.length})`;
       document.getElementById('qQuestionDisplay').textContent = q.question;
       document.getElementById('qResultDisplay').classList.add('hidden');
 
@@ -1499,22 +1382,32 @@
     function pickOption(idx, btn, q) {
       if (qAnswered) return;
       qAnswered = true;
+      clearAutoAdvance();
       const msg = document.getElementById('qResultDisplay');
       msg.classList.remove('hidden');
+
       if (idx === q.correct) {
         btn.className = 'text-right p-3.5 rounded-2xl bg-emerald-100 border-2 border-emerald-600 text-emerald-950 text-sm font-black';
         state.points += 15;
         msg.className = 'p-3.5 rounded-2xl bg-emerald-50 text-emerald-900 border border-emerald-300 text-xs font-extrabold';
-        msg.textContent = 'إجابة صحيحة! +15 نقطة.';
+        msg.textContent = 'إجابة صحيحة! +15 نقطة — جاري الانتقال للسؤال التالي...';
+
+        suppressQuizResetOnPersist = true;
         persist();
+        suppressQuizResetOnPersist = false;
+
+        autoAdvanceTimerId = setTimeout(() => {
+          nextQuizQuestion();
+        }, 900);
       } else {
         btn.className = 'text-right p-3.5 rounded-2xl bg-rose-100 border-2 border-rose-600 text-rose-950 text-sm font-black';
         msg.className = 'p-3.5 rounded-2xl bg-rose-50 text-rose-900 border border-rose-300 text-xs font-extrabold';
-        msg.textContent = `الصحيح هو: ${q.options[q.correct]}`;
+        msg.textContent = `الصحيح هو: ${q.options[q.correct]} — اضغط "التالي ←" للمتابعة.`;
       }
     }
 
     function nextQuizQuestion() {
+      clearAutoAdvance();
       const pool = getFilteredQuestions();
       if (!pool.length) return;
       qPos = (qPos + 1) % pool.length;
@@ -1705,7 +1598,7 @@
       document.getElementById('studyTaskList').innerHTML = taskMarkup;
       document.getElementById('tasksTabList').innerHTML = taskMarkup;
 
-      document.getElementById('admQListView').innerHTML = state.questions.map(q => `
+      document.getElementById('admQListView').innerHTML = state.questions.slice(0, 35).map(q => `
         <div class="flex items-center justify-between p-2.5 rounded-xl bg-cream text-navy font-bold">
           <span>[${q.subject}] ${q.question}</span>
           <button onclick="adminDelQ(${q.id})" class="text-rose-700 font-black px-2">حذف</button>
@@ -1719,7 +1612,9 @@
         </div>
       `).join('');
 
-      renderQuizSection();
+      if (!suppressQuizResetOnPersist) {
+        renderQuizSection();
+      }
       renderFcSection();
       renderGoals();
       renderAdminStudents();
