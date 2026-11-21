@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>مرسى السادس — منصة التركيز والتحديات الدراسية</title>
+  <title>مرسى السادس — استوديو التركيز والتحديات الدراسية</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -16,11 +16,14 @@
             cairo: ['Cairo', 'sans-serif'],
           },
           colors: {
-            navy: '#0E223D',
-            navyDeep: '#081526',
-            gold: '#C5A059',
-            goldSoft: '#E2C88B',
-            cream: '#F7F3EA',
+            ink: '#0B1A30',
+            inkSoft: '#162C4B',
+            ivory: '#FBF8F1',
+            sand: '#F2ECE0',
+            brass: '#C59B48',
+            brassLight: '#E5C685',
+            sage: '#1E6F5C',
+            ruby: '#A83248',
           }
         }
       }
@@ -29,764 +32,715 @@
   <style>
     * { font-family: 'Cairo', sans-serif; }
     body {
-      background: linear-gradient(160deg, #FBF9F5 0%, #F7F3EA 55%, #EFE9DA 100%);
-      color: #0E223D;
+      background-color: #FBF8F1;
+      background-image:
+        radial-gradient(circle at 12% 10%, rgba(197, 155, 72, 0.14) 0%, transparent 42%),
+        radial-gradient(circle at 88% 18%, rgba(11, 26, 48, 0.08) 0%, transparent 45%),
+        radial-gradient(circle at 50% 95%, rgba(30, 111, 92, 0.08) 0%, transparent 48%);
+      color: #0B1A30;
       min-height: 100vh;
     }
-    .card-lux {
-      background: rgba(255, 255, 255, 0.92);
-      border: 1px solid rgba(197, 160, 89, 0.45);
-      box-shadow: 0 12px 30px -12px rgba(14, 34, 61, 0.12);
+    .bento-card {
+      background: rgba(255, 255, 255, 0.86);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(197, 155, 72, 0.35);
+      box-shadow: 0 20px 45px -24px rgba(11, 26, 48, 0.18);
     }
-    .gold-border {
-      border-color: rgba(197, 160, 89, 0.55);
+    .bento-dark {
+      background: linear-gradient(145deg, #0B1A30 0%, #142B4D 65%, #1D3A63 100%);
+      border: 1px solid rgba(229, 198, 133, 0.45);
+      box-shadow: 0 22px 48px -20px rgba(11, 26, 48, 0.42);
     }
-    .q-badge {
-      background: #0E223D;
-      color: #F7F3EA;
-      border: 2px solid #C5A059;
+    .q-num {
+      background: #0B1A30;
+      color: #FBF8F1;
+      border: 2px solid #C59B48;
     }
-    @keyframes floatSlow {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-10px) rotate(4deg); }
-    }
-    .float-emoji {
-      animation: floatSlow 3.8s ease-in-out infinite;
-    }
-    .flip-card {
-      perspective: 1000px;
+    .flip-scene {
+      perspective: 1200px;
       cursor: pointer;
     }
-    .flip-inner {
-      transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    .flip-rig {
+      transition: transform 0.65s cubic-bezier(0.2, 0.85, 0.25, 1);
       transform-style: preserve-3d;
       position: relative;
     }
-    .flip-card.flipped .flip-inner {
+    .flip-scene.is-flipped .flip-rig {
       transform: rotateY(180deg);
     }
-    .flip-face {
+    .flip-side {
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
     }
-    .flip-back {
+    .flip-backside {
       transform: rotateY(180deg);
       position: absolute;
       inset: 0;
     }
+    @keyframes pulseAura {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(197, 155, 72, 0.25); }
+      50% { box-shadow: 0 0 0 12px rgba(197, 155, 72, 0); }
+    }
+    .aura-ring {
+      animation: pulseAura 2.8s infinite;
+    }
   </style>
 </head>
-<body class="flex flex-col min-h-screen selection:bg-gold/30">
+<body class="flex flex-col min-h-screen">
 
-  <!-- الهيدر العلوي -->
-  <header class="sticky top-0 z-30 bg-white/95 backdrop-blur border-b-2 border-gold/60 shadow-sm">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
-      <div class="flex items-center gap-3">
-        <div class="w-14 h-14 rounded-full bg-white border-2 border-gold shadow-md overflow-hidden flex items-center justify-center shrink-0">
+  <!-- رأس المنصة -->
+  <header class="sticky top-0 z-40 bg-white/85 backdrop-blur-md border-b border-brass/40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+      <!-- الهوية واللوكو -->
+      <div class="flex items-center gap-3.5">
+        <div class="w-14 h-14 rounded-2xl bg-white border-2 border-brass shadow-sm overflow-hidden flex items-center justify-center shrink-0">
           <img
-            id="brandLogo"
             src="167499_2.png"
             alt="شعار مرسى السادس"
             class="w-full h-full object-contain"
-            onerror="this.style.display='none'; document.getElementById('fallbackBadge').classList.remove('hidden');"
+            onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');"
           />
-          <span id="fallbackBadge" class="hidden font-black text-navy text-lg">⚓</span>
+          <span class="hidden font-black text-ink text-xl">⚓</span>
         </div>
         <div>
-          <h1 class="text-xl sm:text-2xl font-black text-navy leading-tight flex items-center gap-2">
-            <span>مرسى السادس</span>
-            <span class="text-gold text-base">✦</span>
-          </h1>
-          <p class="text-xs sm:text-sm font-bold text-navy/75">منصة التركيز والتحديات الدراسية لطلاب السادس</p>
+          <div class="flex items-center gap-2">
+            <span class="text-xl sm:text-2xl font-black tracking-tight text-ink">مرسى السادس</span>
+            <span class="text-[11px] font-extrabold px-2 py-0.5 rounded-full bg-sand border border-brass/50 text-ink">نسخة النخبة</span>
+          </div>
+          <p class="text-xs text-ink/70 font-semibold">مساحة تركيز، تحديات وزارية، وبطاقات مراجعة ذكية</p>
         </div>
       </div>
 
-      <!-- إحصائيات سريعة -->
+      <!-- مؤشرات الأداء -->
       <div class="flex items-center gap-2 sm:gap-3">
-        <div class="bg-cream border border-gold/60 rounded-xl px-3 py-1.5 text-center">
-          <span class="block text-[11px] text-navy/70 font-bold">النقاط 🏆</span>
-          <span id="pointsDisplay" class="text-sm sm:text-base font-black text-navy">0</span>
+        <div class="px-3.5 py-1.5 rounded-2xl bg-sand/80 border border-brass/40 text-center">
+          <span class="block text-[10px] font-bold text-ink/65">النقاط</span>
+          <span id="statPoints" class="text-sm sm:text-base font-black text-ink">0</span>
         </div>
-        <div class="bg-cream border border-gold/60 rounded-xl px-3 py-1.5 text-center">
-          <span class="block text-[11px] text-navy/70 font-bold">دقائق التركيز ⏱️</span>
-          <span id="minutesDisplay" class="text-sm sm:text-base font-black text-navy">0</span>
+        <div class="px-3.5 py-1.5 rounded-2xl bg-sand/80 border border-brass/40 text-center">
+          <span class="block text-[10px] font-bold text-ink/65">دقائق التركيز</span>
+          <span id="statMinutes" class="text-sm sm:text-base font-black text-ink">0</span>
         </div>
-        <div class="bg-navy text-cream border border-gold rounded-xl px-3 py-1.5 text-center">
-          <span class="block text-[11px] text-goldSoft font-bold">سلسلة 🔥</span>
-          <span id="streakDisplay" class="text-sm sm:text-base font-black text-white">x1</span>
+        <div class="px-3.5 py-1.5 rounded-2xl bg-ink text-ivory border border-brass text-center">
+          <span class="block text-[10px] font-bold text-brassLight">المستوى</span>
+          <span id="statRank" class="text-xs sm:text-sm font-black">مبتدئ</span>
         </div>
       </div>
     </div>
 
-    <!-- شريط التنقل -->
-    <nav class="bg-cream/90 border-t border-gold/30">
-      <div class="max-w-6xl mx-auto px-4 flex gap-2 overflow-x-auto py-2 text-sm font-extrabold">
-        <button data-tab="focus" class="tab-btn px-4 py-2 rounded-xl bg-navy text-white border border-gold transition whitespace-nowrap">
-          ⏳ غرفة التركيز
+    <!-- أشرطة التبويب المعمارية -->
+    <div class="max-w-6xl mx-auto px-4 pb-3">
+      <div class="inline-flex flex-wrap gap-1.5 p-1.5 rounded-2xl bg-sand border border-brass/35">
+        <button data-view="studio" class="nav-pill px-4 py-2 rounded-xl bg-ink text-ivory text-xs sm:text-sm font-extrabold transition">
+          ⏳ استوديو التركيز
         </button>
-        <button data-tab="quiz" class="tab-btn px-4 py-2 rounded-xl bg-white text-navy border border-gold/50 hover:border-gold transition whitespace-nowrap">
-          🧠 تحدي الأسئلة
+        <button data-view="arena" class="nav-pill px-4 py-2 rounded-xl text-ink hover:bg-white/70 text-xs sm:text-sm font-extrabold transition">
+          🎯 حلبة التحدي
         </button>
-        <button data-tab="flashcards" class="tab-btn px-4 py-2 rounded-xl bg-white text-navy border border-gold/50 hover:border-gold transition whitespace-nowrap">
-          🃏 فلاش كارد
+        <button data-view="cards" class="nav-pill px-4 py-2 rounded-xl text-ink hover:bg-white/70 text-xs sm:text-sm font-extrabold transition">
+          🃏 بطاقات الذاكرة
         </button>
-        <button data-tab="planner" class="tab-btn px-4 py-2 rounded-xl bg-white text-navy border border-gold/50 hover:border-gold transition whitespace-nowrap">
-          📚 جلساتي ومهامي
+        <button data-view="plan" class="nav-pill px-4 py-2 rounded-xl text-ink hover:bg-white/70 text-xs sm:text-sm font-extrabold transition">
+          📌 خارطة الجلسات
         </button>
       </div>
-    </nav>
+    </div>
   </header>
 
-  <!-- المحتوى الرئيسي -->
+  <!-- المحتوى -->
   <main class="flex-1 max-w-6xl w-full mx-auto px-4 py-6 space-y-6">
 
-    <!-- القسم 1: غرفة التركيز -->
-    <section id="tab-focus" class="tab-panel grid grid-cols-1 lg:grid-cols-12 gap-6">
-      <!-- بطاقة التايمر -->
-      <div class="lg:col-span-7 card-lux rounded-3xl p-6 relative overflow-hidden">
-        <div class="flex items-center justify-between gap-3 mb-4">
+    <!-- 1. استوديو التركيز -->
+    <section id="view-studio" class="view-pane grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- العمود الرئيسي: المؤقت -->
+      <div class="lg:col-span-7 bento-card rounded-[2rem] p-6 sm:p-8 flex flex-col justify-between">
+        <div class="flex items-start justify-between gap-4">
           <div class="flex items-center gap-3">
-            <img src="167499_2.png" alt="مرسى السادس" class="w-12 h-12 rounded-full border-2 border-gold bg-white object-contain p-0.5" onerror="this.style.display='none'" />
+            <img src="167499_2.png" alt="مرسى السادس" class="w-11 h-11 rounded-xl border border-brass bg-white object-contain p-0.5" onerror="this.style.display='none'" />
             <div>
-              <h2 class="text-lg sm:text-xl font-black text-navy">مؤقت الجلسة الدراسية 🎯</h2>
-              <p id="activeSessionLabel" class="text-xs sm:text-sm text-navy/75 font-semibold">جلسة تركيز عامة — استعد للإبداع</p>
+              <h2 class="text-lg sm:text-xl font-black text-ink">مؤقت الجلسات العميقة</h2>
+              <p id="sessionSubtitle" class="text-xs text-ink/70 font-semibold">اختر نمط الجلسة أو حدد وقتك الخاص</p>
             </div>
           </div>
-          <span class="text-2xl float-emoji select-none">📖</span>
+          <span id="sessionBadge" class="px-3 py-1 rounded-full bg-sage/10 text-sage border border-sage/30 text-xs font-extrabold">
+            وضع التركيز
+          </span>
         </div>
 
-        <!-- أزرار الأوضاع -->
-        <div class="flex flex-wrap gap-2 mb-6">
-          <button onclick="setTimerMode(25, 'بومودورو سريع (25 د)')" class="px-3.5 py-1.5 rounded-xl bg-cream hover:bg-gold/20 border border-gold/60 text-xs sm:text-sm font-extrabold text-navy transition">
+        <!-- أنماط الجلسة -->
+        <div class="grid grid-cols-3 gap-2.5 my-6">
+          <button onclick="applyPreset(25, 'بومودورو 25 د')" class="py-2.5 px-3 rounded-2xl bg-sand hover:bg-brass/20 border border-brass/45 text-xs sm:text-sm font-extrabold text-ink transition">
             ⚡ 25 دقيقة
           </button>
-          <button onclick="setTimerMode(50, 'تركيز عميق (50 د)')" class="px-3.5 py-1.5 rounded-xl bg-cream hover:bg-gold/20 border border-gold/60 text-xs sm:text-sm font-extrabold text-navy transition">
-            🚀 50 دقيقة
+          <button onclick="applyPreset(45, 'جلسة عميقة 45 د')" class="py-2.5 px-3 rounded-2xl bg-sand hover:bg-brass/20 border border-brass/45 text-xs sm:text-sm font-extrabold text-ink transition">
+            📘 45 دقيقة
           </button>
-          <button onclick="setTimerMode(10, 'استراحة قصيرة (10 د)')" class="px-3.5 py-1.5 rounded-xl bg-cream hover:bg-gold/20 border border-gold/60 text-xs sm:text-sm font-extrabold text-navy transition">
-            ☕ استراحة 10 د
+          <button onclick="applyPreset(10, 'استراحة ذهنية 10 د')" class="py-2.5 px-3 rounded-2xl bg-sand hover:bg-brass/20 border border-brass/45 text-xs sm:text-sm font-extrabold text-ink transition">
+            🌿 10 دقائق
           </button>
         </div>
 
-        <!-- عداد الوقت الدائري -->
-        <div class="flex flex-col items-center justify-center my-4">
-          <div class="relative w-56 h-56 sm:w-64 sm:h-64 flex items-center justify-center">
+        <!-- العداد -->
+        <div class="flex flex-col items-center my-2">
+          <div class="relative w-56 h-56 sm:w-64 sm:h-64 rounded-full aura-ring flex items-center justify-center">
             <svg class="w-full h-full -rotate-90" viewBox="0 0 220 220">
-              <circle cx="110" cy="110" r="96" fill="#FBF9F5" stroke="#EFE9DA" stroke-width="14" />
+              <circle cx="110" cy="110" r="96" fill="#FFFFFF" stroke="#EFE8D8" stroke-width="12" />
               <circle
-                id="timerRing"
+                id="progressCircle"
                 cx="110"
                 cy="110"
                 r="96"
                 fill="none"
-                stroke="#C5A059"
-                stroke-width="14"
+                stroke="#C59B48"
+                stroke-width="12"
                 stroke-linecap="round"
                 stroke-dasharray="603.18"
                 stroke-dashoffset="0"
                 class="transition-all duration-500"
               />
             </svg>
-            <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
-              <span id="timerDisplay" class="text-4xl sm:text-5xl font-black text-navy tracking-wider">25:00</span>
-              <span id="timerStatus" class="text-xs font-bold text-gold mt-1">جاهز للانطلاق ✏️</span>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+              <span id="clockText" class="text-4xl sm:text-5xl font-black text-ink tracking-wider">25:00</span>
+              <span id="clockHint" class="text-xs font-bold text-ink/60 mt-1">جاهز للبدء</span>
             </div>
           </div>
 
-          <!-- شريط وقت مخصص -->
-          <div class="w-full max-w-xs mt-5">
-            <div class="flex justify-between text-xs font-bold text-navy/75 mb-1">
-              <span>تخصيص الدقائق:</span>
-              <span id="customSliderVal">25 دقيقة</span>
+          <!-- منزلق الوقت -->
+          <div class="w-full max-w-xs mt-6">
+            <div class="flex justify-between text-xs font-extrabold text-ink/75 mb-1.5">
+              <span>ضبط المدة يدوياً</span>
+              <span id="sliderLabel">25 دقيقة</span>
             </div>
-            <input id="customSlider" type="range" min="5" max="90" step="5" value="25" oninput="handleSliderChange(this.value)" class="w-full accent-navy cursor-pointer" />
+            <input type="range" min="5" max="90" step="5" value="25" oninput="syncSlider(this.value)" class="w-full accent-ink cursor-pointer" />
           </div>
         </div>
 
-        <!-- أزرار التحكم -->
-        <div class="flex flex-wrap items-center justify-center gap-3 mt-6">
-          <button id="toggleTimerBtn" onclick="toggleTimer()" class="px-7 py-3 rounded-2xl bg-navy hover:bg-navyDeep text-white font-black text-sm sm:text-base border-2 border-gold shadow-md transition">
-            ▶ ابدأ الجلسة
+        <!-- أزرار التشغيل -->
+        <div class="flex items-center justify-center gap-3 mt-6">
+          <button id="playPauseBtn" onclick="toggleClock()" class="px-8 py-3 rounded-2xl bg-ink hover:bg-inkSoft text-ivory border border-brass font-black text-sm shadow-md transition">
+            ▶ ابدأ الآن
           </button>
-          <button onclick="resetTimer()" class="px-5 py-3 rounded-2xl bg-cream hover:bg-white text-navy font-extrabold text-sm border border-gold/60 transition">
-            ↺ إعادة ضبط
+          <button onclick="resetClock()" class="px-5 py-3 rounded-2xl bg-sand hover:bg-white text-ink border border-brass/50 font-extrabold text-sm transition">
+            ↺ تصفير
           </button>
         </div>
       </div>
 
-      <!-- البطاقة الجانبية: أجواء الدراسة وتمرين التنفس -->
+      <!-- العمود الجانبي: بطاقة داكنة للأجواء الصوتية + ملاحظة سريعة -->
       <div class="lg:col-span-5 space-y-6">
-        <!-- أجواء صوتية -->
-        <div class="card-lux rounded-3xl p-6">
-          <h3 class="text-lg font-black text-navy mb-1 flex items-center gap-2">
-            <span>🎧 أجواء تركيز هادئة</span>
-          </h3>
-          <p class="text-xs text-navy/70 font-semibold mb-4">صوت مولّد داخلياً لمساعدتك على الفصل والتركيز</p>
+        <div class="bento-dark text-ivory rounded-[2rem] p-6">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-lg font-black text-brassLight">🎧 مشغّل الأجواء الصوتية</h3>
+            <span class="text-xs px-2.5 py-0.5 rounded-full bg-white/10 text-ivory/85 font-bold">صوت محلي</span>
+          </div>
+          <p class="text-xs text-ivory/75 font-medium mb-4">اختر خلفية صوتية هادئة تساعدك على عزل الضوضاء أثناء الدراسة.</p>
 
-          <div class="grid grid-cols-2 gap-2.5 mb-4">
-            <button onclick="selectSound('none', this)" class="sound-btn px-3 py-2.5 rounded-xl bg-navy text-white border border-gold text-xs font-extrabold transition">
-              🔇 صمت تام
+          <div class="grid grid-cols-2 gap-2.5 mb-5">
+            <button onclick="setAmbient('off', this)" class="amb-btn px-3 py-2.5 rounded-xl bg-brass text-ink font-extrabold text-xs transition">
+              🔇 صمت
             </button>
-            <button onclick="selectSound('rain', this)" class="sound-btn px-3 py-2.5 rounded-xl bg-cream hover:bg-gold/20 text-navy border border-gold/50 text-xs font-extrabold transition">
-              🌧️ مطر خفيف
+            <button onclick="setAmbient('rain', this)" class="amb-btn px-3 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-ivory font-extrabold text-xs transition">
+              🌧️ مطر ناعم
             </button>
-            <button onclick="selectSound('waves', this)" class="sound-btn px-3 py-2.5 rounded-xl bg-cream hover:bg-gold/20 text-navy border border-gold/50 text-xs font-extrabold transition">
-              🌊 أمواج هادئة
+            <button onclick="setAmbient('sea', this)" class="amb-btn px-3 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-ivory font-extrabold text-xs transition">
+              🌊 أمواج الساحل
             </button>
-            <button onclick="selectSound('brown', this)" class="sound-btn px-3 py-2.5 rounded-xl bg-cream hover:bg-gold/20 text-navy border border-gold/50 text-xs font-extrabold transition">
-              🕯️ ضوضاء دافئة
+            <button onclick="setAmbient('warm', this)" class="amb-btn px-3 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-ivory font-extrabold text-xs transition">
+              🕯️ دفء الغرفة
             </button>
           </div>
 
           <div class="flex items-center gap-3">
-            <span class="text-xs font-bold text-navy">الصوت:</span>
-            <input id="volumeSlider" type="range" min="0" max="100" value="40" oninput="updateVolume(this.value)" class="flex-1 accent-navy" />
+            <span class="text-xs font-bold text-ivory/80">الشدة:</span>
+            <input type="range" min="0" max="100" value="35" oninput="setAmbientGain(this.value)" class="flex-1 accent-brass" />
           </div>
         </div>
 
-        <!-- تمرين تهدئة وتنفس -->
-        <div class="card-lux rounded-3xl p-6 bg-gradient-to-br from-white to-cream">
-          <div class="flex items-center justify-between mb-2">
-            <h3 class="text-lg font-black text-navy">🧘‍♂️ تمرين تهدئة الذهن</h3>
-            <span class="text-xl">✨</span>
-          </div>
-          <p class="text-xs text-navy/75 font-semibold mb-4">تنفس 4 ثوانٍ، احبس 4 ثوانٍ، وأخرج الهواء 4 ثوانٍ لتخفيف توتر السادس.</p>
-          <div class="bg-white border border-gold/60 rounded-2xl p-4 text-center">
-            <p id="breathText" class="text-base font-black text-navy">اضغط لبدء جلسة تنفس هادئة</p>
-            <button id="breathBtn" onclick="toggleBreathing()" class="mt-3 px-4 py-2 rounded-xl bg-gold/25 hover:bg-gold/40 border border-gold text-navy font-extrabold text-xs transition">
-              ابدأ التمرين
-            </button>
-          </div>
+        <div class="bento-card rounded-[2rem] p-6">
+          <h3 class="text-base sm:text-lg font-black text-ink mb-2">✍️ دفتر الالتزام للجلسة الحالية</h3>
+          <p class="text-xs text-ink/70 font-semibold mb-3">اكتب هدفاً واحداً واضحاً ستنجزه خلال هذه الجلسة.</p>
+          <textarea
+            id="focusGoalInput"
+            rows="3"
+            placeholder="مثال: إتمام حل 10 أسئلة وزارية في الفصل الأول دون فتح الهاتف..."
+            class="w-full p-3.5 rounded-2xl bg-sand/75 border border-brass/45 text-sm font-bold text-ink focus:outline-none focus:border-ink"
+          ></textarea>
         </div>
       </div>
     </section>
 
-    <!-- القسم 2: تحدي الأسئلة -->
-    <section id="tab-quiz" class="tab-panel hidden space-y-6">
-      <div class="card-lux rounded-3xl p-6">
-        <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-gold/40">
-          <div class="flex items-center gap-3">
-            <span id="qNumberBadge" class="q-badge w-11 h-11 rounded-2xl flex items-center justify-center font-black text-lg shadow">1</span>
+    <!-- 2. حلبة التحدي -->
+    <section id="view-arena" class="view-pane hidden space-y-6">
+      <div class="bento-card rounded-[2rem] p-6 sm:p-8">
+        <div class="flex flex-wrap items-center justify-between gap-4 pb-5 border-b border-brass/35">
+          <div class="flex items-center gap-3.5">
+            <span id="arenaNum" class="q-num w-12 h-12 rounded-2xl flex items-center justify-center text-lg font-black">1</span>
             <div>
-              <span id="qSubjectTag" class="inline-block text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-cream border border-gold/60 text-navy mb-1">الفيزياء</span>
-              <h2 class="text-lg sm:text-xl font-black text-navy">ميدان تحدي الأسئلة الوزارية 🎯</h2>
+              <span id="arenaSubject" class="text-xs font-extrabold px-3 py-0.5 rounded-full bg-sand border border-brass/45 text-ink">الفيزياء</span>
+              <h2 class="text-lg sm:text-xl font-black text-ink mt-1">تحدي الأسئلة والاختبارات السريعة</h2>
             </div>
           </div>
 
           <div class="flex items-center gap-2">
-            <button onclick="toggleHint()" class="px-3.5 py-2 rounded-xl bg-cream hover:bg-gold/20 border border-gold/60 text-xs font-extrabold text-navy transition">
+            <button onclick="revealClue()" class="px-3.5 py-2 rounded-xl bg-sand hover:bg-brass/20 border border-brass/50 text-xs font-extrabold text-ink transition">
               💡 تلميح
             </button>
-            <button onclick="nextQuestion()" class="px-4 py-2 rounded-xl bg-navy hover:bg-navyDeep text-white border border-gold text-xs font-extrabold transition">
-              السؤال التالي ←
+            <button onclick="stepQuestion()" class="px-4 py-2 rounded-xl bg-ink hover:bg-inkSoft text-ivory border border-brass text-xs font-extrabold transition">
+              التالي ←
             </button>
           </div>
         </div>
 
-        <div class="mt-5">
-          <p id="qText" class="text-base sm:text-lg font-extrabold text-navy leading-relaxed"></p>
-          <div id="qHintBox" class="hidden mt-3 p-3.5 rounded-2xl bg-cream border border-gold text-xs sm:text-sm font-bold text-navy/90"></div>
+        <div class="mt-6">
+          <p id="arenaPrompt" class="text-base sm:text-lg font-black text-ink leading-relaxed"></p>
+          <div id="arenaClue" class="hidden mt-3 p-3.5 rounded-2xl bg-sand border border-brass text-xs sm:text-sm font-bold text-ink"></div>
 
-          <div id="qOptions" class="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
-          <div id="qFeedback" class="hidden mt-4 p-4 rounded-2xl text-sm font-bold"></div>
+          <div id="arenaChoices" class="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+          <div id="arenaResult" class="hidden mt-4 p-4 rounded-2xl text-xs sm:text-sm font-extrabold"></div>
         </div>
       </div>
 
-      <!-- سجل الأخطاء للمراجعة -->
-      <div class="card-lux rounded-3xl p-6">
-        <h3 class="text-base sm:text-lg font-black text-navy mb-3 flex items-center gap-2">
-          <span>📝 سجل الأسئلة التي تحتاج مراجعة</span>
-          <span id="mistakesCount" class="text-xs px-2.5 py-0.5 rounded-full bg-navy text-gold font-black">0</span>
-        </h3>
-        <div id="mistakesList" class="space-y-2.5 text-sm">
-          <p class="text-navy/65 font-semibold">لا توجد أخطاء مسجلة حالياً — أحسنت! 🌟</p>
+      <!-- قائمة المراجعة -->
+      <div class="bento-card rounded-[2rem] p-6">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-base sm:text-lg font-black text-ink">📌 الأسئلة المحفوظة للمراجعة</h3>
+          <span id="reviewCounter" class="px-3 py-0.5 rounded-full bg-ink text-brassLight text-xs font-black">0</span>
         </div>
+        <div id="reviewContainer" class="space-y-2.5 text-sm"></div>
       </div>
     </section>
 
-    <!-- القسم 3: فلاش كارد -->
-    <section id="tab-flashcards" class="tab-panel hidden space-y-6">
-      <div class="card-lux rounded-3xl p-6">
-        <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+    <!-- 3. بطاقات الذاكرة -->
+    <section id="view-cards" class="view-pane hidden">
+      <div class="bento-card rounded-[2rem] p-6 sm:p-8">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
           <div>
-            <h2 class="text-lg sm:text-xl font-black text-navy">بطاقات المراجعة السريعة (Flashcards) 🃏</h2>
-            <p class="text-xs sm:text-sm text-navy/75 font-semibold">اضغط على البطاقة لقلبها ومشاهدة الجواب أو القاعدة</p>
+            <h2 class="text-lg sm:text-xl font-black text-ink">بطاقات المراجعة التفاعلية</h2>
+            <p class="text-xs text-ink/70 font-semibold">انقر على البطاقة لإظهار الجواب أو الشرح المختصر</p>
           </div>
           <div class="flex items-center gap-2">
-            <button onclick="prevFlashcard()" class="px-3.5 py-2 rounded-xl bg-cream border border-gold/60 text-xs font-extrabold text-navy">السابقة</button>
-            <span id="fcCounter" class="text-xs font-black px-3 py-1.5 rounded-xl bg-navy text-white">1 / 4</span>
-            <button onclick="nextFlashcard()" class="px-3.5 py-2 rounded-xl bg-cream border border-gold/60 text-xs font-extrabold text-navy">التالية</button>
+            <button onclick="shiftCard(-1)" class="px-3.5 py-2 rounded-xl bg-sand border border-brass/50 text-xs font-extrabold text-ink">السابقة</button>
+            <span id="cardIndexBadge" class="px-3 py-1.5 rounded-xl bg-ink text-ivory text-xs font-black">1 / 4</span>
+            <button onclick="shiftCard(1)" class="px-3.5 py-2 rounded-xl bg-sand border border-brass/50 text-xs font-extrabold text-ink">التالية</button>
           </div>
         </div>
 
-        <div id="flashcardBox" onclick="this.classList.toggle('flipped')" class="flip-card max-w-2xl mx-auto">
-          <div class="flip-inner min-h-[220px]">
-            <div class="flip-face bg-gradient-to-br from-navy to-navyDeep text-white rounded-3xl p-7 border-2 border-gold shadow-lg flex flex-col justify-between min-h-[220px]">
-              <div class="flex justify-between items-center text-xs text-goldSoft font-bold">
-                <span id="fcSubject">المادة</span>
-                <span>انقر لقلب البطاقة 🔄</span>
+        <div id="cardStage" onclick="this.classList.toggle('is-flipped')" class="flip-scene max-w-2xl mx-auto">
+          <div class="flip-rig min-h-[230px]">
+            <div class="flip-side bento-dark text-ivory rounded-[2rem] p-7 flex flex-col justify-between min-h-[230px]">
+              <div class="flex items-center justify-between text-xs text-brassLight font-bold">
+                <span id="cardTopic">المادة</span>
+                <span>انقر لقلب البطاقة</span>
               </div>
-              <p id="fcFront" class="text-xl sm:text-2xl font-black text-center my-4 leading-relaxed"></p>
-              <span class="text-center text-xs text-white/70 font-semibold">الوجه الأمامي — السؤال / المصطلح</span>
+              <p id="cardFrontText" class="text-xl sm:text-2xl font-black text-center my-4 leading-relaxed"></p>
+              <span class="text-center text-[11px] text-ivory/65 font-semibold">السؤال / المفهوم</span>
             </div>
 
-            <div class="flip-face flip-back bg-white text-navy rounded-3xl p-7 border-2 border-gold shadow-lg flex flex-col justify-between min-h-[220px]">
-              <div class="flex justify-between items-center text-xs text-gold font-extrabold">
-                <span>الإجابة النموذجية ✨</span>
-                <span>انقر للعودة 🔄</span>
+            <div class="flip-side flip-backside bg-white text-ink border-2 border-brass rounded-[2rem] p-7 flex flex-col justify-between min-h-[230px]">
+              <div class="flex items-center justify-between text-xs text-brass font-extrabold">
+                <span>الجواب النموذجي</span>
+                <span>انقر للعودة</span>
               </div>
-              <p id="fcBack" class="text-lg sm:text-xl font-extrabold text-center my-4 leading-relaxed text-navy"></p>
-              <span class="text-center text-xs text-navy/60 font-semibold">الوجه الخلفي — الشرح / القاعدة</span>
+              <p id="cardBackText" class="text-lg sm:text-xl font-extrabold text-center my-4 leading-relaxed text-ink"></p>
+              <span class="text-center text-[11px] text-ink/60 font-semibold">الخلاصة المركزة</span>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- القسم 4: جلساتي ومهامي -->
-    <section id="tab-planner" class="tab-panel hidden space-y-6">
-      <div class="card-lux rounded-3xl p-6">
-        <h2 class="text-lg sm:text-xl font-black text-navy mb-4">📚 جدول المهام والجلسات الدراسية</h2>
+    <!-- 4. خارطة الجلسات -->
+    <section id="view-plan" class="view-pane hidden">
+      <div class="bento-card rounded-[2rem] p-6 sm:p-8">
+        <h2 class="text-lg sm:text-xl font-black text-ink mb-4">📌 خارطة الجلسات والمهام الدراسية</h2>
 
-        <form onsubmit="addTask(event)" class="flex flex-col sm:flex-row gap-3 mb-5">
-          <input id="taskSubject" type="text" placeholder="المادة (مثلاً: فيزياء، رياضيات)" required class="sm:w-44 px-4 py-2.5 rounded-xl bg-cream border border-gold/60 text-sm font-bold text-navy focus:outline-none focus:border-navy" />
-          <input id="taskTitle" type="text" placeholder="اكتب مهمة اليوم (مثلاً: حل مسائل الفصل الثاني)" required class="flex-1 px-4 py-2.5 rounded-xl bg-cream border border-gold/60 text-sm font-bold text-navy focus:outline-none focus:border-navy" />
-          <button type="submit" class="px-5 py-2.5 rounded-xl bg-navy hover:bg-navyDeep text-white border border-gold text-sm font-black transition">
-            + إضافة مهمة
+        <form onsubmit="createPlanItem(event)" class="grid grid-cols-1 sm:grid-cols-12 gap-3 mb-6">
+          <input id="planSubject" type="text" placeholder="المادة" required class="sm:col-span-3 px-4 py-2.5 rounded-2xl bg-sand/80 border border-brass/45 text-sm font-bold text-ink focus:outline-none focus:border-ink" />
+          <input id="planTask" type="text" placeholder="عنوان الجلسة أو المهمة" required class="sm:col-span-6 px-4 py-2.5 rounded-2xl bg-sand/80 border border-brass/45 text-sm font-bold text-ink focus:outline-none focus:border-ink" />
+          <button type="submit" class="sm:col-span-3 py-2.5 px-4 rounded-2xl bg-ink hover:bg-inkSoft text-ivory border border-brass text-sm font-black transition">
+            + إضافة للخارطة
           </button>
         </form>
 
-        <div id="tasksList" class="space-y-2.5"></div>
+        <div id="planContainer" class="space-y-2.5"></div>
       </div>
     </section>
 
   </main>
 
-  <!-- الفوتر -->
-  <footer class="bg-white border-t-2 border-gold/60 py-4 px-4 mt-8">
-    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs sm:text-sm font-extrabold text-navy">
+  <!-- تذييل الصفحة -->
+  <footer class="bg-white/90 border-t border-brass/45 py-4 px-4 mt-8">
+    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs sm:text-sm font-extrabold text-ink">
       <div class="flex items-center gap-2">
-        <span class="text-gold">⚓</span>
-        <span>مرسى السادس — رفيق التفوق في السادس الإعدادي</span>
+        <span class="text-brass">⚓</span>
+        <span>مرسى السادس — منصة التركيز والتحديات الدراسية</span>
       </div>
-      <div class="text-navy/85">إعداد: مساعدين مرسى السادس</div>
+      <div class="text-ink/85">إعداد: مساعدين مرسى السادس</div>
     </div>
   </footer>
 
   <script>
-    // الحالة العامة المحفوظة محلياً
-    const state = JSON.parse(localStorage.getItem('marsa_alsadis_v1') || 'null') || {
+    const STORAGE_KEY = 'marsa_alsadis_studio_v2';
+    const appData = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null') || {
       points: 0,
       minutes: 0,
-      streak: 1,
-      mistakes: [],
-      tasks: [
-        { id: 1, subject: 'الفيزياء', title: 'مراجعة قوانين الحث الكهرومغناطيسي', done: false },
-        { id: 2, subject: 'الإنكليزي', title: 'حفظ مفردات الوحدة الأولى مع الأمثلة', done: false }
+      reviewList: [],
+      planItems: [
+        { id: 1, subject: 'الفيزياء', title: 'حل مسائل التيار المتناوب الوزارية', done: false },
+        { id: 2, subject: 'الأدب', title: 'مراجعة حياة وسيرة أبرز الشعراء', done: false }
       ]
     };
 
-    function saveState() {
-      localStorage.setItem('marsa_alsadis_v1', JSON.stringify(state));
-      renderStats();
+    function persistData() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+      refreshHud();
     }
 
-    function renderStats() {
-      document.getElementById('pointsDisplay').textContent = state.points;
-      document.getElementById('minutesDisplay').textContent = state.minutes;
-      document.getElementById('streakDisplay').textContent = `x${state.streak}`;
-      renderMistakes();
-      renderTasks();
+    function computeRank(pts) {
+      if (pts >= 200) return 'قبطان النخبة';
+      if (pts >= 80) return 'ملاح متقدم';
+      return 'مبتدئ';
     }
 
-    // التنقل بين الأقسام
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const target = btn.dataset.tab;
-        document.querySelectorAll('.tab-btn').forEach(b => {
-          b.className = 'tab-btn px-4 py-2 rounded-xl bg-white text-navy border border-gold/50 hover:border-gold transition whitespace-nowrap';
+    function refreshHud() {
+      document.getElementById('statPoints').textContent = appData.points;
+      document.getElementById('statMinutes').textContent = appData.minutes;
+      document.getElementById('statRank').textContent = computeRank(appData.points);
+      renderReviewList();
+      renderPlanList();
+    }
+
+    // التنقل
+    document.querySelectorAll('.nav-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        const view = pill.dataset.view;
+        document.querySelectorAll('.nav-pill').forEach(p => {
+          p.className = 'nav-pill px-4 py-2 rounded-xl text-ink hover:bg-white/70 text-xs sm:text-sm font-extrabold transition';
         });
-        btn.className = 'tab-btn px-4 py-2 rounded-xl bg-navy text-white border border-gold transition whitespace-nowrap';
-        document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.add('hidden'));
-        document.getElementById(`tab-${target}`).classList.remove('hidden');
+        pill.className = 'nav-pill px-4 py-2 rounded-xl bg-ink text-ivory text-xs sm:text-sm font-extrabold transition';
+        document.querySelectorAll('.view-pane').forEach(v => v.classList.add('hidden'));
+        document.getElementById(`view-${view}`).classList.remove('hidden');
       });
     });
 
-    // منطق التايمر
-    let totalSeconds = 25 * 60;
-    let remainingSeconds = totalSeconds;
-    let timerInterval = null;
-    const circumference = 2 * Math.PI * 96;
+    // المؤقت
+    let spanSeconds = 25 * 60;
+    let leftSeconds = spanSeconds;
+    let ticker = null;
+    const circleLen = 2 * Math.PI * 96;
 
-    function updateTimerUI() {
-      const mins = Math.floor(remainingSeconds / 60);
-      const secs = remainingSeconds % 60;
-      document.getElementById('timerDisplay').textContent =
-        `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-      const progress = totalSeconds > 0 ? remainingSeconds / totalSeconds : 0;
-      document.getElementById('timerRing').style.strokeDashoffset = circumference * (1 - progress);
+    function drawClock() {
+      const m = Math.floor(leftSeconds / 60);
+      const s = leftSeconds % 60;
+      document.getElementById('clockText').textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      const ratio = spanSeconds > 0 ? leftSeconds / spanSeconds : 0;
+      document.getElementById('progressCircle').style.strokeDashoffset = circleLen * (1 - ratio);
     }
 
-    function setTimerMode(mins, label) {
-      pauseTimer();
-      totalSeconds = mins * 60;
-      remainingSeconds = totalSeconds;
-      document.getElementById('customSlider').value = mins;
-      document.getElementById('customSliderVal').textContent = `${mins} دقيقة`;
-      document.getElementById('activeSessionLabel').textContent = `${label} — تركيز عالٍ`;
-      document.getElementById('timerStatus').textContent = 'جاهز للانطلاق ✏️';
-      updateTimerUI();
+    function applyPreset(mins, title) {
+      stopTicker();
+      spanSeconds = mins * 60;
+      leftSeconds = spanSeconds;
+      document.querySelector('input[type="range"]').value = mins;
+      document.getElementById('sliderLabel').textContent = `${mins} دقيقة`;
+      document.getElementById('sessionSubtitle').textContent = title;
+      document.getElementById('clockHint').textContent = 'جاهز للبدء';
+      drawClock();
     }
 
-    function handleSliderChange(val) {
-      pauseTimer();
-      totalSeconds = Number(val) * 60;
-      remainingSeconds = totalSeconds;
-      document.getElementById('customSliderVal').textContent = `${val} دقيقة`;
-      document.getElementById('activeSessionLabel').textContent = `جلسة مخصصة (${val} دقيقة)`;
-      updateTimerUI();
+    function syncSlider(val) {
+      stopTicker();
+      spanSeconds = Number(val) * 60;
+      leftSeconds = spanSeconds;
+      document.getElementById('sliderLabel').textContent = `${val} دقيقة`;
+      document.getElementById('sessionSubtitle').textContent = `جلسة مخصصة (${val} دقيقة)`;
+      drawClock();
     }
 
-    function startSessionWithLabel(label) {
-      document.querySelector('[data-tab="focus"]').click();
-      setTimerMode(25, `جلسة: ${label}`);
-      toggleTimer();
+    function launchTaskSession(label) {
+      document.querySelector('[data-view="studio"]').click();
+      applyPreset(25, `جلسة: ${label}`);
+      toggleClock();
     }
 
-    function toggleTimer() {
-      if (timerInterval) {
-        pauseTimer();
+    function toggleClock() {
+      if (ticker) {
+        stopTicker();
       } else {
-        document.getElementById('toggleTimerBtn').textContent = '⏸ إيقاف مؤقت';
-        document.getElementById('timerStatus').textContent = 'جاري التركيز... لا تشتت انتباهك 🔥';
-        let elapsedTick = 0;
-        timerInterval = setInterval(() => {
-          if (remainingSeconds > 0) {
-            remainingSeconds--;
-            elapsedTick++;
-            if (elapsedTick % 60 === 0) {
-              state.minutes += 1;
-              state.points += 5;
-              saveState();
+        document.getElementById('playPauseBtn').textContent = '⏸ إيقاف مؤقت';
+        document.getElementById('clockHint').textContent = 'التركيز مستمر...';
+        let secCounter = 0;
+        ticker = setInterval(() => {
+          if (leftSeconds > 0) {
+            leftSeconds--;
+            secCounter++;
+            if (secCounter % 60 === 0) {
+              appData.minutes += 1;
+              appData.points += 5;
+              persistData();
             }
-            updateTimerUI();
+            drawClock();
           } else {
-            pauseTimer();
-            state.points += 25;
-            saveState();
-            document.getElementById('timerStatus').textContent = 'أحسنت! اكتملت الجلسة 🎉';
-            alert('أحسنت يا بطل! اكتملت الجلسة وحصلت على +25 نقطة 🌟');
+            stopTicker();
+            appData.points += 25;
+            persistData();
+            document.getElementById('clockHint').textContent = 'اكتملت الجلسة بنجاح';
+            alert('أحسنت! أتممت الجلسة وحصلت على +25 نقطة.');
           }
         }, 1000);
       }
     }
 
-    function pauseTimer() {
-      clearInterval(timerInterval);
-      timerInterval = null;
-      document.getElementById('toggleTimerBtn').textContent = '▶ ابدأ الجلسة';
-      if (remainingSeconds > 0) {
-        document.getElementById('timerStatus').textContent = 'متوقف مؤقتاً';
+    function stopTicker() {
+      clearInterval(ticker);
+      ticker = null;
+      document.getElementById('playPauseBtn').textContent = '▶ ابدأ الآن';
+      if (leftSeconds > 0) {
+        document.getElementById('clockHint').textContent = 'متوقف مؤقتاً';
       }
     }
 
-    function resetTimer() {
-      pauseTimer();
-      remainingSeconds = totalSeconds;
-      document.getElementById('timerStatus').textContent = 'جاهز للانطلاق ✏️';
-      updateTimerUI();
+    function resetClock() {
+      stopTicker();
+      leftSeconds = spanSeconds;
+      document.getElementById('clockHint').textContent = 'جاهز للبدء';
+      drawClock();
     }
 
-    // مولد الأصوات الهادئة عبر Web Audio API
-    let audioCtx = null;
-    let noiseNode = null;
-    let gainNode = null;
+    // الأجواء الصوتية
+    let ctxAudio = null;
+    let ambSource = null;
+    let ambGain = null;
 
-    function initAudio() {
-      if (!audioCtx) {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        audioCtx = new AudioContext();
-        gainNode = audioCtx.createGain();
-        gainNode.gain.value = document.getElementById('volumeSlider').value / 100 * 0.25;
-        gainNode.connect(audioCtx.destination);
+    function bootAudio() {
+      if (!ctxAudio) {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        ctxAudio = new AC();
+        ambGain = ctxAudio.createGain();
+        ambGain.gain.value = 0.08;
+        ambGain.connect(ctxAudio.destination);
       }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
+      if (ctxAudio.state === 'suspended') ctxAudio.resume();
     }
 
-    function stopNoise() {
-      if (noiseNode) {
-        try { noiseNode.stop(); noiseNode.disconnect(); } catch (e) {}
-        noiseNode = null;
+    function clearAmbient() {
+      if (ambSource) {
+        try { ambSource.stop(); ambSource.disconnect(); } catch (e) {}
+        ambSource = null;
       }
     }
 
-    function selectSound(type, btn) {
-      document.querySelectorAll('.sound-btn').forEach(b => {
-        b.className = 'sound-btn px-3 py-2.5 rounded-xl bg-cream hover:bg-gold/20 text-navy border border-gold/50 text-xs font-extrabold transition';
+    function setAmbient(mode, btnEl) {
+      document.querySelectorAll('.amb-btn').forEach(b => {
+        b.className = 'amb-btn px-3 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-ivory font-extrabold text-xs transition';
       });
-      btn.className = 'sound-btn px-3 py-2.5 rounded-xl bg-navy text-white border border-gold text-xs font-extrabold transition';
+      btnEl.className = 'amb-btn px-3 py-2.5 rounded-xl bg-brass text-ink font-extrabold text-xs transition';
 
-      stopNoise();
-      if (type === 'none') return;
+      clearAmbient();
+      if (mode === 'off') return;
 
-      initAudio();
-      const bufferSize = audioCtx.sampleRate * 2;
-      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-      const data = buffer.getChannelData(0);
-
-      let lastOut = 0.0;
-      for (let i = 0; i < bufferSize; i++) {
-        const white = Math.random() * 2 - 1;
-        if (type === 'brown') {
-          data[i] = (lastOut + (0.02 * white)) / 1.02;
-          lastOut = data[i];
-          data[i] *= 2.5;
-        } else if (type === 'waves') {
-          const mod = 0.5 + 0.5 * Math.sin((i / audioCtx.sampleRate) * Math.PI * 0.5);
-          data[i] = ((lastOut + (0.03 * white)) / 1.03) * mod * 2.2;
-          lastOut = data[i];
+      bootAudio();
+      const len = ctxAudio.sampleRate * 2;
+      const buf = ctxAudio.createBuffer(1, len, ctxAudio.sampleRate);
+      const ch = buf.getChannelData(0);
+      let prev = 0;
+      for (let i = 0; i < len; i++) {
+        const n = Math.random() * 2 - 1;
+        if (mode === 'warm') {
+          ch[i] = (prev + 0.02 * n) / 1.02 * 2.4;
+          prev = ch[i];
+        } else if (mode === 'sea') {
+          const wave = 0.5 + 0.5 * Math.sin((i / ctxAudio.sampleRate) * Math.PI * 0.4);
+          ch[i] = ((prev + 0.03 * n) / 1.03) * wave * 2.1;
+          prev = ch[i];
         } else {
-          data[i] = white * 0.25;
+          ch[i] = n * 0.25;
         }
       }
 
-      const source = audioCtx.createBufferSource();
-      source.buffer = buffer;
-      source.loop = true;
-
-      const filter = audioCtx.createBiquadFilter();
-      filter.type = type === 'rain' ? 'bandpass' : 'lowpass';
-      filter.frequency.value = type === 'rain' ? 1100 : 420;
-
-      source.connect(filter);
-      filter.connect(gainNode);
-      source.start();
-      noiseNode = source;
+      const src = ctxAudio.createBufferSource();
+      src.buffer = buf;
+      src.loop = true;
+      const flt = ctxAudio.createBiquadFilter();
+      flt.type = mode === 'rain' ? 'bandpass' : 'lowpass';
+      flt.frequency.value = mode === 'rain' ? 1050 : 400;
+      src.connect(flt);
+      flt.connect(ambGain);
+      src.start();
+      ambSource = src;
     }
 
-    function updateVolume(val) {
-      if (gainNode) {
-        gainNode.gain.value = (Number(val) / 100) * 0.25;
-      }
+    function setAmbientGain(v) {
+      if (ambGain) ambGain.gain.value = (Number(v) / 100) * 0.22;
     }
 
-    // تمرين التنفس
-    let breathTimer = null;
-    function toggleBreathing() {
-      const btn = document.getElementById('breathBtn');
-      const txt = document.getElementById('breathText');
-      if (breathTimer) {
-        clearInterval(breathTimer);
-        breathTimer = null;
-        btn.textContent = 'ابدأ التمرين';
-        txt.textContent = 'اضغط لبدء جلسة تنفس هادئة';
-        return;
-      }
-      btn.textContent = 'إيقاف التمرين';
-      const phases = [
-        '🌬️ شهيق عميق (4 ثوانٍ)...',
-        '⏸️ حبس النفس بهدوء (4 ثوانٍ)...',
-        '🍃 زفير بطيء ومريح (4 ثوانٍ)...'
-      ];
-      let idx = 0;
-      txt.textContent = phases[0];
-      breathTimer = setInterval(() => {
-        idx = (idx + 1) % phases.length;
-        txt.textContent = phases[idx];
-      }, 4000);
-    }
-
-    // تحدي الأسئلة
-    const questions = [
+    // التحدي
+    const bank = [
       {
         subject: 'الفيزياء',
-        question: 'ما الشرط الأساسي لتولّد تيار محتث في حلقة موصلة مقفلة؟',
-        hint: 'تذكّر قانون فاراداي: التغير هو الأساس وليس الثبات.',
-        options: [
-          'تغير الفيض المغناطيسي الذي يخترق الحلقة خلال الزمن',
-          'وضع الحلقة داخل مجال مغناطيسي ثابت الشدة',
-          'زيادة مقاومة سلك الحلقة بشكل كبير',
-          'إبعاد الحلقة عن أي مجال كهربائي فقط'
-        ],
-        answer: 0
+        text: 'أيّ كمية فيزيائية تقاس بوحدة (الهنري H) في النظام الدولي؟',
+        clue: 'ترتبط بقدرة الملف على توليد قوة دافعة كهربائية محتثة عند تغير التيار.',
+        choices: ['معامل الحث الذاتي', 'السعة الكهربائية', 'الفيض المغناطيسي', 'التردد الزاوي'],
+        correct: 0
       },
       {
         subject: 'اللغة العربية',
-        question: 'ما نوع الاستثناء في جملة: (ما حضر الطلابُ إلا زيداً)؟',
-        hint: 'المستثنى منه مذكور والكلام منفي.',
-        options: [
-          'تام متصل منفي',
-          'مفرغ',
-          'منقطع مثبت',
-          'تام منقطع منفي'
-        ],
-        answer: 0
+        text: 'ما إعراب كلمة (إلا) في جملة: (ما فاز إلا المجتهدُ)؟',
+        clue: 'الاستثناء مفرغ لأن المستثنى منه محذوف والكلام منفي.',
+        choices: ['أداة حصر ملغاة لا عمل لها', 'حرف استثناء واجب النصب', 'اسم استثناء منصوب', 'صفة منصوبة'],
+        correct: 0
       },
       {
         subject: 'الرياضيات',
-        question: 'إذا كانت دالة قابلة للاشتقاق ولها نهاية عظمى محلية عند x = c فإن:',
-        hint: 'المماس عند نقطة النهاية المحلية يكون أفقياً.',
-        options: [
-          'f\'(c) = 0 إن وُجدت المشتقة',
-          'f(c) = 0 دائماً',
-          'f\'\'(c) > 0 دائماً',
-          'الدالة متناقصة قبل وبعد c'
-        ],
-        answer: 0
+        text: 'ما قيمة التكامل المحدد من 0 إلى 1 للدالة f(x) = 3x²؟',
+        clue: 'الدالة المقابلة لـ 3x² هي x³.',
+        choices: ['1', '3', '0', '2'],
+        correct: 0
       }
     ];
 
-    let qIndex = 0;
-    let answeredCurrent = false;
+    let qPos = 0;
+    let qLocked = false;
 
-    function renderQuestion() {
-      answeredCurrent = false;
-      const item = questions[qIndex];
-      document.getElementById('qNumberBadge').textContent = qIndex + 1;
-      document.getElementById('qSubjectTag').textContent = item.subject;
-      document.getElementById('qText').textContent = item.question;
-      document.getElementById('qHintBox').classList.add('hidden');
-      document.getElementById('qHintBox').textContent = `💡 تلميح: ${item.hint}`;
-      document.getElementById('qFeedback').classList.add('hidden');
+    function drawQuestion() {
+      qLocked = false;
+      const q = bank[qPos];
+      document.getElementById('arenaNum').textContent = qPos + 1;
+      document.getElementById('arenaSubject').textContent = q.subject;
+      document.getElementById('arenaPrompt').textContent = q.text;
+      document.getElementById('arenaClue').classList.add('hidden');
+      document.getElementById('arenaClue').textContent = `تلميح: ${q.clue}`;
+      document.getElementById('arenaResult').classList.add('hidden');
 
-      const optsContainer = document.getElementById('qOptions');
-      optsContainer.innerHTML = '';
-      item.options.forEach((opt, i) => {
-        const b = document.createElement('button');
-        b.className = 'text-right p-3.5 rounded-2xl bg-cream hover:bg-gold/20 border border-gold/60 text-sm font-bold text-navy transition';
-        b.textContent = opt;
-        b.onclick = () => checkAnswer(i, b);
-        optsContainer.appendChild(b);
+      const box = document.getElementById('arenaChoices');
+      box.innerHTML = '';
+      q.choices.forEach((c, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'text-right p-4 rounded-2xl bg-sand/75 hover:bg-brass/20 border border-brass/50 text-sm font-bold text-ink transition';
+        btn.textContent = c;
+        btn.onclick = () => pickChoice(idx, btn);
+        box.appendChild(btn);
       });
     }
 
-    function toggleHint() {
-      document.getElementById('qHintBox').classList.toggle('hidden');
+    function revealClue() {
+      document.getElementById('arenaClue').classList.toggle('hidden');
     }
 
-    function checkAnswer(selectedIndex, btnEl) {
-      if (answeredCurrent) return;
-      answeredCurrent = true;
-      const item = questions[qIndex];
-      const feedback = document.getElementById('qFeedback');
-      feedback.classList.remove('hidden');
+    function pickChoice(idx, btn) {
+      if (qLocked) return;
+      qLocked = true;
+      const q = bank[qPos];
+      const res = document.getElementById('arenaResult');
+      res.classList.remove('hidden');
 
-      if (selectedIndex === item.answer) {
-        btnEl.className = 'text-right p-3.5 rounded-2xl bg-emerald-100 border-2 border-emerald-600 text-sm font-extrabold text-emerald-950';
-        const earned = 15 * state.streak;
-        state.points += earned;
-        state.streak = Math.min(state.streak + 1, 5);
-        feedback.className = 'mt-4 p-4 rounded-2xl bg-emerald-50 border border-emerald-400 text-emerald-900 text-sm font-extrabold';
-        feedback.textContent = `إجابة صحيحة! 🎉 حصلت على +${earned} نقطة.`;
+      if (idx === q.correct) {
+        btn.className = 'text-right p-4 rounded-2xl bg-sage/15 border-2 border-sage text-sm font-black text-sage';
+        appData.points += 15;
+        res.className = 'mt-4 p-4 rounded-2xl bg-sage/10 border border-sage/40 text-sage text-xs sm:text-sm font-extrabold';
+        res.textContent = 'إجابة دقيقة وموفقة! أضفنا +15 نقطة إلى رصيدك.';
       } else {
-        btnEl.className = 'text-right p-3.5 rounded-2xl bg-rose-100 border-2 border-rose-600 text-sm font-extrabold text-rose-950';
-        state.streak = 1;
-        feedback.className = 'mt-4 p-4 rounded-2xl bg-rose-50 border border-rose-400 text-rose-900 text-sm font-extrabold';
-        feedback.textContent = `إجابة غير صحيحة — الصحيح هو: (${item.options[item.answer]}). أضفنا السؤال لسجل المراجعة.`;
-        if (!state.mistakes.some(m => m.question === item.question)) {
-          state.mistakes.push({ subject: item.subject, question: item.question, answer: item.options[item.answer] });
+        btn.className = 'text-right p-4 rounded-2xl bg-ruby/15 border-2 border-ruby text-sm font-black text-ruby';
+        res.className = 'mt-4 p-4 rounded-2xl bg-ruby/10 border border-ruby/40 text-ruby text-xs sm:text-sm font-extrabold';
+        res.textContent = `الجواب الصحيح هو: (${q.choices[q.correct]}). تم حفظ السؤال في قائمة المراجعة.`;
+        if (!appData.reviewList.some(item => item.text === q.text)) {
+          appData.reviewList.push({ subject: q.subject, text: q.text, answer: q.choices[q.correct] });
         }
       }
-      saveState();
+      persistData();
     }
 
-    function nextQuestion() {
-      qIndex = (qIndex + 1) % questions.length;
-      renderQuestion();
+    function stepQuestion() {
+      qPos = (qPos + 1) % bank.length;
+      drawQuestion();
     }
 
-    function renderMistakes() {
-      const box = document.getElementById('mistakesList');
-      document.getElementById('mistakesCount').textContent = state.mistakes.length;
-      if (!state.mistakes.length) {
-        box.innerHTML = '<p class="text-navy/65 font-semibold">لا توجد أخطاء مسجلة حالياً — أحسنت! 🌟</p>';
+    function renderReviewList() {
+      const wrap = document.getElementById('reviewContainer');
+      document.getElementById('reviewCounter').textContent = appData.reviewList.length;
+      if (!appData.reviewList.length) {
+        wrap.innerHTML = '<p class="text-ink/60 font-semibold text-xs sm:text-sm">لا توجد أسئلة مؤجلة للمراجعة حالياً.</p>';
         return;
       }
-      box.innerHTML = state.mistakes.map(m => `
-        <div class="p-3.5 rounded-2xl bg-cream border border-gold/60">
-          <span class="text-xs font-black text-gold">${m.subject}</span>
-          <p class="font-extrabold text-navy mt-0.5">${m.question}</p>
-          <p class="text-xs font-bold text-emerald-800 mt-1">الجواب الصحيح: ${m.answer}</p>
+      wrap.innerHTML = appData.reviewList.map(r => `
+        <div class="p-3.5 rounded-2xl bg-sand/75 border border-brass/40">
+          <span class="text-xs font-black text-brass">${r.subject}</span>
+          <p class="font-extrabold text-ink mt-0.5">${r.text}</p>
+          <p class="text-xs font-bold text-sage mt-1">الحل الصحيح: ${r.answer}</p>
         </div>
       `).join('');
     }
 
-    // الفلاش كارد
-    const flashcards = [
-      { subject: 'الفيزياء', front: 'ما المقصود بقوة لورنتز؟', back: 'هي محصلة قوتين: قوة كهربائية وقوة مغناطيسية تؤثران في جسيم مشحون يتحرك داخل مجالين كهربائي ومغناطيسي.' },
-      { subject: 'اللغة الإنكليزية', front: 'ما معنى مصطلح (Broad shoulders) في سياق الوصف؟', back: 'أكتاف عريضة — ويُستخدم لوصف القوة أو القدرة على تحمّل المسؤولية.' },
-      { subject: 'الرياضيات', front: 'متى تكون الدالة متزايدة في فترة معينة؟', back: 'عندما تكون مشتقتها الأولى موجبة f\'(x) > 0 لجميع قيم x ضمن تلك الفترة.' },
-      { subject: 'الأدب والنصوص', front: 'بماذا يتميز الشعر الحر؟', back: 'بالاعتماد على التفعيلة بدلاً من الشطرين المتساويين مع الحفاظ على القافية أو تنويعها وفق المعنى.' }
+    // بطاقات الذاكرة
+    const deck = [
+      { topic: 'الفيزياء', front: 'ما المقصود بالتيار المتناوب (AC)؟', back: 'هو التيار المتغير دورياً في المقدار والاتجاه مع الزمن.' },
+      { topic: 'الإنكليزية', front: 'ما معنى كلمة (Ankle)؟', back: 'الكاحل — مفصل يربط الساق بالقدم.' },
+      { topic: 'الرياضيات', front: 'متى تمتلك الدالة نقطة انقلاب؟', back: 'عندما تتغير إشارة المشتقة الثانية من موجبة إلى سالبة أو العكس مع وجود المماس.' },
+      { topic: 'اللغة العربية', front: 'ما الفرق بين (ما) النافية و(إن) النافية؟', back: '(ما) أداة نفي شائعة تدخل على الجملة الاسمية والفعلية، و(إن) النافية تشبه (ما) في العمل أو تأتي بمعنى (ما).' }
     ];
-    let fcIndex = 0;
+    let cPos = 0;
 
-    function renderFlashcard() {
-      const card = flashcards[fcIndex];
-      document.getElementById('flashcardBox').classList.remove('flipped');
-      document.getElementById('fcSubject').textContent = card.subject;
-      document.getElementById('fcFront').textContent = card.front;
-      document.getElementById('fcBack').textContent = card.back;
-      document.getElementById('fcCounter').textContent = `${fcIndex + 1} / ${flashcards.length}`;
+    function drawCard() {
+      const item = deck[cPos];
+      document.getElementById('cardStage').classList.remove('is-flipped');
+      document.getElementById('cardTopic').textContent = item.topic;
+      document.getElementById('cardFrontText').textContent = item.front;
+      document.getElementById('cardBackText').textContent = item.back;
+      document.getElementById('cardIndexBadge').textContent = `${cPos + 1} / ${deck.length}`;
     }
 
-    function nextFlashcard() {
-      fcIndex = (fcIndex + 1) % flashcards.length;
-      renderFlashcard();
+    function shiftCard(dir) {
+      cPos = (cPos + dir + deck.length) % deck.length;
+      drawCard();
     }
 
-    function prevFlashcard() {
-      fcIndex = (fcIndex - 1 + flashcards.length) % flashcards.length;
-      renderFlashcard();
-    }
-
-    // المهام والجلسات
-    function addTask(e) {
+    // الخارطة
+    function createPlanItem(e) {
       e.preventDefault();
-      const subject = document.getElementById('taskSubject').value.trim();
-      const title = document.getElementById('taskTitle').value.trim();
+      const subject = document.getElementById('planSubject').value.trim();
+      const title = document.getElementById('planTask').value.trim();
       if (!subject || !title) return;
-      state.tasks.unshift({ id: Date.now(), subject, title, done: false });
-      document.getElementById('taskSubject').value = '';
-      document.getElementById('taskTitle').value = '';
-      saveState();
+      appData.planItems.unshift({ id: Date.now(), subject, title, done: false });
+      document.getElementById('planSubject').value = '';
+      document.getElementById('planTask').value = '';
+      persistData();
     }
 
-    function toggleTask(id) {
-      const t = state.tasks.find(x => x.id === id);
-      if (t) {
-        t.done = !t.done;
-        if (t.done) state.points += 10;
-        saveState();
+    function togglePlanItem(id) {
+      const target = appData.planItems.find(x => x.id === id);
+      if (target) {
+        target.done = !target.done;
+        if (target.done) appData.points += 10;
+        persistData();
       }
     }
 
-    function deleteTask(id) {
-      state.tasks = state.tasks.filter(x => x.id !== id);
-      saveState();
+    function removePlanItem(id) {
+      appData.planItems = appData.planItems.filter(x => x.id !== id);
+      persistData();
     }
 
-    function renderTasks() {
-      const list = document.getElementById('tasksList');
-      if (!state.tasks.length) {
-        list.innerHTML = '<p class="text-navy/65 text-sm font-semibold">أضف أول مهمة دراسية لليوم لتبدأ بتركيز.</p>';
+    function renderPlanList() {
+      const box = document.getElementById('planContainer');
+      if (!appData.planItems.length) {
+        box.innerHTML = '<p class="text-ink/60 text-sm font-semibold">أضف جلسة دراسية لتبدأ تنظيم يومك.</p>';
         return;
       }
-      list.innerHTML = state.tasks.map(t => `
-        <div class="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-2xl bg-cream border border-gold/60">
+      box.innerHTML = appData.planItems.map(p => `
+        <div class="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl bg-sand/70 border border-brass/40">
           <div class="flex items-center gap-3">
-            <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTask(${t.id})" class="w-4 h-4 accent-navy cursor-pointer" />
+            <input type="checkbox" ${p.done ? 'checked' : ''} onchange="togglePlanItem(${p.id})" class="w-4 h-4 accent-ink cursor-pointer" />
             <div>
-              <span class="text-xs font-black text-gold">${t.subject}</span>
-              <p class="text-sm font-extrabold ${t.done ? 'line-through text-navy/50' : 'text-navy'}">${t.title}</p>
+              <span class="text-xs font-black text-brass">${p.subject}</span>
+              <p class="text-sm font-extrabold ${p.done ? 'line-through text-ink/45' : 'text-ink'}">${p.title}</p>
             </div>
           </div>
           <div class="flex items-center gap-2">
-            <button onclick="startSessionWithLabel('${t.subject} - ${t.title.replace(/'/g, '')}')" class="px-3 py-1.5 rounded-xl bg-navy text-white border border-gold text-xs font-extrabold">
-              ▶ ابدأ جلسة
+            <button onclick="launchTaskSession('${p.subject} - ${p.title.replace(/'/g, '')}')" class="px-3 py-1.5 rounded-xl bg-ink text-ivory border border-brass text-xs font-extrabold">
+              ▶ بدء الجلسة
             </button>
-            <button onclick="deleteTask(${t.id})" class="px-2.5 py-1.5 rounded-xl bg-white text-rose-700 border border-rose-200 text-xs font-bold">
+            <button onclick="removePlanItem(${p.id})" class="px-2.5 py-1.5 rounded-xl bg-white text-ruby border border-ruby/30 text-xs font-bold">
               حذف
             </button>
           </div>
@@ -794,12 +748,10 @@
       `).join('');
     }
 
-    // تشغيل أولي
-    updateTimerUI();
-    renderStats();
-    renderQuestion();
-    renderFlashcard();
+    drawClock();
+    refreshHud();
+    drawQuestion();
+    drawCard();
   </script>
 </body>
 </html>
-
