@@ -1222,5 +1222,157 @@
     renderUI = function () { _renderUIOrig(); gateSync(); };
     renderUI();
   </script>
+
+  <!-- ===== ربط Firebase: دخول حقيقي + طلاب حقيقيين ===== -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signInWithPopup, signInWithRedirect, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const app = initializeApp({
+      apiKey: "AIzaSyCIktvOCzI7KPLav2xUniwZtReBJkT-q0I",
+      authDomain: "marsa-sades-37f37.firebaseapp.com",
+      projectId: "marsa-sades-37f37",
+      storageBucket: "marsa-sades-37f37.firebasestorage.app",
+      messagingSenderId: "123080070915",
+      appId: "1:123080070915:web:6c8fa408e0f2d3bddcfb36"
+    });
+    const auth = getAuth(app);
+    auth.languageCode = 'ar';
+    const db = getFirestore(app);
+
+    let myUid = null, unsub = null, cache = [], hb = null, justLogged = false, pendingName = '';
+
+    const ERR = {
+      'auth/email-already-in-use': 'هذا الإيميل مسجّل من قبل، سجّل دخول.',
+      'auth/invalid-credential': 'الإيميل أو الرمز غير صحيح.',
+      'auth/wrong-password': 'الإيميل أو الرمز غير صحيح.',
+      'auth/user-not-found': 'الإيميل أو الرمز غير صحيح.',
+      'auth/weak-password': 'الرمز ضعيف، استخدم 6 أحرف أو أكثر.',
+      'auth/invalid-email': 'الإيميل غير صحيح.',
+      'auth/too-many-requests': 'محاولات كثيرة، انتظر شوية وجرّب.',
+      'auth/network-request-failed': 'ما في اتصال بالإنترنت.',
+      'auth/popup-closed-by-user': 'تم إغلاق نافذة جوجل.',
+      'auth/unauthorized-domain': 'الدومين غير مضاف بـ Authorized domains في Firebase.',
+      'auth/operation-not-allowed': 'طريقة الدخول هذي غير مفعّلة في Firebase.'
+    };
+    const fail = e => gateFail(ERR[e.code] || ('صار خطأ: ' + (e.code || e.message)));
+
+    /* مزامنة بياناتي مع Firestore */
+    async function fbSyncNow() {
+      if (!myUid || !state.user || state.user.uid !== myUid) return;
+      try {
+        await setDoc(doc(db, 'users', myUid), {
+          name: state.user.name, title: state.user.title, avatar: state.user.avatar || '',
+          status: state.user.status || 'active', points: state.points, minutes: state.minutes, lastSeen: Date.now()
+        }, { merge: true });
+      } catch (e) { console.warn('sync', e); }
+    }
+    let st; function fbSync() { clearTimeout(st); st = setTimeout(fbSyncNow, 1500); }
+    const _persist = persist;
+    persist = function () { _persist(); fbSync(); };
+
+    /* الطلاب الحقيقيين: لو ما رسل نبضة من 3 دقائق يعتبر نايم */
+    function applyPeers() {
+      const now = Date.now();
+      state.peers = cache.filter(p => p.id !== myUid).map(p => ({
+        id: p.id, name: p.name || 'طالب', title: p.title || 'طالب', avatar: p.avatar || '',
+        points: p.points || 0, status: (now - (p.lastSeen || 0) > 180000) ? 'sleeping' : (p.status || 'active')
+      }));
+      renderUI();
+    }
+    setInterval(applyPeers, 60000);
+
+    onAuthStateChanged(auth, async u => {
+      if (!u) {
+        myUid = null; clearInterval(hb);
+        if (unsub) { unsub(); unsub = null; }
+        cache = []; state.peers = [];
+        if (state.user && state.user.role !== 'admin') state.user = null;
+        persist();
+        return;
+      }
+      myUid = u.uid;
+      let p = {};
+      try { const s = await getDoc(doc(db, 'users', u.uid)); if (s.exists()) p = s.data(); } catch (e) {}
+      state.user = {
+        role: 'student', uid: u.uid, email: u.email || '',
+        name: p.name || pendingName || u.displayName || (u.email || 'طالب').split('@')[0],
+        title: p.title || 'بطل السادس الإعدادي', avatar: p.avatar || '', status: p.status || 'active'
+      };
+      state.points = p.points ?? 0;
+      state.minutes = p.minutes ?? 0;
+      pendingName = '';
+      persist();
+      fbSyncNow();
+      if (!unsub) unsub = onSnapshot(collection(db, 'users'), s => {
+        cache = s.docs.map(d => ({ id: d.id, ...d.data() }));
+        applyPeers();
+      }, err => console.warn('listen', err));
+      clearInterval(hb); hb = setInterval(fbSyncNow, 60000);
+      if (justLogged) { justLogged = false; goToPage('top'); }
+    });
+
+    /* دخول Google الحقيقي */
+    window.gateGoogle = async function () {
+      justLogged = true;
+      const pr = new GoogleAuthProvider();
+      try { await signInWithPopup(auth, pr); }
+      catch (e) {
+        if (['auth/popup-blocked', 'auth/operation-not-supported-in-this-environment'].includes(e.code)) {
+          try { await signInWithRedirect(auth, pr); } catch (x) { justLogged = false; fail(x); }
+        } else { justLogged = false; fail(e); }
+      }
+    };
+
+    /* دخول وتسجيل بالإيميل والرمز */
+    window.gateSubmit = async function (e) {
+      e.preventDefault();
+      const form = e.target;
+      const email = document.getElementById('gateEmail').value.trim().toLowerCase();
+      const pass = document.getElementById('gatePass').value;
+      justLogged = true;
+      try {
+        if (gateModeNow === 'up') {
+          const name = document.getElementById('gateName').value.trim();
+          if (!name) { justLogged = false; return gateFail('اكتب اسمك.'); }
+          pendingName = name;
+          const c = await createUserWithEmailAndPassword(auth, email, pass);
+          await updateProfile(c.user, { displayName: name });
+          await setDoc(doc(db, 'users', c.user.uid), { name, title: 'بطل السادس الإعدادي', avatar: '', status: 'active', points: 0, minutes: 0, lastSeen: Date.now() });
+        } else {
+          await signInWithEmailAndPassword(auth, email, pass);
+        }
+        form.reset();
+      } catch (err) { justLogged = false; pendingName = ''; fail(err); }
+    };
+
+    window.logoutAccount = async function () {
+      if (myUid) { try { await signOut(auth); } catch (e) {} }
+      state.user = null;
+      persist();
+    };
+
+    /* نافذة الدخول القديمة: تبقى للأدمن فقط */
+    const _openLogin = openLoginScreen;
+    window.openLoginScreen = function (role = 'student') {
+      if (role === 'admin') { document.getElementById('loginTabStudent').style.display = 'none'; _openLogin('admin'); }
+      else if (state.user) openProfileEditor();
+    };
+
+    /* تصغير الصورة الشخصية حتى تنحفظ بسرعة */
+    window.handleAvatarFile = function (input) {
+      const f = input.files && input.files[0];
+      if (!f) return;
+      const img = new Image();
+      img.onload = () => {
+        const c = document.createElement('canvas'); c.width = c.height = 128;
+        const s = Math.min(img.width, img.height);
+        c.getContext('2d').drawImage(img, (img.width - s) / 2, (img.height - s) / 2, s, s, 0, 0, 128, 128);
+        tempAvatarDataUrl = c.toDataURL('image/jpeg', 0.75);
+      };
+      img.src = URL.createObjectURL(f);
+    };
+  </script>
 </body>
 </html>
