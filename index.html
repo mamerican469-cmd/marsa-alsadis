@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>مرسى السادس — استوديو التركيز والتحديات الدراسية</title>
+  <title>مرسى السادس — منصة النخبة للدراسة والتحديات</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -16,14 +16,16 @@
             cairo: ['Cairo', 'sans-serif'],
           },
           colors: {
-            ink: '#0B1A30',
-            inkSoft: '#162C4B',
+            royal: '#0A192F',
+            royalMid: '#112544',
+            royalDeep: '#06101E',
+            gold: '#C69C4E',
+            goldBright: '#E5C37A',
+            goldMuted: '#9E7936',
             ivory: '#FBF8F1',
-            sand: '#F2ECE0',
-            brass: '#C59B48',
-            brassLight: '#E5C685',
-            sage: '#1E6F5C',
-            ruby: '#A83248',
+            sand: '#F3ECE0',
+            emeraldLux: '#176B55',
+            crimsonLux: '#9E2A3F',
           }
         }
       }
@@ -34,724 +36,1097 @@
     body {
       background-color: #FBF8F1;
       background-image:
-        radial-gradient(circle at 12% 10%, rgba(197, 155, 72, 0.14) 0%, transparent 42%),
-        radial-gradient(circle at 88% 18%, rgba(11, 26, 48, 0.08) 0%, transparent 45%),
-        radial-gradient(circle at 50% 95%, rgba(30, 111, 92, 0.08) 0%, transparent 48%);
-      color: #0B1A30;
+        radial-gradient(at 15% 8%, rgba(198, 156, 78, 0.16) 0px, transparent 45%),
+        radial-gradient(at 85% 15%, rgba(10, 25, 47, 0.08) 0px, transparent 50%),
+        radial-gradient(at 50% 92%, rgba(198, 156, 78, 0.12) 0px, transparent 50%),
+        linear-gradient(rgba(10, 25, 47, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(10, 25, 47, 0.025) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+      color: #0A192F;
       min-height: 100vh;
     }
-    .bento-card {
-      background: rgba(255, 255, 255, 0.86);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid rgba(197, 155, 72, 0.35);
-      box-shadow: 0 20px 45px -24px rgba(11, 26, 48, 0.18);
+
+    /* بطاقة عاجية فاخرة بحدود ذهبية مزدوجة */
+    .luxe-surface {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(251, 248, 241, 0.92) 100%);
+      border: 1px solid rgba(198, 156, 78, 0.55);
+      box-shadow:
+        0 24px 50px -24px rgba(10, 25, 47, 0.22),
+        0 4px 12px -2px rgba(198, 156, 78, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
     }
-    .bento-dark {
-      background: linear-gradient(145deg, #0B1A30 0%, #142B4D 65%, #1D3A63 100%);
-      border: 1px solid rgba(229, 198, 133, 0.45);
-      box-shadow: 0 22px 48px -20px rgba(11, 26, 48, 0.42);
+
+    /* بطاقة كحلية ملكية داكنة */
+    .royal-surface {
+      background: linear-gradient(155deg, #0A192F 0%, #112544 55%, #06101E 100%);
+      border: 1px solid rgba(229, 195, 122, 0.55);
+      box-shadow:
+        0 28px 60px -22px rgba(6, 16, 30, 0.55),
+        inset 0 1px 0 rgba(229, 195, 122, 0.25);
     }
-    .q-num {
-      background: #0B1A30;
+
+    /* شريط ذهبي معدني */
+    .gold-gradient-text {
+      background: linear-gradient(135deg, #C69C4E 0%, #E5C37A 50%, #9E7936 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .gold-btn {
+      background: linear-gradient(135deg, #C69C4E 0%, #DFBC73 50%, #B3893E 100%);
+      color: #06101E;
+      box-shadow: 0 10px 24px -8px rgba(198, 156, 78, 0.65);
+      transition: all 0.25s ease;
+    }
+    .gold-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 28px -8px rgba(198, 156, 78, 0.85);
+    }
+
+    .q-emblem {
+      background: linear-gradient(145deg, #0A192F, #16325B);
       color: #FBF8F1;
-      border: 2px solid #C59B48;
+      border: 2px solid #C69C4E;
+      box-shadow: 0 8px 18px -6px rgba(10, 25, 47, 0.45);
     }
-    .flip-scene {
-      perspective: 1200px;
+
+    @keyframes slowOrbit {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .orbit-ring {
+      animation: slowOrbit 28s linear infinite;
+    }
+
+    /* بطاقة الفلاش كارد ثلاثية الأبعاد */
+    .card-3d {
+      perspective: 1400px;
       cursor: pointer;
     }
-    .flip-rig {
-      transition: transform 0.65s cubic-bezier(0.2, 0.85, 0.25, 1);
+    .card-3d-inner {
+      transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
       transform-style: preserve-3d;
       position: relative;
     }
-    .flip-scene.is-flipped .flip-rig {
+    .card-3d.is-flipped .card-3d-inner {
       transform: rotateY(180deg);
     }
-    .flip-side {
+    .card-3d-face {
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
     }
-    .flip-backside {
+    .card-3d-back {
       transform: rotateY(180deg);
       position: absolute;
       inset: 0;
     }
-    @keyframes pulseAura {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(197, 155, 72, 0.25); }
-      50% { box-shadow: 0 0 0 12px rgba(197, 155, 72, 0); }
-    }
-    .aura-ring {
-      animation: pulseAura 2.8s infinite;
-    }
   </style>
 </head>
-<body class="flex flex-col min-h-screen">
+<body class="flex flex-col min-h-screen selection:bg-gold/30">
 
-  <!-- رأس المنصة -->
-  <header class="sticky top-0 z-40 bg-white/85 backdrop-blur-md border-b border-brass/40">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
-      <!-- الهوية واللوكو -->
+  <!-- الشريط العلوي الفاخر -->
+  <header class="sticky top-0 z-40 royal-surface text-ivory border-b-2 border-gold/70">
+    <div class="max-w-6xl mx-auto px-4 py-3.5 flex flex-wrap items-center justify-between gap-4">
+      <!-- الهوية والشعار -->
       <div class="flex items-center gap-3.5">
-        <div class="w-14 h-14 rounded-2xl bg-white border-2 border-brass shadow-sm overflow-hidden flex items-center justify-center shrink-0">
-          <img
-            src="167499_2.png"
-            alt="شعار مرسى السادس"
-            class="w-full h-full object-contain"
-            onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');"
-          />
-          <span class="hidden font-black text-ink text-xl">⚓</span>
-        </div>
-        <div>
-          <div class="flex items-center gap-2">
-            <span class="text-xl sm:text-2xl font-black tracking-tight text-ink">مرسى السادس</span>
-            <span class="text-[11px] font-extrabold px-2 py-0.5 rounded-full bg-sand border border-brass/50 text-ink">نسخة النخبة</span>
+        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full p-0.5 bg-gradient-to-tr from-goldMuted via-goldBright to-gold shadow-lg shrink-0">
+          <div class="w-full h-full rounded-full bg-white overflow-hidden flex items-center justify-center">
+            <img
+              src="167499_2.png"
+              alt="شعار مرسى السادس"
+              class="w-full h-full object-contain"
+              onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');"
+            />
+            <span class="hidden font-black text-royal text-xl">⚓</span>
           </div>
-          <p class="text-xs text-ink/70 font-semibold">مساحة تركيز، تحديات وزارية، وبطاقات مراجعة ذكية</p>
+        </div>
+
+        <div>
+          <div class="flex items-center gap-2.5">
+            <h1 class="text-xl sm:text-2xl font-black tracking-wide text-white">مرسى السادس</h1>
+            <span class="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-gold/20 border border-goldBright/60 text-goldBright">
+              منصة النخبة
+            </span>
+          </div>
+          <p id="topAnnouncement" class="text-xs sm:text-sm font-semibold text-ivory/80 mt-0.5">
+            أهلاً بك في مرسى السادس — ركّز اليوم لتحصد التفوق غداً
+          </p>
         </div>
       </div>
 
-      <!-- مؤشرات الأداء -->
-      <div class="flex items-center gap-2 sm:gap-3">
-        <div class="px-3.5 py-1.5 rounded-2xl bg-sand/80 border border-brass/40 text-center">
-          <span class="block text-[10px] font-bold text-ink/65">النقاط</span>
-          <span id="statPoints" class="text-sm sm:text-base font-black text-ink">0</span>
+      <!-- لوحة الحساب والدخول -->
+      <div class="flex flex-wrap items-center gap-2.5">
+        <div id="accountBadge" class="px-3.5 py-1.5 rounded-2xl bg-white/10 border border-gold/45 text-xs sm:text-sm font-bold text-goldBright">
+          وضع الزائر
         </div>
-        <div class="px-3.5 py-1.5 rounded-2xl bg-sand/80 border border-brass/40 text-center">
-          <span class="block text-[10px] font-bold text-ink/65">دقائق التركيز</span>
-          <span id="statMinutes" class="text-sm sm:text-base font-black text-ink">0</span>
-        </div>
-        <div class="px-3.5 py-1.5 rounded-2xl bg-ink text-ivory border border-brass text-center">
-          <span class="block text-[10px] font-bold text-brassLight">المستوى</span>
-          <span id="statRank" class="text-xs sm:text-sm font-black">مبتدئ</span>
-        </div>
+        <button id="loginOpenBtn" onclick="openLoginModal()" class="gold-btn px-4 py-2 rounded-2xl text-xs sm:text-sm font-black">
+          تسجيل الدخول
+        </button>
+        <button id="logoutBtn" onclick="handleLogout()" class="hidden px-3.5 py-2 rounded-2xl bg-white/10 hover:bg-crimsonLux/30 text-ivory border border-white/25 text-xs sm:text-sm font-bold transition">
+          تسجيل الخروج
+        </button>
       </div>
     </div>
 
-    <!-- أشرطة التبويب المعمارية -->
-    <div class="max-w-6xl mx-auto px-4 pb-3">
-      <div class="inline-flex flex-wrap gap-1.5 p-1.5 rounded-2xl bg-sand border border-brass/35">
-        <button data-view="studio" class="nav-pill px-4 py-2 rounded-xl bg-ink text-ivory text-xs sm:text-sm font-extrabold transition">
-          ⏳ استوديو التركيز
+    <!-- شريط التنقل المعماري -->
+    <div class="bg-royalDeep/90 border-t border-gold/30">
+      <div class="max-w-6xl mx-auto px-4 py-2.5 flex items-center gap-2 overflow-x-auto text-xs sm:text-sm font-extrabold">
+        <button data-tab="focus" class="nav-tab px-4 py-2 rounded-xl gold-btn transition whitespace-nowrap">
+          ⏳ غرفة التركيز
         </button>
-        <button data-view="arena" class="nav-pill px-4 py-2 rounded-xl text-ink hover:bg-white/70 text-xs sm:text-sm font-extrabold transition">
-          🎯 حلبة التحدي
+        <button data-tab="quiz" class="nav-tab px-4 py-2 rounded-xl bg-white/5 hover:bg-white/15 text-ivory border border-gold/30 transition whitespace-nowrap">
+          🎯 تحدي الأسئلة
         </button>
-        <button data-view="cards" class="nav-pill px-4 py-2 rounded-xl text-ink hover:bg-white/70 text-xs sm:text-sm font-extrabold transition">
+        <button data-tab="cards" class="nav-tab px-4 py-2 rounded-xl bg-white/5 hover:bg-white/15 text-ivory border border-gold/30 transition whitespace-nowrap">
           🃏 بطاقات الذاكرة
         </button>
-        <button data-view="plan" class="nav-pill px-4 py-2 rounded-xl text-ink hover:bg-white/70 text-xs sm:text-sm font-extrabold transition">
-          📌 خارطة الجلسات
+        <button data-tab="planner" class="nav-tab px-4 py-2 rounded-xl bg-white/5 hover:bg-white/15 text-ivory border border-gold/30 transition whitespace-nowrap">
+          📚 خارطة الجلسات
+        </button>
+        <button id="adminTabBtn" data-tab="admin" onclick="openAdminTab()" class="nav-tab px-4 py-2 rounded-xl bg-gold/15 hover:bg-gold/25 text-goldBright border border-gold/60 transition whitespace-nowrap mr-auto">
+          🛠️ إدارة المنصة
         </button>
       </div>
     </div>
   </header>
 
-  <!-- المحتوى -->
-  <main class="flex-1 max-w-6xl w-full mx-auto px-4 py-6 space-y-6">
+  <!-- المحتوى الرئيسي -->
+  <main class="flex-1 max-w-6xl w-full mx-auto px-4 py-7 space-y-7">
 
-    <!-- 1. استوديو التركيز -->
-    <section id="view-studio" class="view-pane grid grid-cols-1 lg:grid-cols-12 gap-6">
-      <!-- العمود الرئيسي: المؤقت -->
-      <div class="lg:col-span-7 bento-card rounded-[2rem] p-6 sm:p-8 flex flex-col justify-between">
-        <div class="flex items-start justify-between gap-4">
+    <!-- بطاقات الإحصائيات العلوية -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="luxe-surface rounded-2xl p-4 flex items-center justify-between">
+        <div>
+          <span class="block text-xs font-bold text-royal/65">نقاط الإنجاز</span>
+          <span id="statPoints" class="text-2xl font-black text-royal">0</span>
+        </div>
+        <span class="w-10 h-10 rounded-xl bg-sand border border-gold/50 flex items-center justify-center text-lg">🏆</span>
+      </div>
+
+      <div class="luxe-surface rounded-2xl p-4 flex items-center justify-between">
+        <div>
+          <span class="block text-xs font-bold text-royal/65">دقائق التركيز</span>
+          <span id="statMinutes" class="text-2xl font-black text-royal">0</span>
+        </div>
+        <span class="w-10 h-10 rounded-xl bg-sand border border-gold/50 flex items-center justify-center text-lg">⏱️</span>
+      </div>
+
+      <div class="luxe-surface rounded-2xl p-4 flex items-center justify-between">
+        <div>
+          <span class="block text-xs font-bold text-royal/65">رتبة الطالب</span>
+          <span id="statRank" class="text-base sm:text-lg font-black text-royal">ملاح مبتدئ</span>
+        </div>
+        <span class="w-10 h-10 rounded-xl bg-sand border border-gold/50 flex items-center justify-center text-lg">🧭</span>
+      </div>
+
+      <div class="royal-surface rounded-2xl p-4 flex items-center justify-between text-ivory">
+        <div>
+          <span class="block text-xs font-bold text-goldBright">بنك الأسئلة</span>
+          <span id="statQuestions" class="text-2xl font-black text-white">0</span>
+        </div>
+        <span class="w-10 h-10 rounded-xl bg-white/10 border border-gold/50 flex items-center justify-center text-lg">📜</span>
+      </div>
+    </div>
+
+    <!-- القسم 1: غرفة التركيز الملكية -->
+    <section id="tab-focus" class="tab-view grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- بطاقة التايمر -->
+      <div class="lg:col-span-7 luxe-surface rounded-[2rem] p-6 sm:p-8 relative overflow-hidden">
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-5 border-b border-gold/35">
           <div class="flex items-center gap-3">
-            <img src="167499_2.png" alt="مرسى السادس" class="w-11 h-11 rounded-xl border border-brass bg-white object-contain p-0.5" onerror="this.style.display='none'" />
+            <img src="167499_2.png" alt="مرسى السادس" class="w-12 h-12 rounded-full border-2 border-gold bg-white object-contain p-0.5" onerror="this.style.display='none'" />
             <div>
-              <h2 class="text-lg sm:text-xl font-black text-ink">مؤقت الجلسات العميقة</h2>
-              <p id="sessionSubtitle" class="text-xs text-ink/70 font-semibold">اختر نمط الجلسة أو حدد وقتك الخاص</p>
+              <h2 class="text-lg sm:text-xl font-black text-royal">مؤقت التركيز العميق</h2>
+              <p id="timerModeCaption" class="text-xs sm:text-sm font-semibold text-royal/70">جلسة بومودورو القياسية — 25 دقيقة</p>
             </div>
           </div>
-          <span id="sessionBadge" class="px-3 py-1 rounded-full bg-sage/10 text-sage border border-sage/30 text-xs font-extrabold">
+          <span class="px-3 py-1 rounded-full bg-sand border border-gold/50 text-xs font-extrabold text-royal">
             وضع التركيز
           </span>
         </div>
 
-        <!-- أنماط الجلسة -->
+        <!-- أزرار المدد السريعة -->
         <div class="grid grid-cols-3 gap-2.5 my-6">
-          <button onclick="applyPreset(25, 'بومودورو 25 د')" class="py-2.5 px-3 rounded-2xl bg-sand hover:bg-brass/20 border border-brass/45 text-xs sm:text-sm font-extrabold text-ink transition">
-            ⚡ 25 دقيقة
+          <button onclick="selectPreset(25, 'بومودورو قياسي (25 دقيقة)')" class="py-2.5 px-3 rounded-2xl bg-sand hover:bg-gold/20 border border-gold/50 text-xs sm:text-sm font-extrabold text-royal transition">
+            25 دقيقة
           </button>
-          <button onclick="applyPreset(45, 'جلسة عميقة 45 د')" class="py-2.5 px-3 rounded-2xl bg-sand hover:bg-brass/20 border border-brass/45 text-xs sm:text-sm font-extrabold text-ink transition">
-            📘 45 دقيقة
+          <button onclick="selectPreset(50, 'جلسة إتقان عميقة (50 دقيقة)')" class="py-2.5 px-3 rounded-2xl bg-sand hover:bg-gold/20 border border-gold/50 text-xs sm:text-sm font-extrabold text-royal transition">
+            50 دقيقة
           </button>
-          <button onclick="applyPreset(10, 'استراحة ذهنية 10 د')" class="py-2.5 px-3 rounded-2xl bg-sand hover:bg-brass/20 border border-brass/45 text-xs sm:text-sm font-extrabold text-ink transition">
-            🌿 10 دقائق
+          <button onclick="selectPreset(10, 'استراحة ذهنية (10 دقائق)')" class="py-2.5 px-3 rounded-2xl bg-sand hover:bg-gold/20 border border-gold/50 text-xs sm:text-sm font-extrabold text-royal transition">
+            10 دقائق
           </button>
         </div>
 
-        <!-- العداد -->
-        <div class="flex flex-col items-center my-2">
-          <div class="relative w-56 h-56 sm:w-64 sm:h-64 rounded-full aura-ring flex items-center justify-center">
-            <svg class="w-full h-full -rotate-90" viewBox="0 0 220 220">
-              <circle cx="110" cy="110" r="96" fill="#FFFFFF" stroke="#EFE8D8" stroke-width="12" />
+        <!-- الحلقة الهندسية للمؤقت -->
+        <div class="flex flex-col items-center justify-center my-4">
+          <div class="relative w-60 h-60 sm:w-68 sm:h-68 flex items-center justify-center">
+            <!-- إطار زخرفي خارجي -->
+            <div class="absolute inset-1 rounded-full border border-dashed border-gold/50 orbit-ring pointer-events-none"></div>
+
+            <svg class="w-full h-full -rotate-90" viewBox="0 0 240 240">
+              <defs>
+                <linearGradient id="luxGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#9E7936" />
+                  <stop offset="50%" stop-color="#E5C37A" />
+                  <stop offset="100%" stop-color="#C69C4E" />
+                </linearGradient>
+              </defs>
+              <circle cx="120" cy="120" r="102" fill="#FFFFFF" stroke="#EFE7D6" stroke-width="14" />
               <circle
-                id="progressCircle"
-                cx="110"
-                cy="110"
-                r="96"
+                id="timerArc"
+                cx="120"
+                cy="120"
+                r="102"
                 fill="none"
-                stroke="#C59B48"
-                stroke-width="12"
+                stroke="url(#luxGoldGrad)"
+                stroke-width="14"
                 stroke-linecap="round"
-                stroke-dasharray="603.18"
+                stroke-dasharray="640.88"
                 stroke-dashoffset="0"
                 class="transition-all duration-500"
               />
             </svg>
-            <div class="absolute inset-0 flex flex-col items-center justify-center">
-              <span id="clockText" class="text-4xl sm:text-5xl font-black text-ink tracking-wider">25:00</span>
-              <span id="clockHint" class="text-xs font-bold text-ink/60 mt-1">جاهز للبدء</span>
+
+            <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+              <span id="timerClock" class="text-4xl sm:text-5xl font-black text-royal tracking-wider">25:00</span>
+              <span id="timerStateLabel" class="text-xs font-extrabold text-goldMuted mt-1.5">مستعد للانطلاق</span>
             </div>
           </div>
 
-          <!-- منزلق الوقت -->
+          <!-- شريط التخصيص -->
           <div class="w-full max-w-xs mt-6">
-            <div class="flex justify-between text-xs font-extrabold text-ink/75 mb-1.5">
-              <span>ضبط المدة يدوياً</span>
-              <span id="sliderLabel">25 دقيقة</span>
+            <div class="flex justify-between text-xs font-extrabold text-royal/75 mb-1.5">
+              <span>تخصيص مدة الجلسة</span>
+              <span id="rangeValLabel">25 دقيقة</span>
             </div>
-            <input type="range" min="5" max="90" step="5" value="25" oninput="syncSlider(this.value)" class="w-full accent-ink cursor-pointer" />
+            <input id="durationRange" type="range" min="5" max="90" step="5" value="25" oninput="onRangeInput(this.value)" class="w-full accent-royal cursor-pointer" />
           </div>
         </div>
 
         <!-- أزرار التشغيل -->
-        <div class="flex items-center justify-center gap-3 mt-6">
-          <button id="playPauseBtn" onclick="toggleClock()" class="px-8 py-3 rounded-2xl bg-ink hover:bg-inkSoft text-ivory border border-brass font-black text-sm shadow-md transition">
-            ▶ ابدأ الآن
+        <div class="flex flex-wrap items-center justify-center gap-3 mt-6">
+          <button id="startPauseBtn" onclick="toggleTimer()" class="px-8 py-3.5 rounded-2xl bg-royal hover:bg-royalMid text-white border-2 border-gold font-black text-sm shadow-lg transition">
+            ▶ ابدأ الجلسة
           </button>
-          <button onclick="resetClock()" class="px-5 py-3 rounded-2xl bg-sand hover:bg-white text-ink border border-brass/50 font-extrabold text-sm transition">
-            ↺ تصفير
+          <button onclick="resetTimer()" class="px-5 py-3.5 rounded-2xl bg-sand hover:bg-white text-royal border border-gold/60 font-extrabold text-sm transition">
+            ↺ إعادة ضبط
           </button>
         </div>
       </div>
 
-      <!-- العمود الجانبي: بطاقة داكنة للأجواء الصوتية + ملاحظة سريعة -->
+      <!-- العمود الجانبي الفاخر -->
       <div class="lg:col-span-5 space-y-6">
-        <div class="bento-dark text-ivory rounded-[2rem] p-6">
+        <!-- مشغل الأجواء الصوتية -->
+        <div class="royal-surface rounded-[2rem] p-6 sm:p-7 text-ivory">
           <div class="flex items-center justify-between mb-2">
-            <h3 class="text-lg font-black text-brassLight">🎧 مشغّل الأجواء الصوتية</h3>
-            <span class="text-xs px-2.5 py-0.5 rounded-full bg-white/10 text-ivory/85 font-bold">صوت محلي</span>
+            <h3 class="text-lg font-black text-goldBright">🎧 أجواء التركيز الصوتية</h3>
+            <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-white/10 text-ivory/80">توليد مباشر</span>
           </div>
-          <p class="text-xs text-ivory/75 font-medium mb-4">اختر خلفية صوتية هادئة تساعدك على عزل الضوضاء أثناء الدراسة.</p>
+          <p class="text-xs text-ivory/75 font-medium mb-4">أصوات محيطية ناعمة تعزلك عن الضوضاء وتزيد صفاء الذهن.</p>
 
           <div class="grid grid-cols-2 gap-2.5 mb-5">
-            <button onclick="setAmbient('off', this)" class="amb-btn px-3 py-2.5 rounded-xl bg-brass text-ink font-extrabold text-xs transition">
-              🔇 صمت
+            <button onclick="switchAmbient('none', this)" class="amb-choice px-3.5 py-2.5 rounded-xl gold-btn text-xs font-black">
+              🔇 صمت تام
             </button>
-            <button onclick="setAmbient('rain', this)" class="amb-btn px-3 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-ivory font-extrabold text-xs transition">
-              🌧️ مطر ناعم
+            <button onclick="switchAmbient('rain', this)" class="amb-choice px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-ivory border border-gold/30 text-xs font-extrabold transition">
+              🌧️ مطر هادئ
             </button>
-            <button onclick="setAmbient('sea', this)" class="amb-btn px-3 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-ivory font-extrabold text-xs transition">
-              🌊 أمواج الساحل
+            <button onclick="switchAmbient('waves', this)" class="amb-choice px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-ivory border border-gold/30 text-xs font-extrabold transition">
+              🌊 أمواج البحر
             </button>
-            <button onclick="setAmbient('warm', this)" class="amb-btn px-3 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-ivory font-extrabold text-xs transition">
-              🕯️ دفء الغرفة
+            <button onclick="switchAmbient('brown', this)" class="amb-choice px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-ivory border border-gold/30 text-xs font-extrabold transition">
+              🕯️ دفء المكتبة
             </button>
           </div>
 
           <div class="flex items-center gap-3">
-            <span class="text-xs font-bold text-ivory/80">الشدة:</span>
-            <input type="range" min="0" max="100" value="35" oninput="setAmbientGain(this.value)" class="flex-1 accent-brass" />
+            <span class="text-xs font-bold text-ivory/80">مستوى الصوت</span>
+            <input type="range" min="0" max="100" value="35" oninput="changeAmbientVol(this.value)" class="flex-1 accent-goldBright" />
           </div>
         </div>
 
-        <div class="bento-card rounded-[2rem] p-6">
-          <h3 class="text-base sm:text-lg font-black text-ink mb-2">✍️ دفتر الالتزام للجلسة الحالية</h3>
-          <p class="text-xs text-ink/70 font-semibold mb-3">اكتب هدفاً واحداً واضحاً ستنجزه خلال هذه الجلسة.</p>
+        <!-- ميثاق الجلسة -->
+        <div class="luxe-surface rounded-[2rem] p-6 sm:p-7">
+          <h3 class="text-base sm:text-lg font-black text-royal mb-1.5">✍️ هدف هذه الجلسة</h3>
+          <p class="text-xs text-royal/70 font-semibold mb-3">حدد مهمة واحدة واضحة ستنجزها قبل انتهاء العداد.</p>
           <textarea
-            id="focusGoalInput"
             rows="3"
-            placeholder="مثال: إتمام حل 10 أسئلة وزارية في الفصل الأول دون فتح الهاتف..."
-            class="w-full p-3.5 rounded-2xl bg-sand/75 border border-brass/45 text-sm font-bold text-ink focus:outline-none focus:border-ink"
+            placeholder="مثال: إتقان اشتقاقات وتكاملات الفصل الرابع مع حل 5 أسئلة وزارية..."
+            class="w-full p-3.5 rounded-2xl bg-sand/75 border border-gold/50 text-sm font-bold text-royal focus:outline-none focus:border-royal"
           ></textarea>
         </div>
       </div>
     </section>
 
-    <!-- 2. حلبة التحدي -->
-    <section id="view-arena" class="view-pane hidden space-y-6">
-      <div class="bento-card rounded-[2rem] p-6 sm:p-8">
-        <div class="flex flex-wrap items-center justify-between gap-4 pb-5 border-b border-brass/35">
+    <!-- القسم 2: تحدي الأسئلة الوزارية -->
+    <section id="tab-quiz" class="tab-view hidden space-y-6">
+      <div class="luxe-surface rounded-[2rem] p-6 sm:p-8">
+        <div class="flex flex-wrap items-center justify-between gap-4 pb-5 border-b border-gold/40">
           <div class="flex items-center gap-3.5">
-            <span id="arenaNum" class="q-num w-12 h-12 rounded-2xl flex items-center justify-center text-lg font-black">1</span>
+            <span id="qBadgeNum" class="q-emblem w-12 h-12 rounded-2xl flex items-center justify-center text-lg font-black">1</span>
             <div>
-              <span id="arenaSubject" class="text-xs font-extrabold px-3 py-0.5 rounded-full bg-sand border border-brass/45 text-ink">الفيزياء</span>
-              <h2 class="text-lg sm:text-xl font-black text-ink mt-1">تحدي الأسئلة والاختبارات السريعة</h2>
+              <span id="qSubjectPill" class="inline-block text-xs font-extrabold px-3 py-0.5 rounded-full bg-sand border border-gold/55 text-royal">المادة</span>
+              <h2 class="text-lg sm:text-xl font-black text-royal mt-1">ميدان التحدي والاختبار</h2>
             </div>
           </div>
 
-          <div class="flex items-center gap-2">
-            <button onclick="revealClue()" class="px-3.5 py-2 rounded-xl bg-sand hover:bg-brass/20 border border-brass/50 text-xs font-extrabold text-ink transition">
-              💡 تلميح
-            </button>
-            <button onclick="stepQuestion()" class="px-4 py-2 rounded-xl bg-ink hover:bg-inkSoft text-ivory border border-brass text-xs font-extrabold transition">
-              التالي ←
-            </button>
-          </div>
+          <button onclick="advanceQuestion()" class="px-5 py-2.5 rounded-2xl bg-royal hover:bg-royalMid text-white border border-gold text-xs sm:text-sm font-black transition">
+            السؤال التالي ←
+          </button>
         </div>
 
         <div class="mt-6">
-          <p id="arenaPrompt" class="text-base sm:text-lg font-black text-ink leading-relaxed"></p>
-          <div id="arenaClue" class="hidden mt-3 p-3.5 rounded-2xl bg-sand border border-brass text-xs sm:text-sm font-bold text-ink"></div>
-
-          <div id="arenaChoices" class="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
-          <div id="arenaResult" class="hidden mt-4 p-4 rounded-2xl text-xs sm:text-sm font-extrabold"></div>
+          <p id="qPromptBody" class="text-base sm:text-lg font-black text-royal leading-relaxed"></p>
+          <div id="qOptionsGrid" class="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3.5"></div>
+          <div id="qResultBanner" class="hidden mt-5 p-4 rounded-2xl text-xs sm:text-sm font-extrabold"></div>
         </div>
-      </div>
-
-      <!-- قائمة المراجعة -->
-      <div class="bento-card rounded-[2rem] p-6">
-        <div class="flex items-center justify-between mb-3">
-          <h3 class="text-base sm:text-lg font-black text-ink">📌 الأسئلة المحفوظة للمراجعة</h3>
-          <span id="reviewCounter" class="px-3 py-0.5 rounded-full bg-ink text-brassLight text-xs font-black">0</span>
-        </div>
-        <div id="reviewContainer" class="space-y-2.5 text-sm"></div>
       </div>
     </section>
 
-    <!-- 3. بطاقات الذاكرة -->
-    <section id="view-cards" class="view-pane hidden">
-      <div class="bento-card rounded-[2rem] p-6 sm:p-8">
+    <!-- القسم 3: بطاقات الذاكرة ثلاثية الأبعاد -->
+    <section id="tab-cards" class="tab-view hidden">
+      <div class="luxe-surface rounded-[2rem] p-6 sm:p-8">
         <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
           <div>
-            <h2 class="text-lg sm:text-xl font-black text-ink">بطاقات المراجعة التفاعلية</h2>
-            <p class="text-xs text-ink/70 font-semibold">انقر على البطاقة لإظهار الجواب أو الشرح المختصر</p>
+            <h2 class="text-lg sm:text-xl font-black text-royal">بطاقات الذاكرة والمراجعة السريعة</h2>
+            <p class="text-xs sm:text-sm text-royal/70 font-semibold">انقر على البطاقة لقلبها ومشاهدة الجواب النموذجي</p>
           </div>
           <div class="flex items-center gap-2">
-            <button onclick="shiftCard(-1)" class="px-3.5 py-2 rounded-xl bg-sand border border-brass/50 text-xs font-extrabold text-ink">السابقة</button>
-            <span id="cardIndexBadge" class="px-3 py-1.5 rounded-xl bg-ink text-ivory text-xs font-black">1 / 4</span>
-            <button onclick="shiftCard(1)" class="px-3.5 py-2 rounded-xl bg-sand border border-brass/50 text-xs font-extrabold text-ink">التالية</button>
+            <button onclick="stepCard(-1)" class="px-4 py-2 rounded-xl bg-sand border border-gold/55 text-xs font-extrabold text-royal">السابقة</button>
+            <span id="fcCountBadge" class="px-3.5 py-1.5 rounded-xl bg-royal text-goldBright border border-gold text-xs font-black">1 / 1</span>
+            <button onclick="stepCard(1)" class="px-4 py-2 rounded-xl bg-sand border border-gold/55 text-xs font-extrabold text-royal">التالية</button>
           </div>
         </div>
 
-        <div id="cardStage" onclick="this.classList.toggle('is-flipped')" class="flip-scene max-w-2xl mx-auto">
-          <div class="flip-rig min-h-[230px]">
-            <div class="flip-side bento-dark text-ivory rounded-[2rem] p-7 flex flex-col justify-between min-h-[230px]">
-              <div class="flex items-center justify-between text-xs text-brassLight font-bold">
-                <span id="cardTopic">المادة</span>
-                <span>انقر لقلب البطاقة</span>
+        <div id="flashCardStage" onclick="this.classList.toggle('is-flipped')" class="card-3d max-w-2xl mx-auto">
+          <div class="card-3d-inner min-h-[240px]">
+            <!-- الوجه الأمامي -->
+            <div class="card-3d-face royal-surface text-ivory rounded-[2rem] p-7 sm:p-9 flex flex-col justify-between min-h-[240px]">
+              <div class="flex items-center justify-between text-xs text-goldBright font-bold">
+                <span id="fcCardSubject">المادة</span>
+                <span>انقر لقلب البطاقة ↻</span>
               </div>
-              <p id="cardFrontText" class="text-xl sm:text-2xl font-black text-center my-4 leading-relaxed"></p>
-              <span class="text-center text-[11px] text-ivory/65 font-semibold">السؤال / المفهوم</span>
+              <p id="fcCardFront" class="text-xl sm:text-2xl font-black text-center my-4 leading-relaxed"></p>
+              <span class="text-center text-[11px] text-ivory/65 font-semibold">المصطلح / السؤال</span>
             </div>
 
-            <div class="flip-side flip-backside bg-white text-ink border-2 border-brass rounded-[2rem] p-7 flex flex-col justify-between min-h-[230px]">
-              <div class="flex items-center justify-between text-xs text-brass font-extrabold">
-                <span>الجواب النموذجي</span>
-                <span>انقر للعودة</span>
+            <!-- الوجه الخلفي -->
+            <div class="card-3d-face card-3d-back bg-white text-royal border-2 border-gold rounded-[2rem] p-7 sm:p-9 flex flex-col justify-between min-h-[240px] shadow-xl">
+              <div class="flex items-center justify-between text-xs text-goldMuted font-extrabold">
+                <span>الإجابة النموذجية</span>
+                <span>انقر للعودة ↻</span>
               </div>
-              <p id="cardBackText" class="text-lg sm:text-xl font-extrabold text-center my-4 leading-relaxed text-ink"></p>
-              <span class="text-center text-[11px] text-ink/60 font-semibold">الخلاصة المركزة</span>
+              <p id="fcCardBack" class="text-lg sm:text-xl font-extrabold text-center my-4 leading-relaxed text-royal"></p>
+              <span class="text-center text-[11px] text-royal/60 font-semibold">الشرح / القاعدة</span>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 4. خارطة الجلسات -->
-    <section id="view-plan" class="view-pane hidden">
-      <div class="bento-card rounded-[2rem] p-6 sm:p-8">
-        <h2 class="text-lg sm:text-xl font-black text-ink mb-4">📌 خارطة الجلسات والمهام الدراسية</h2>
+    <!-- القسم 4: خارطة الجلسات -->
+    <section id="tab-planner" class="tab-view hidden">
+      <div class="luxe-surface rounded-[2rem] p-6 sm:p-8">
+        <h2 class="text-lg sm:text-xl font-black text-royal mb-4">📚 خارطة الجلسات والمهام الدراسية</h2>
 
-        <form onsubmit="createPlanItem(event)" class="grid grid-cols-1 sm:grid-cols-12 gap-3 mb-6">
-          <input id="planSubject" type="text" placeholder="المادة" required class="sm:col-span-3 px-4 py-2.5 rounded-2xl bg-sand/80 border border-brass/45 text-sm font-bold text-ink focus:outline-none focus:border-ink" />
-          <input id="planTask" type="text" placeholder="عنوان الجلسة أو المهمة" required class="sm:col-span-6 px-4 py-2.5 rounded-2xl bg-sand/80 border border-brass/45 text-sm font-bold text-ink focus:outline-none focus:border-ink" />
-          <button type="submit" class="sm:col-span-3 py-2.5 px-4 rounded-2xl bg-ink hover:bg-inkSoft text-ivory border border-brass text-sm font-black transition">
-            + إضافة للخارطة
+        <form onsubmit="createTask(event)" class="grid grid-cols-1 sm:grid-cols-12 gap-3 mb-6">
+          <input id="taskSubjInput" type="text" placeholder="المادة" required class="sm:col-span-3 px-4 py-3 rounded-2xl bg-sand/80 border border-gold/50 text-sm font-bold text-royal focus:outline-none focus:border-royal" />
+          <input id="taskNameInput" type="text" placeholder="اكتب مهمة اليوم أو الفصل المطلوب دراسته" required class="sm:col-span-6 px-4 py-3 rounded-2xl bg-sand/80 border border-gold/50 text-sm font-bold text-royal focus:outline-none focus:border-royal" />
+          <button type="submit" class="sm:col-span-3 py-3 px-4 rounded-2xl bg-royal hover:bg-royalMid text-white border border-gold text-sm font-black transition">
+            + إضافة للجدول
           </button>
         </form>
 
-        <div id="planContainer" class="space-y-2.5"></div>
+        <div id="tasksListBox" class="space-y-3"></div>
+      </div>
+    </section>
+
+    <!-- القسم 5: لوحة تحكم الأدمن -->
+    <section id="tab-admin" class="tab-view hidden space-y-6">
+      <div class="luxe-surface rounded-[2rem] p-6 sm:p-8 border-2 border-gold">
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-5 border-b border-gold/45">
+          <div>
+            <span class="text-xs font-black px-3 py-1 rounded-full bg-royal text-goldBright">صلاحيات الإدارة الكاملة</span>
+            <h2 class="text-xl sm:text-2xl font-black text-royal mt-1.5">لوحة تحكم الأدمن — مرسى السادس</h2>
+          </div>
+          <button onclick="copyBackupJson()" class="px-4 py-2.5 rounded-2xl bg-sand hover:bg-gold/25 border border-gold text-xs font-black text-royal transition">
+            📋 نسخ نسخة احتياطية (JSON)
+          </button>
+        </div>
+
+        <!-- الإعلان + رمز المرور -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
+          <form onsubmit="saveAnnouncement(event)" class="p-5 rounded-2xl bg-sand/70 border border-gold/50 space-y-3">
+            <h3 class="text-base font-black text-royal">📢 تعديل شريط الإعلان الترحيبي</h3>
+            <input id="adminBannerField" type="text" required class="w-full px-4 py-2.5 rounded-xl bg-white border border-gold/60 text-sm font-bold text-royal" />
+            <button type="submit" class="px-4 py-2 rounded-xl bg-royal text-white border border-gold text-xs font-black">حفظ التعديل</button>
+          </form>
+
+          <form onsubmit="updatePasscode(event)" class="p-5 rounded-2xl bg-sand/70 border border-gold/50 space-y-3">
+            <h3 class="text-base font-black text-royal">🔑 تحديث رمز مرور الأدمن</h3>
+            <input id="adminNewPassField" type="password" placeholder="أدخل رمز المرور الجديد" minlength="4" required class="w-full px-4 py-2.5 rounded-xl bg-white border border-gold/60 text-sm font-bold text-royal" />
+            <button type="submit" class="px-4 py-2 rounded-xl bg-royal text-white border border-gold text-xs font-black">تحديث الرمز</button>
+          </form>
+        </div>
+
+        <!-- إضافة سؤال -->
+        <form onsubmit="addQuestionByAdmin(event)" class="mt-6 p-5 rounded-2xl bg-sand/60 border border-gold/50 space-y-3.5">
+          <h3 class="text-base sm:text-lg font-black text-royal">➕ إضافة سؤال جديد إلى ميدان التحدي</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <input id="admQSubj" type="text" placeholder="المادة (مثلاً: فيزياء)" required class="px-3.5 py-2.5 rounded-xl bg-white border border-gold/60 text-sm font-bold text-royal" />
+            <input id="admQText" type="text" placeholder="نص السؤال" required class="sm:col-span-2 px-3.5 py-2.5 rounded-xl bg-white border border-gold/60 text-sm font-bold text-royal" />
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <input id="admOpt0" type="text" placeholder="الخيار الأول" required class="px-3.5 py-2.5 rounded-xl bg-white border border-gold/60 text-sm font-bold text-royal" />
+            <input id="admOpt1" type="text" placeholder="الخيار الثاني" required class="px-3.5 py-2.5 rounded-xl bg-white border border-gold/60 text-sm font-bold text-royal" />
+            <input id="admOpt2" type="text" placeholder="الخيار الثالث" required class="px-3.5 py-2.5 rounded-xl bg-white border border-gold/60 text-sm font-bold text-royal" />
+            <input id="admOpt3" type="text" placeholder="الخيار الرابع" required class="px-3.5 py-2.5 rounded-xl bg-white border border-gold/60 text-sm font-bold text-royal" />
+          </div>
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <label class="text-xs font-extrabold text-royal flex items-center gap-2">
+              <span>الإجابة الصحيحة:</span>
+              <select id="admQCorrect" class="px-3 py-1.5 rounded-xl bg-white border border-gold font-black text-royal">
+                <option value="0">الخيار الأول</option>
+                <option value="1">الخيار الثاني</option>
+                <option value="2">الخيار الثالث</option>
+                <option value="3">الخيار الرابع</option>
+              </select>
+            </label>
+            <button type="submit" class="gold-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-black">
+              إضافة السؤال للمنصة
+            </button>
+          </div>
+        </form>
+
+        <div class="mt-4">
+          <h4 class="text-sm font-black text-royal mb-2">الأسئلة المدرجة حالياً:</h4>
+          <div id="admQuestionsBox" class="space-y-2 text-xs sm:text-sm"></div>
+        </div>
+
+        <!-- إضافة فلاش كارد -->
+        <form onsubmit="addCardByAdmin(event)" class="mt-6 p-5 rounded-2xl bg-sand/60 border border-gold/50 space-y-3.5">
+          <h3 class="text-base sm:text-lg font-black text-royal">🃏 إضافة بطاقة ذاكرة (فلاش كارد)</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <input id="admCSubj" type="text" placeholder="المادة" required class="px-3.5 py-2.5 rounded-xl bg-white border border-gold/60 text-sm font-bold text-royal" />
+            <input id="admCFront" type="text" placeholder="الوجه الأمامي (السؤال)" required class="px-3.5 py-2.5 rounded-xl bg-white border border-gold/60 text-sm font-bold text-royal" />
+            <input id="admCBack" type="text" placeholder="الوجه الخلفي (الجواب)" required class="px-3.5 py-2.5 rounded-xl bg-white border border-gold/60 text-sm font-bold text-royal" />
+          </div>
+          <button type="submit" class="gold-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-black">
+            إضافة البطاقة
+          </button>
+        </form>
+
+        <div class="mt-4">
+          <h4 class="text-sm font-black text-royal mb-2">البطاقات المدرجة حالياً:</h4>
+          <div id="admCardsBox" class="space-y-2 text-xs sm:text-sm"></div>
+        </div>
       </div>
     </section>
 
   </main>
 
-  <!-- تذييل الصفحة -->
-  <footer class="bg-white/90 border-t border-brass/45 py-4 px-4 mt-8">
-    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs sm:text-sm font-extrabold text-ink">
-      <div class="flex items-center gap-2">
-        <span class="text-brass">⚓</span>
-        <span>مرسى السادس — منصة التركيز والتحديات الدراسية</span>
+  <!-- نافذة تسجيل الدخول الفاخرة -->
+  <div id="loginModal" class="hidden fixed inset-0 z-50 bg-royalDeep/75 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="luxe-surface w-full max-w-md rounded-[2rem] p-6 sm:p-8 border-2 border-gold relative">
+      <button onclick="closeLoginModal()" class="absolute top-5 left-5 w-9 h-9 rounded-full bg-sand border border-gold/60 font-black text-royal hover:bg-gold/25 transition">✕</button>
+
+      <div class="flex items-center gap-3.5 mb-6">
+        <img src="167499_2.png" alt="مرسى السادس" class="w-13 h-13 rounded-full border-2 border-gold bg-white object-contain p-0.5" onerror="this.style.display='none'" />
+        <div>
+          <h3 class="text-lg sm:text-xl font-black text-royal">بوابة الدخول — مرسى السادس</h3>
+          <p class="text-xs text-royal/70 font-semibold">اختر نوع الحساب للمتابعة</p>
+        </div>
       </div>
-      <div class="text-ink/85">إعداد: مساعدين مرسى السادس</div>
+
+      <div class="grid grid-cols-2 gap-2 p-1.5 rounded-2xl bg-sand border border-gold/50 mb-5 text-xs sm:text-sm font-black">
+        <button id="roleBtnStudent" type="button" onclick="setLoginMode('student')" class="py-2 rounded-xl bg-royal text-white transition">
+          🎓 حساب طالب
+        </button>
+        <button id="roleBtnAdmin" type="button" onclick="setLoginMode('admin')" class="py-2 rounded-xl text-royal transition">
+          🛠️ حساب أدمن
+        </button>
+      </div>
+
+      <!-- دخول طالب -->
+      <form id="formStudent" onsubmit="submitStudentLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-extrabold text-royal mb-1.5">الاسم الكامل أو اللقب الدراسي</label>
+          <input id="stuInputName" type="text" placeholder="أدخل اسمك هنا" required class="w-full px-4 py-3 rounded-2xl bg-sand/80 border border-gold/60 text-sm font-bold text-royal focus:outline-none focus:border-royal" />
+        </div>
+        <button type="submit" class="w-full py-3 rounded-2xl bg-royal hover:bg-royalMid text-white border border-gold font-black text-sm shadow transition">
+          دخول إلى المنصة
+        </button>
+      </form>
+
+      <!-- دخول أدمن -->
+      <form id="formAdmin" onsubmit="submitAdminLogin(event)" class="hidden space-y-4">
+        <div>
+          <label class="block text-xs font-extrabold text-royal mb-1.5">اسم الأدمن</label>
+          <input id="admInputName" type="text" value="الأستاذ علي العبيدي" required class="w-full px-4 py-3 rounded-2xl bg-sand/80 border border-gold/60 text-sm font-bold text-royal focus:outline-none focus:border-royal" />
+        </div>
+        <div>
+          <label class="block text-xs font-extrabold text-royal mb-1.5">رمز الدخول السري</label>
+          <input id="admInputPass" type="password" placeholder="أدخل رمز الأدمن" required class="w-full px-4 py-3 rounded-2xl bg-sand/80 border border-gold/60 text-sm font-bold text-royal focus:outline-none focus:border-royal" />
+        </div>
+        <p class="text-[11px] text-royal/65 font-semibold">الرمز الافتراضي: <span class="font-black text-royal">MarsaAdmin2026</span></p>
+        <button type="submit" class="w-full py-3 rounded-2xl gold-btn font-black text-sm">
+          فتح لوحة التحكم
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- التذييل الملكي -->
+  <footer class="royal-surface text-ivory border-t-2 border-gold/70 py-4 px-4 mt-10">
+    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs sm:text-sm font-extrabold">
+      <div class="flex items-center gap-2">
+        <span class="text-goldBright">⚓</span>
+        <span>مرسى السادس — منصة النخبة للتركيز والتحديات الدراسية</span>
+      </div>
+      <div class="text-goldBright">إعداد: مساعدين مرسى السادس</div>
     </div>
   </footer>
 
   <script>
-    const STORAGE_KEY = 'marsa_alsadis_studio_v2';
-    const appData = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null') || {
+    const STORE_ID = 'marsa_alsadis_luxe_v4';
+
+    const initialStore = {
+      announcement: 'أهلاً بك في مرسى السادس — ركّز اليوم لتحصد التفوق غداً',
+      passcode: 'MarsaAdmin2026',
+      user: null,
       points: 0,
       minutes: 0,
-      reviewList: [],
-      planItems: [
-        { id: 1, subject: 'الفيزياء', title: 'حل مسائل التيار المتناوب الوزارية', done: false },
-        { id: 2, subject: 'الأدب', title: 'مراجعة حياة وسيرة أبرز الشعراء', done: false }
+      questions: [
+        {
+          id: 1,
+          subject: 'الفيزياء',
+          question: 'ما تأثير قوة لورنتز في جسيم مشحون يتحرك عمودياً على مجال مغناطيسي منتظم؟',
+          options: [
+            'تؤثر بقوة عمودية على اتجاه الحركة وتجعله يسير في مسار دائري',
+            'تزيد من كتلة الجسيم الساكن',
+            'تلغي الشحنة الكهربائية للجسيم',
+            'تمنع حركة الجسيم في جميع الاتجاهات'
+          ],
+          correct: 0
+        },
+        {
+          id: 2,
+          subject: 'اللغة العربية',
+          question: 'ما نوع الاستثناء في جملة: (ما حضر الطلابُ إلا طالباً)؟',
+          options: ['تام متصل منفي', 'مفرغ', 'منقطع مثبت', 'تام منقطع منفي'],
+          correct: 0
+        }
+      ],
+      flashcards: [
+        { id: 1, subject: 'الفيزياء', front: 'قوة لورنتز', back: 'هي محصلة قوتين كهربائية ومغناطيسية تؤثران في جسيم مشحون يتحرك داخل مجالين كهربائي ومغناطيسي.' },
+        { id: 2, subject: 'الرياضيات', front: 'النقطة الحرجة', back: 'نقطة تنتمي لمجال الدالة وتكون عندها المشتقة الأولى مساوية للصفر أو غير معرفة.' }
+      ],
+      tasks: [
+        { id: 1, subject: 'الفيزياء', title: 'إتقان قوانين الحث الكهرومغناطيسي وحل المسائل الوزارية', done: false }
       ]
     };
 
-    function persistData() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
-      refreshHud();
+    const store = JSON.parse(localStorage.getItem(STORE_ID) || 'null') || initialStore;
+
+    function commitStore() {
+      localStorage.setItem(STORE_ID, JSON.stringify(store));
+      refreshInterface();
     }
 
-    function computeRank(pts) {
-      if (pts >= 200) return 'قبطان النخبة';
-      if (pts >= 80) return 'ملاح متقدم';
-      return 'مبتدئ';
-    }
-
-    function refreshHud() {
-      document.getElementById('statPoints').textContent = appData.points;
-      document.getElementById('statMinutes').textContent = appData.minutes;
-      document.getElementById('statRank').textContent = computeRank(appData.points);
-      renderReviewList();
-      renderPlanList();
-    }
-
-    // التنقل
-    document.querySelectorAll('.nav-pill').forEach(pill => {
-      pill.addEventListener('click', () => {
-        const view = pill.dataset.view;
-        document.querySelectorAll('.nav-pill').forEach(p => {
-          p.className = 'nav-pill px-4 py-2 rounded-xl text-ink hover:bg-white/70 text-xs sm:text-sm font-extrabold transition';
-        });
-        pill.className = 'nav-pill px-4 py-2 rounded-xl bg-ink text-ivory text-xs sm:text-sm font-extrabold transition';
-        document.querySelectorAll('.view-pane').forEach(v => v.classList.add('hidden'));
-        document.getElementById(`view-${view}`).classList.remove('hidden');
-      });
+    // التنقل بين التبويبات
+    document.querySelectorAll('.nav-tab').forEach(btn => {
+      if (btn.id === 'adminTabBtn') return;
+      btn.addEventListener('click', () => switchTab(btn.dataset.tab));
     });
 
-    // المؤقت
-    let spanSeconds = 25 * 60;
-    let leftSeconds = spanSeconds;
-    let ticker = null;
-    const circleLen = 2 * Math.PI * 96;
-
-    function drawClock() {
-      const m = Math.floor(leftSeconds / 60);
-      const s = leftSeconds % 60;
-      document.getElementById('clockText').textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-      const ratio = spanSeconds > 0 ? leftSeconds / spanSeconds : 0;
-      document.getElementById('progressCircle').style.strokeDashoffset = circleLen * (1 - ratio);
+    function switchTab(tabKey) {
+      if (tabKey === 'admin' && (!store.user || store.user.role !== 'admin')) {
+        openLoginModal('admin');
+        return;
+      }
+      document.querySelectorAll('.nav-tab').forEach(b => {
+        if (b.id === 'adminTabBtn') {
+          b.className = 'nav-tab px-4 py-2 rounded-xl bg-gold/15 hover:bg-gold/25 text-goldBright border border-gold/60 transition whitespace-nowrap mr-auto';
+        } else {
+          b.className = 'nav-tab px-4 py-2 rounded-xl bg-white/5 hover:bg-white/15 text-ivory border border-gold/30 transition whitespace-nowrap';
+        }
+      });
+      const current = document.querySelector(`.nav-tab[data-tab="${tabKey}"]`);
+      if (current) {
+        current.className = tabKey === 'admin'
+          ? 'nav-tab px-4 py-2 rounded-xl gold-btn transition whitespace-nowrap mr-auto'
+          : 'nav-tab px-4 py-2 rounded-xl gold-btn transition whitespace-nowrap';
+      }
+      document.querySelectorAll('.tab-view').forEach(v => v.classList.add('hidden'));
+      document.getElementById(`tab-${tabKey}`).classList.remove('hidden');
     }
 
-    function applyPreset(mins, title) {
-      stopTicker();
-      spanSeconds = mins * 60;
-      leftSeconds = spanSeconds;
-      document.querySelector('input[type="range"]').value = mins;
-      document.getElementById('sliderLabel').textContent = `${mins} دقيقة`;
-      document.getElementById('sessionSubtitle').textContent = title;
-      document.getElementById('clockHint').textContent = 'جاهز للبدء';
-      drawClock();
-    }
-
-    function syncSlider(val) {
-      stopTicker();
-      spanSeconds = Number(val) * 60;
-      leftSeconds = spanSeconds;
-      document.getElementById('sliderLabel').textContent = `${val} دقيقة`;
-      document.getElementById('sessionSubtitle').textContent = `جلسة مخصصة (${val} دقيقة)`;
-      drawClock();
-    }
-
-    function launchTaskSession(label) {
-      document.querySelector('[data-view="studio"]').click();
-      applyPreset(25, `جلسة: ${label}`);
-      toggleClock();
-    }
-
-    function toggleClock() {
-      if (ticker) {
-        stopTicker();
+    function openAdminTab() {
+      if (store.user && store.user.role === 'admin') {
+        switchTab('admin');
       } else {
-        document.getElementById('playPauseBtn').textContent = '⏸ إيقاف مؤقت';
-        document.getElementById('clockHint').textContent = 'التركيز مستمر...';
-        let secCounter = 0;
-        ticker = setInterval(() => {
-          if (leftSeconds > 0) {
-            leftSeconds--;
-            secCounter++;
-            if (secCounter % 60 === 0) {
-              appData.minutes += 1;
-              appData.points += 5;
-              persistData();
+        openLoginModal('admin');
+      }
+    }
+
+    // نافذة تسجيل الدخول
+    function openLoginModal(mode = 'student') {
+      document.getElementById('loginModal').classList.remove('hidden');
+      setLoginMode(mode);
+    }
+
+    function closeLoginModal() {
+      document.getElementById('loginModal').classList.add('hidden');
+    }
+
+    function setLoginMode(mode) {
+      const sBtn = document.getElementById('roleBtnStudent');
+      const aBtn = document.getElementById('roleBtnAdmin');
+      const sForm = document.getElementById('formStudent');
+      const aForm = document.getElementById('formAdmin');
+
+      if (mode === 'admin') {
+        aBtn.className = 'py-2 rounded-xl bg-royal text-white transition';
+        sBtn.className = 'py-2 rounded-xl text-royal transition';
+        aForm.classList.remove('hidden');
+        sForm.classList.add('hidden');
+      } else {
+        sBtn.className = 'py-2 rounded-xl bg-royal text-white transition';
+        aBtn.className = 'py-2 rounded-xl text-royal transition';
+        sForm.classList.remove('hidden');
+        aForm.classList.add('hidden');
+      }
+    }
+
+    function submitStudentLogin(e) {
+      e.preventDefault();
+      const name = document.getElementById('stuInputName').value.trim();
+      if (!name) return;
+      store.user = { role: 'student', name };
+      document.getElementById('stuInputName').value = '';
+      closeLoginModal();
+      commitStore();
+    }
+
+    function submitAdminLogin(e) {
+      e.preventDefault();
+      const name = document.getElementById('admInputName').value.trim();
+      const pass = document.getElementById('admInputPass').value;
+      if (pass !== store.passcode) {
+        alert('رمز المرور السري غير صحيح.');
+        return;
+      }
+      store.user = { role: 'admin', name: name || 'الأستاذ علي العبيدي' };
+      document.getElementById('admInputPass').value = '';
+      closeLoginModal();
+      commitStore();
+      switchTab('admin');
+    }
+
+    function handleLogout() {
+      const wasAdmin = store.user && store.user.role === 'admin';
+      store.user = null;
+      commitStore();
+      if (wasAdmin) switchTab('focus');
+    }
+
+    // المؤقت
+    let totalDuration = 25 * 60;
+    let remainingTime = totalDuration;
+    let timerHandle = null;
+    const arcCircumference = 2 * Math.PI * 102;
+
+    function renderClock() {
+      const m = Math.floor(remainingTime / 60);
+      const s = remainingTime % 60;
+      document.getElementById('timerClock').textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      const fraction = totalDuration > 0 ? remainingTime / totalDuration : 0;
+      document.getElementById('timerArc').style.strokeDashoffset = arcCircumference * (1 - fraction);
+    }
+
+    function selectPreset(mins, label) {
+      haltTimer();
+      totalDuration = mins * 60;
+      remainingTime = totalDuration;
+      document.getElementById('durationRange').value = mins;
+      document.getElementById('rangeValLabel').textContent = `${mins} دقيقة`;
+      document.getElementById('timerModeCaption').textContent = label;
+      document.getElementById('timerStateLabel').textContent = 'مستعد للانطلاق';
+      renderClock();
+    }
+
+    function onRangeInput(val) {
+      haltTimer();
+      totalDuration = Number(val) * 60;
+      remainingTime = totalDuration;
+      document.getElementById('rangeValLabel').textContent = `${val} دقيقة`;
+      document.getElementById('timerModeCaption').textContent = `جلسة مخصصة (${val} دقيقة)`;
+      renderClock();
+    }
+
+    function toggleTimer() {
+      if (timerHandle) {
+        haltTimer();
+      } else {
+        document.getElementById('startPauseBtn').textContent = '⏸ إيقاف مؤقت';
+        document.getElementById('timerStateLabel').textContent = 'جلسة تركيز نشطة...';
+        let secPassed = 0;
+        timerHandle = setInterval(() => {
+          if (remainingTime > 0) {
+            remainingTime--;
+            secPassed++;
+            if (secPassed % 60 === 0) {
+              store.minutes += 1;
+              store.points += 5;
+              commitStore();
             }
-            drawClock();
+            renderClock();
           } else {
-            stopTicker();
-            appData.points += 25;
-            persistData();
-            document.getElementById('clockHint').textContent = 'اكتملت الجلسة بنجاح';
-            alert('أحسنت! أتممت الجلسة وحصلت على +25 نقطة.');
+            haltTimer();
+            store.points += 25;
+            commitStore();
+            document.getElementById('timerStateLabel').textContent = 'اكتملت الجلسة بنجاح';
+            alert('أحسنت يا بطل! أتممت جلستك الدراسية وحصلت على +25 نقطة.');
           }
         }, 1000);
       }
     }
 
-    function stopTicker() {
-      clearInterval(ticker);
-      ticker = null;
-      document.getElementById('playPauseBtn').textContent = '▶ ابدأ الآن';
-      if (leftSeconds > 0) {
-        document.getElementById('clockHint').textContent = 'متوقف مؤقتاً';
-      }
+    function haltTimer() {
+      clearInterval(timerHandle);
+      timerHandle = null;
+      document.getElementById('startPauseBtn').textContent = '▶ ابدأ الجلسة';
+      if (remainingTime > 0) document.getElementById('timerStateLabel').textContent = 'متوقف مؤقتاً';
     }
 
-    function resetClock() {
-      stopTicker();
-      leftSeconds = spanSeconds;
-      document.getElementById('clockHint').textContent = 'جاهز للبدء';
-      drawClock();
+    function resetTimer() {
+      haltTimer();
+      remainingTime = totalDuration;
+      document.getElementById('timerStateLabel').textContent = 'مستعد للانطلاق';
+      renderClock();
     }
 
     // الأجواء الصوتية
-    let ctxAudio = null;
-    let ambSource = null;
-    let ambGain = null;
+    let audioEngine = null;
+    let ambientNode = null;
+    let ambientGain = null;
 
-    function bootAudio() {
-      if (!ctxAudio) {
+    function ensureAudioEngine() {
+      if (!audioEngine) {
         const AC = window.AudioContext || window.webkitAudioContext;
-        ctxAudio = new AC();
-        ambGain = ctxAudio.createGain();
-        ambGain.gain.value = 0.08;
-        ambGain.connect(ctxAudio.destination);
+        audioEngine = new AC();
+        ambientGain = audioEngine.createGain();
+        ambientGain.gain.value = 0.08;
+        ambientGain.connect(audioEngine.destination);
       }
-      if (ctxAudio.state === 'suspended') ctxAudio.resume();
+      if (audioEngine.state === 'suspended') audioEngine.resume();
     }
 
-    function clearAmbient() {
-      if (ambSource) {
-        try { ambSource.stop(); ambSource.disconnect(); } catch (e) {}
-        ambSource = null;
+    function stopAmbientSound() {
+      if (ambientNode) {
+        try { ambientNode.stop(); ambientNode.disconnect(); } catch (e) {}
+        ambientNode = null;
       }
     }
 
-    function setAmbient(mode, btnEl) {
-      document.querySelectorAll('.amb-btn').forEach(b => {
-        b.className = 'amb-btn px-3 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-ivory font-extrabold text-xs transition';
+    function switchAmbient(type, btn) {
+      document.querySelectorAll('.amb-choice').forEach(b => {
+        b.className = 'amb-choice px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-ivory border border-gold/30 text-xs font-extrabold transition';
       });
-      btnEl.className = 'amb-btn px-3 py-2.5 rounded-xl bg-brass text-ink font-extrabold text-xs transition';
+      btn.className = 'amb-choice px-3.5 py-2.5 rounded-xl gold-btn text-xs font-black';
 
-      clearAmbient();
-      if (mode === 'off') return;
+      stopAmbientSound();
+      if (type === 'none') return;
 
-      bootAudio();
-      const len = ctxAudio.sampleRate * 2;
-      const buf = ctxAudio.createBuffer(1, len, ctxAudio.sampleRate);
-      const ch = buf.getChannelData(0);
-      let prev = 0;
-      for (let i = 0; i < len; i++) {
-        const n = Math.random() * 2 - 1;
-        if (mode === 'warm') {
-          ch[i] = (prev + 0.02 * n) / 1.02 * 2.4;
-          prev = ch[i];
-        } else if (mode === 'sea') {
-          const wave = 0.5 + 0.5 * Math.sin((i / ctxAudio.sampleRate) * Math.PI * 0.4);
-          ch[i] = ((prev + 0.03 * n) / 1.03) * wave * 2.1;
-          prev = ch[i];
+      ensureAudioEngine();
+      const bufferLen = audioEngine.sampleRate * 2;
+      const audioBuffer = audioEngine.createBuffer(1, bufferLen, audioEngine.sampleRate);
+      const output = audioBuffer.getChannelData(0);
+      let last = 0;
+
+      for (let i = 0; i < bufferLen; i++) {
+        const white = Math.random() * 2 - 1;
+        if (type === 'brown') {
+          output[i] = ((last + 0.02 * white) / 1.02) * 2.4;
+          last = output[i];
+        } else if (type === 'waves') {
+          const swell = 0.5 + 0.5 * Math.sin((i / audioEngine.sampleRate) * Math.PI * 0.45);
+          output[i] = ((last + 0.03 * white) / 1.03) * swell * 2.1;
+          last = output[i];
         } else {
-          ch[i] = n * 0.25;
+          output[i] = white * 0.25;
         }
       }
 
-      const src = ctxAudio.createBufferSource();
-      src.buffer = buf;
+      const src = audioEngine.createBufferSource();
+      src.buffer = audioBuffer;
       src.loop = true;
-      const flt = ctxAudio.createBiquadFilter();
-      flt.type = mode === 'rain' ? 'bandpass' : 'lowpass';
-      flt.frequency.value = mode === 'rain' ? 1050 : 400;
-      src.connect(flt);
-      flt.connect(ambGain);
+
+      const filter = audioEngine.createBiquadFilter();
+      filter.type = type === 'rain' ? 'bandpass' : 'lowpass';
+      filter.frequency.value = type === 'rain' ? 1100 : 410;
+
+      src.connect(filter);
+      filter.connect(ambientGain);
       src.start();
-      ambSource = src;
+      ambientNode = src;
     }
 
-    function setAmbientGain(v) {
-      if (ambGain) ambGain.gain.value = (Number(v) / 100) * 0.22;
+    function changeAmbientVol(v) {
+      if (ambientGain) ambientGain.gain.value = (Number(v) / 100) * 0.22;
     }
 
-    // التحدي
-    const bank = [
-      {
-        subject: 'الفيزياء',
-        text: 'أيّ كمية فيزيائية تقاس بوحدة (الهنري H) في النظام الدولي؟',
-        clue: 'ترتبط بقدرة الملف على توليد قوة دافعة كهربائية محتثة عند تغير التيار.',
-        choices: ['معامل الحث الذاتي', 'السعة الكهربائية', 'الفيض المغناطيسي', 'التردد الزاوي'],
-        correct: 0
-      },
-      {
-        subject: 'اللغة العربية',
-        text: 'ما إعراب كلمة (إلا) في جملة: (ما فاز إلا المجتهدُ)؟',
-        clue: 'الاستثناء مفرغ لأن المستثنى منه محذوف والكلام منفي.',
-        choices: ['أداة حصر ملغاة لا عمل لها', 'حرف استثناء واجب النصب', 'اسم استثناء منصوب', 'صفة منصوبة'],
-        correct: 0
-      },
-      {
-        subject: 'الرياضيات',
-        text: 'ما قيمة التكامل المحدد من 0 إلى 1 للدالة f(x) = 3x²؟',
-        clue: 'الدالة المقابلة لـ 3x² هي x³.',
-        choices: ['1', '3', '0', '2'],
-        correct: 0
+    // الأسئلة
+    let quizPointer = 0;
+    let quizSolved = false;
+
+    function renderQuizView() {
+      if (!store.questions.length) {
+        document.getElementById('qPromptBody').textContent = 'لا توجد أسئلة مضافة حالياً.';
+        document.getElementById('qOptionsGrid').innerHTML = '';
+        return;
       }
-    ];
+      if (quizPointer >= store.questions.length) quizPointer = 0;
+      quizSolved = false;
+      const q = store.questions[quizPointer];
+      document.getElementById('qBadgeNum').textContent = quizPointer + 1;
+      document.getElementById('qSubjectPill').textContent = q.subject;
+      document.getElementById('qPromptBody').textContent = q.question;
+      document.getElementById('qResultBanner').classList.add('hidden');
 
-    let qPos = 0;
-    let qLocked = false;
-
-    function drawQuestion() {
-      qLocked = false;
-      const q = bank[qPos];
-      document.getElementById('arenaNum').textContent = qPos + 1;
-      document.getElementById('arenaSubject').textContent = q.subject;
-      document.getElementById('arenaPrompt').textContent = q.text;
-      document.getElementById('arenaClue').classList.add('hidden');
-      document.getElementById('arenaClue').textContent = `تلميح: ${q.clue}`;
-      document.getElementById('arenaResult').classList.add('hidden');
-
-      const box = document.getElementById('arenaChoices');
-      box.innerHTML = '';
-      q.choices.forEach((c, idx) => {
-        const btn = document.createElement('button');
-        btn.className = 'text-right p-4 rounded-2xl bg-sand/75 hover:bg-brass/20 border border-brass/50 text-sm font-bold text-ink transition';
-        btn.textContent = c;
-        btn.onclick = () => pickChoice(idx, btn);
-        box.appendChild(btn);
+      const grid = document.getElementById('qOptionsGrid');
+      grid.innerHTML = '';
+      q.options.forEach((opt, i) => {
+        const b = document.createElement('button');
+        b.className = 'text-right p-4 rounded-2xl bg-sand/80 hover:bg-gold/20 border border-gold/55 text-sm font-extrabold text-royal transition';
+        b.textContent = opt;
+        b.onclick = () => evaluateAnswer(i, b);
+        grid.appendChild(b);
       });
     }
 
-    function revealClue() {
-      document.getElementById('arenaClue').classList.toggle('hidden');
-    }
-
-    function pickChoice(idx, btn) {
-      if (qLocked) return;
-      qLocked = true;
-      const q = bank[qPos];
-      const res = document.getElementById('arenaResult');
-      res.classList.remove('hidden');
+    function evaluateAnswer(idx, btn) {
+      if (quizSolved) return;
+      quizSolved = true;
+      const q = store.questions[quizPointer];
+      const banner = document.getElementById('qResultBanner');
+      banner.classList.remove('hidden');
 
       if (idx === q.correct) {
-        btn.className = 'text-right p-4 rounded-2xl bg-sage/15 border-2 border-sage text-sm font-black text-sage';
-        appData.points += 15;
-        res.className = 'mt-4 p-4 rounded-2xl bg-sage/10 border border-sage/40 text-sage text-xs sm:text-sm font-extrabold';
-        res.textContent = 'إجابة دقيقة وموفقة! أضفنا +15 نقطة إلى رصيدك.';
+        btn.className = 'text-right p-4 rounded-2xl bg-emeraldLux/15 border-2 border-emeraldLux text-sm font-black text-emeraldLux';
+        store.points += 15;
+        banner.className = 'mt-5 p-4 rounded-2xl bg-emeraldLux/10 border border-emeraldLux/40 text-emeraldLux text-xs sm:text-sm font-extrabold';
+        banner.textContent = 'إجابة دقيقة وموفقة! أُضيفت +15 نقطة إلى رصيدك.';
+        commitStore();
       } else {
-        btn.className = 'text-right p-4 rounded-2xl bg-ruby/15 border-2 border-ruby text-sm font-black text-ruby';
-        res.className = 'mt-4 p-4 rounded-2xl bg-ruby/10 border border-ruby/40 text-ruby text-xs sm:text-sm font-extrabold';
-        res.textContent = `الجواب الصحيح هو: (${q.choices[q.correct]}). تم حفظ السؤال في قائمة المراجعة.`;
-        if (!appData.reviewList.some(item => item.text === q.text)) {
-          appData.reviewList.push({ subject: q.subject, text: q.text, answer: q.choices[q.correct] });
-        }
+        btn.className = 'text-right p-4 rounded-2xl bg-crimsonLux/15 border-2 border-crimsonLux text-sm font-black text-crimsonLux';
+        banner.className = 'mt-5 p-4 rounded-2xl bg-crimsonLux/10 border border-crimsonLux/40 text-crimsonLux text-xs sm:text-sm font-extrabold';
+        banner.textContent = `إجابة غير صحيحة — الصحيح هو: (${q.options[q.correct]}).`;
       }
-      persistData();
     }
 
-    function stepQuestion() {
-      qPos = (qPos + 1) % bank.length;
-      drawQuestion();
+    function advanceQuestion() {
+      if (!store.questions.length) return;
+      quizPointer = (quizPointer + 1) % store.questions.length;
+      renderQuizView();
     }
 
-    function renderReviewList() {
-      const wrap = document.getElementById('reviewContainer');
-      document.getElementById('reviewCounter').textContent = appData.reviewList.length;
-      if (!appData.reviewList.length) {
-        wrap.innerHTML = '<p class="text-ink/60 font-semibold text-xs sm:text-sm">لا توجد أسئلة مؤجلة للمراجعة حالياً.</p>';
+    // البطاقات
+    let cardPointer = 0;
+
+    function renderCardsView() {
+      if (!store.flashcards.length) {
+        document.getElementById('fcCardFront').textContent = 'لا توجد بطاقات مضافة حالياً';
+        document.getElementById('fcCardBack').textContent = 'يمكن للأدمن إضافة بطاقات من لوحة الإدارة';
+        document.getElementById('fcCountBadge').textContent = '0 / 0';
         return;
       }
-      wrap.innerHTML = appData.reviewList.map(r => `
-        <div class="p-3.5 rounded-2xl bg-sand/75 border border-brass/40">
-          <span class="text-xs font-black text-brass">${r.subject}</span>
-          <p class="font-extrabold text-ink mt-0.5">${r.text}</p>
-          <p class="text-xs font-bold text-sage mt-1">الحل الصحيح: ${r.answer}</p>
-        </div>
-      `).join('');
+      if (cardPointer >= store.flashcards.length) cardPointer = 0;
+      const card = store.flashcards[cardPointer];
+      document.getElementById('flashCardStage').classList.remove('is-flipped');
+      document.getElementById('fcCardSubject').textContent = card.subject;
+      document.getElementById('fcCardFront').textContent = card.front;
+      document.getElementById('fcCardBack').textContent = card.back;
+      document.getElementById('fcCountBadge').textContent = `${cardPointer + 1} / ${store.flashcards.length}`;
     }
 
-    // بطاقات الذاكرة
-    const deck = [
-      { topic: 'الفيزياء', front: 'ما المقصود بالتيار المتناوب (AC)؟', back: 'هو التيار المتغير دورياً في المقدار والاتجاه مع الزمن.' },
-      { topic: 'الإنكليزية', front: 'ما معنى كلمة (Ankle)؟', back: 'الكاحل — مفصل يربط الساق بالقدم.' },
-      { topic: 'الرياضيات', front: 'متى تمتلك الدالة نقطة انقلاب؟', back: 'عندما تتغير إشارة المشتقة الثانية من موجبة إلى سالبة أو العكس مع وجود المماس.' },
-      { topic: 'اللغة العربية', front: 'ما الفرق بين (ما) النافية و(إن) النافية؟', back: '(ما) أداة نفي شائعة تدخل على الجملة الاسمية والفعلية، و(إن) النافية تشبه (ما) في العمل أو تأتي بمعنى (ما).' }
-    ];
-    let cPos = 0;
-
-    function drawCard() {
-      const item = deck[cPos];
-      document.getElementById('cardStage').classList.remove('is-flipped');
-      document.getElementById('cardTopic').textContent = item.topic;
-      document.getElementById('cardFrontText').textContent = item.front;
-      document.getElementById('cardBackText').textContent = item.back;
-      document.getElementById('cardIndexBadge').textContent = `${cPos + 1} / ${deck.length}`;
+    function stepCard(delta) {
+      if (!store.flashcards.length) return;
+      cardPointer = (cardPointer + delta + store.flashcards.length) % store.flashcards.length;
+      renderCardsView();
     }
 
-    function shiftCard(dir) {
-      cPos = (cPos + dir + deck.length) % deck.length;
-      drawCard();
-    }
-
-    // الخارطة
-    function createPlanItem(e) {
+    // المهام
+    function createTask(e) {
       e.preventDefault();
-      const subject = document.getElementById('planSubject').value.trim();
-      const title = document.getElementById('planTask').value.trim();
+      const subject = document.getElementById('taskSubjInput').value.trim();
+      const title = document.getElementById('taskNameInput').value.trim();
       if (!subject || !title) return;
-      appData.planItems.unshift({ id: Date.now(), subject, title, done: false });
-      document.getElementById('planSubject').value = '';
-      document.getElementById('planTask').value = '';
-      persistData();
+      store.tasks.unshift({ id: Date.now(), subject, title, done: false });
+      document.getElementById('taskSubjInput').value = '';
+      document.getElementById('taskNameInput').value = '';
+      commitStore();
     }
 
-    function togglePlanItem(id) {
-      const target = appData.planItems.find(x => x.id === id);
-      if (target) {
-        target.done = !target.done;
-        if (target.done) appData.points += 10;
-        persistData();
+    function toggleTaskDone(id) {
+      const item = store.tasks.find(t => t.id === id);
+      if (item) {
+        item.done = !item.done;
+        if (item.done) store.points += 10;
+        commitStore();
       }
     }
 
-    function removePlanItem(id) {
-      appData.planItems = appData.planItems.filter(x => x.id !== id);
-      persistData();
+    function removeTask(id) {
+      store.tasks = store.tasks.filter(t => t.id !== id);
+      commitStore();
     }
 
-    function renderPlanList() {
-      const box = document.getElementById('planContainer');
-      if (!appData.planItems.length) {
-        box.innerHTML = '<p class="text-ink/60 text-sm font-semibold">أضف جلسة دراسية لتبدأ تنظيم يومك.</p>';
+    function renderTasksView() {
+      const box = document.getElementById('tasksListBox');
+      if (!store.tasks.length) {
+        box.innerHTML = '<p class="text-sm text-royal/65 font-semibold">أضف مهمة جديدة لتبدأ تنظيم يومك الدراسي.</p>';
         return;
       }
-      box.innerHTML = appData.planItems.map(p => `
-        <div class="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl bg-sand/70 border border-brass/40">
+      box.innerHTML = store.tasks.map(t => `
+        <div class="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl bg-sand/75 border border-gold/50">
           <div class="flex items-center gap-3">
-            <input type="checkbox" ${p.done ? 'checked' : ''} onchange="togglePlanItem(${p.id})" class="w-4 h-4 accent-ink cursor-pointer" />
+            <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTaskDone(${t.id})" class="w-4 h-4 accent-royal cursor-pointer" />
             <div>
-              <span class="text-xs font-black text-brass">${p.subject}</span>
-              <p class="text-sm font-extrabold ${p.done ? 'line-through text-ink/45' : 'text-ink'}">${p.title}</p>
+              <span class="text-xs font-black text-goldMuted">${t.subject}</span>
+              <p class="text-sm font-extrabold ${t.done ? 'line-through text-royal/45' : 'text-royal'}">${t.title}</p>
             </div>
           </div>
-          <div class="flex items-center gap-2">
-            <button onclick="launchTaskSession('${p.subject} - ${p.title.replace(/'/g, '')}')" class="px-3 py-1.5 rounded-xl bg-ink text-ivory border border-brass text-xs font-extrabold">
-              ▶ بدء الجلسة
-            </button>
-            <button onclick="removePlanItem(${p.id})" class="px-2.5 py-1.5 rounded-xl bg-white text-ruby border border-ruby/30 text-xs font-bold">
-              حذف
-            </button>
-          </div>
+          <button onclick="removeTask(${t.id})" class="px-3 py-1.5 rounded-xl bg-white text-crimsonLux border border-crimsonLux/30 text-xs font-bold">
+            حذف
+          </button>
         </div>
       `).join('');
     }
 
-    drawClock();
-    refreshHud();
-    drawQuestion();
-    drawCard();
+    // لوحة تحكم الأدمن
+    function saveAnnouncement(e) {
+      e.preventDefault();
+      const val = document.getElementById('adminBannerField').value.trim();
+      if (!val) return;
+      store.announcement = val;
+      commitStore();
+      alert('تم تحديث رسالة الترحيب بنجاح.');
+    }
+
+    function updatePasscode(e) {
+      e.preventDefault();
+      const val = document.getElementById('adminNewPassField').value;
+      if (val.length < 4) return;
+      store.passcode = val;
+      document.getElementById('adminNewPassField').value = '';
+      commitStore();
+      alert('تم تحديث رمز مرور الأدمن بنجاح.');
+    }
+
+    function addQuestionByAdmin(e) {
+      e.preventDefault();
+      const subject = document.getElementById('admQSubj').value.trim();
+      const question = document.getElementById('admQText').value.trim();
+      const options = [
+        document.getElementById('admOpt0').value.trim(),
+        document.getElementById('admOpt1').value.trim(),
+        document.getElementById('admOpt2').value.trim(),
+        document.getElementById('admOpt3').value.trim()
+      ];
+      const correct = Number(document.getElementById('admQCorrect').value);
+      store.questions.push({ id: Date.now(), subject, question, options, correct });
+      e.target.reset();
+      commitStore();
+      alert('تمت إضافة السؤال بنجاح.');
+    }
+
+    function removeQuestionByAdmin(id) {
+      store.questions = store.questions.filter(q => q.id !== id);
+      commitStore();
+    }
+
+    function addCardByAdmin(e) {
+      e.preventDefault();
+      const subject = document.getElementById('admCSubj').value.trim();
+      const front = document.getElementById('admCFront').value.trim();
+      const back = document.getElementById('admCBack').value.trim();
+      store.flashcards.push({ id: Date.now(), subject, front, back });
+      e.target.reset();
+      commitStore();
+      alert('تمت إضافة البطاقة بنجاح.');
+    }
+
+    function removeCardByAdmin(id) {
+      store.flashcards = store.flashcards.filter(c => c.id !== id);
+      commitStore();
+    }
+
+    function copyBackupJson() {
+      const data = JSON.stringify({
+        announcement: store.announcement,
+        questions: store.questions,
+        flashcards: store.flashcards
+      }, null, 2);
+      navigator.clipboard?.writeText(data);
+      alert('تم نسخ بيانات المحتوى بصيغة JSON إلى الحافظة.');
+    }
+
+    function renderAdminPanel() {
+      document.getElementById('adminBannerField').value = store.announcement;
+
+      document.getElementById('admQuestionsBox').innerHTML = store.questions.length
+        ? store.questions.map(q => `
+            <div class="flex items-center justify-between gap-2 p-3 rounded-xl bg-white border border-gold/45">
+              <span class="font-bold text-royal">[${q.subject}] ${q.question}</span>
+              <button onclick="removeQuestionByAdmin(${q.id})" class="px-3 py-1 rounded-lg bg-rose-50 text-crimsonLux border border-crimsonLux/30 font-bold shrink-0">حذف</button>
+            </div>
+          `).join('')
+        : '<p class="text-royal/60">لا توجد أسئلة مضافة.</p>';
+
+      document.getElementById('admCardsBox').innerHTML = store.flashcards.length
+        ? store.flashcards.map(c => `
+            <div class="flex items-center justify-between gap-2 p-3 rounded-xl bg-white border border-gold/45">
+              <span class="font-bold text-royal">[${c.subject}] ${c.front} — ${c.back}</span>
+              <button onclick="removeCardByAdmin(${c.id})" class="px-3 py-1 rounded-lg bg-rose-50 text-crimsonLux border border-crimsonLux/30 font-bold shrink-0">حذف</button>
+            </div>
+          `).join('')
+        : '<p class="text-royal/60">لا توجد بطاقات مضافة.</p>';
+    }
+
+    function getStudentRank(pts) {
+      if (pts >= 250) return 'قبطان النخبة';
+      if (pts >= 100) return 'ملاح متقدم';
+      return 'ملاح مبتدئ';
+    }
+
+    function refreshInterface() {
+      document.getElementById('topAnnouncement').textContent = store.announcement;
+      document.getElementById('statPoints').textContent = store.points;
+      document.getElementById('statMinutes').textContent = store.minutes;
+      document.getElementById('statRank').textContent = getStudentRank(store.points);
+      document.getElementById('statQuestions').textContent = store.questions.length;
+
+      const badge = document.getElementById('accountBadge');
+      const logoutBtn = document.getElementById('logoutBtn');
+      if (store.user) {
+        const label = store.user.role === 'admin' ? '🛠️ أدمن' : '🎓 طالب';
+        badge.textContent = `${label}: ${store.user.name}`;
+        logoutBtn.classList.remove('hidden');
+      } else {
+        badge.textContent = 'وضع الزائر';
+        logoutBtn.classList.add('hidden');
+      }
+
+      renderQuizView();
+      renderCardsView();
+      renderTasksView();
+      renderAdminPanel();
+    }
+
+    renderClock();
+    refreshInterface();
   </script>
 </body>
 </html>
