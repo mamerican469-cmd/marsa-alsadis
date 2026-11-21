@@ -442,7 +442,13 @@
 
     <section id="page-quiz" class="page-view hidden space-y-5">
       <div class="app-card p-6 space-y-4">
-        <div class="flex items-center justify-between border-b border-gold/35 pb-3">
+        <div class="flex flex-wrap items-center justify-between gap-2 pb-2">
+          <span class="text-xs font-black text-gold">اختر المادة أو اختبر الكل:</span>
+          <span id="quizTotalBadge" class="text-xs font-black px-2.5 py-0.5 rounded-full bg-cream text-navy border border-gold/50">0 سؤال</span>
+        </div>
+        <div id="quizSubjectFilterBar" class="flex gap-1.5 overflow-x-auto pb-1"></div>
+
+        <div class="flex items-center justify-between border-b border-gold/35 pb-3 pt-1">
           <div class="flex items-center gap-3">
             <span id="qNumBadge" class="q-badge w-10 h-10 rounded-2xl flex items-center justify-center font-black">1</span>
             <div>
@@ -469,6 +475,8 @@
             <button onclick="shiftFc(1)" class="h-9 px-3 rounded-xl bg-cream text-navy border border-gold/50 text-xs font-extrabold whitespace-nowrap">التالية</button>
           </div>
         </div>
+
+        <div id="fcSubjectFilterBar" class="flex gap-1.5 overflow-x-auto pb-1"></div>
 
         <div id="fcBox" onclick="this.classList.toggle('flipped')" class="flip-wrap">
           <div class="flip-body min-h-[210px]">
@@ -698,7 +706,7 @@
   </div>
 
   <script>
-    const STORE_KEY = 'marsa_alsadis_radar_v6';
+    const STORE_KEY = 'marsa_alsadis_radar_v8';
     const ADMIN_UIDS = ["6YfSco5cbJNYMlNtDVTnEGT2WC32"];
     let tempAvatarDataUrl = '';
 
@@ -714,8 +722,9 @@
         { id: 'p3', name: 'نور الهدى', title: 'طالبة النخبة', status: 'sleeping', points: 95, avatar: '' }
       ],
       questions: [
+        // الفيزياء (4 أسئلة)
         {
-          id: 1,
+          id: 101,
           subject: 'الفيزياء',
           question: 'ما تأثير قوة لورنتز في جسيم مشحون يتحرك عمودياً على مجال مغناطيسي منتظم؟',
           options: [
@@ -727,28 +736,65 @@
           correct: 0
         },
         {
-          id: 2,
+          id: 102,
           subject: 'الفيزياء',
           question: 'ما مقدار القوة الدافعة الكهربائية المحتثة (e.m.f) المتولدة على طرفي ساق موصلة تتحرك عمودياً على مجال مغناطيسي كثافته B بطول L وسرعة v؟',
           options: ['e.m.f = v · B · L', 'e.m.f = B / (v · L)', 'e.m.f = v² · B', 'e.m.f = 0 دائماً'],
           correct: 0
         },
         {
-          id: 3,
+          id: 103,
+          subject: 'الفيزياء',
+          question: 'بماذا تقاس السعة الكهربائية في النظام الدولي للوحدات (SI)؟',
+          options: ['الفاراد (F)', 'الهنري (H)', 'الويبر (Wb)', 'الأوم (Ω)'],
+          correct: 0
+        },
+        {
+          id: 104,
+          subject: 'الفيزياء',
+          question: 'في دائرة تيار متناوب تحتوي على محث صرف، كيف يكون طور الفولتية عبر المحث مقارنة بالتيار؟',
+          options: [
+            'الفولتية تسبق التيار بزاوية طور (π/2)',
+            'الفولتية تتأخر عن التيار بزاوية (π/2)',
+            'الفولتية والتيار متطابقان في الطور دائماً',
+            'الفرق بينهما يساوي (π) دائماً'
+          ],
+          correct: 0
+        },
+
+        // اللغة العربية (4 أسئلة)
+        {
+          id: 201,
           subject: 'اللغة العربية',
           question: 'ما نوع الاستثناء في جملة: (ما حضر الطلابُ إلا طالباً)؟',
           options: ['تام متصل منفي', 'مفرغ', 'منقطع مثبت', 'تام منقطع منفي'],
           correct: 0
         },
         {
-          id: 4,
+          id: 202,
           subject: 'اللغة العربية',
           question: 'في قولنا: (للهِ درُّك فارساً)، ما إعراب كلمة (فارساً)؟',
           options: ['تمييز منصوب وعلامة نصبه الفتحة', 'حال منصوب', 'مفعول به منصوب', 'خبر منصوب'],
           correct: 0
         },
         {
-          id: 5,
+          id: 203,
+          subject: 'اللغة العربية',
+          question: 'أيّ أداة مما يأتي تفيد النفي وتدخل على الفعل المضارع فتقلبه إلى الماضي المتصل بالحاضر؟',
+          options: ['لمّا', 'لن', 'ما', 'لات'],
+          correct: 0
+        },
+        {
+          id: 204,
+          subject: 'اللغة العربية',
+          question: 'في جملة: (هل من شفيعٍ يغفرُ الذنوبَ؟)، ما إعراب (شفيعٍ)؟',
+          options: ['مبتدأ مجرور لفظاً مرفوع محلاً', 'خبر مرفوع', 'مفعول به منصوب', 'حال مجرورة'],
+          correct: 0
+        },
+
+        // الأدب (4 أسئلة)
+        {
+          id: 301,
           subject: 'الأدب',
           question: 'بماذا يتميز الشعر الحر مقارنة بالشعر العمودي في منهج السادس؟',
           options: [
@@ -760,7 +806,7 @@
           correct: 0
         },
         {
-          id: 6,
+          id: 302,
           subject: 'الأدب',
           question: 'ما السمة الأبرز لمدرسة الإحياء في الأدب العربي الحديث؟',
           options: [
@@ -772,35 +818,88 @@
           correct: 0
         },
         {
-          id: 7,
+          id: 303,
+          subject: 'الأدب',
+          question: 'ما المقصود بالالتزام في الأدب الحديث؟',
+          options: [
+            'مشاركة الأديب لقضايا مجتمعه وأمته والتعبير عن همومها بوعي ومسؤولية',
+            'الالتزام بعدد محدد من الأبيات في كل قصيدة',
+            'الاقتصار على وصف الطبيعة دون أي مضمون فكري',
+            'استخدام الألفاظ الغريبة المعجمية فقط'
+          ],
+          correct: 0
+        },
+        {
+          id: 304,
+          subject: 'الأدب',
+          question: 'أيّ من الآتي يُعدّ من فنون النثر الحديث التي ظهرت أو تطورت في العصر الحديث؟',
+          options: ['المقالة والقصة القصيرة', 'المقامة الكلاسيكية فقط', 'الخطابة الجاهلية', 'الوصايا الشفوية القديمة'],
+          correct: 0
+        },
+
+        // اللغة الإنكليزية (4 أسئلة)
+        {
+          id: 401,
           subject: 'اللغة الإنكليزية',
           question: 'Choose the correct form: While I ______ for the exam, the lights went out.',
           options: ['was studying', 'studied', 'have studied', 'am study'],
           correct: 0
         },
         {
-          id: 8,
+          id: 402,
           subject: 'اللغة الإنكليزية',
           question: 'Which phrase correctly completes: "He ______ wear glasses, but now he wears contact lenses"?',
           options: ['used to', 'use to', 'is used to', 'using to'],
           correct: 0
         },
         {
-          id: 9,
+          id: 403,
+          subject: 'اللغة الإنكليزية',
+          question: 'If you ______ harder, you will pass the final exam with high marks.',
+          options: ['study', 'studied', 'had studied', 'will study'],
+          correct: 0
+        },
+        {
+          id: 404,
+          subject: 'اللغة الإنكليزية',
+          question: 'Choose the correct word: A joint in the leg that connects the lower leg and the foot is an ______.',
+          options: ['ankle', 'wrist', 'elbow', 'shoulder'],
+          correct: 0
+        },
+
+        // الرياضيات (4 أسئلة)
+        {
+          id: 501,
           subject: 'الرياضيات',
           question: 'ما قيمة التكامل المحدد من 0 إلى 1 للدالة f(x) = 3x²؟',
           options: ['1', '3', '0', '2'],
           correct: 0
         },
         {
-          id: 10,
+          id: 502,
           subject: 'الرياضيات',
           question: 'إذا كانت f(x) = x³ - 3x² + 2، فما قيمة المشتقة الثانية عند x = 1؟',
           options: ['0', '6', '-6', '3'],
           correct: 0
         },
         {
-          id: 11,
+          id: 503,
+          subject: 'الرياضيات',
+          question: 'ما ناتج تكامل ∫ cos(x) dx ؟',
+          options: ['sin(x) + c', '-sin(x) + c', 'cos(x) + c', '-cos(x) + c'],
+          correct: 0
+        },
+        {
+          id: 504,
+          subject: 'الرياضيات',
+          question: 'إذا كان z = 3 + 4i عدداً مركباً، فما مقياسه |z| ؟',
+          options: ['5', '7', '12', '25'],
+          correct: 0
+        },
+
+        // الكيمياء (4 أسئلة)
+        {
+          id: 601,
           subject: 'الكيمياء',
           question: 'في التفاعلات الانعكاسية، ماذا يعني وصول التفاعل إلى حالة الاتزان الكيميائي؟',
           options: [
@@ -812,7 +911,7 @@
           correct: 0
         },
         {
-          id: 12,
+          id: 602,
           subject: 'الكيمياء',
           question: 'وفق قاعدة لوشاتليه، ماذا يحدث لتفاعل باعث للحرارة في حالة اتزان عند رفع درجة الحرارة؟',
           options: [
@@ -824,14 +923,30 @@
           correct: 0
         },
         {
-          id: 13,
+          id: 603,
+          subject: 'الكيمياء',
+          question: 'ما العلاقة بين طاقة كبس الحرة القياسية (ΔG°) وثابت الاتزان (Keq) عند الاتزان؟',
+          options: ['ΔG° = -RT ln Keq', 'ΔG° = +RT ln Keq', 'ΔG° = Keq / RT', 'ΔG° = 0 دائماً'],
+          correct: 0
+        },
+        {
+          id: 604,
+          subject: 'الكيمياء',
+          question: 'في خلية دانيال الكلفانية، ماذا يحدث عند قطب الأنود؟',
+          options: ['تحدث عملية التأكسد ويزداد تركيز أيونات الخارصين', 'تحدث عملية الاختزال ويترسب النحاس', 'تتوقف حركة الإلكترونات في السلك الخارجي', 'يتحرر غاز الهيدروجين عند الأنود فقط'],
+          correct: 0
+        },
+
+        // الأحياء (4 أسئلة)
+        {
+          id: 701,
           subject: 'الأحياء',
           question: 'أين تحدث دورة كريبس (دورة حامض الستريك) داخل الخلية حقيقية النواة؟',
           options: ['في قالب المايتوكوندريا', 'في السيتوبلازم فقط', 'داخل النواة', 'على غشاء البلازما'],
           correct: 0
         },
         {
-          id: 14,
+          id: 702,
           subject: 'الأحياء',
           question: 'ما ناتج تحلل جزيء غلوكوز واحد في مرحلة التحلل السكري في السيتوبلازم؟',
           options: [
@@ -841,16 +956,37 @@
             'جزيء أسيتيل CoA واحد فقط'
           ],
           correct: 0
+        },
+        {
+          id: 703,
+          subject: 'الأحياء',
+          question: 'أيّ نسيج حيواني يبطّن الأوعية الدموية ويسهل عملية التبادل الغازي والانتشار؟',
+          options: ['النسيج الظهاري الحرشفي البسيط', 'النسيج العضلي الهيكلي', 'النسيج الضام الكثيف', 'النسيج العصبي'],
+          correct: 0
+        },
+        {
+          id: 704,
+          subject: 'الأحياء',
+          question: 'في أيّ طور من أطوار الانقسام الخيطي تترتب الكروموسومات في خط استواء الخلية؟',
+          options: ['الطور الاستوائي', 'الطور التمهيدي', 'الطور الانفصالي', 'الطور النهائي'],
+          correct: 0
         }
       ],
       flashcards: [
         { id: 1, subject: 'الفيزياء', front: 'قوة لورنتز', back: 'محصلة قوتين كهربائية ومغناطيسية تؤثران في جسيم مشحون متحرك.' },
-        { id: 2, subject: 'اللغة العربية', front: 'الاستثناء المفرغ', back: 'استثناء يكون فيه المستثنى منه محذوفاً والكلام منفياً، ويعرب حسب موقعه في الجملة.' },
-        { id: 3, subject: 'الأدب', front: 'وحدة التفعيلة في الشعر الحر', back: 'الأساس الإيقاعي للشعر الحر حيث يتكرر عدد غير متساوٍ من التفعيلات في كل سطر شعري.' },
-        { id: 4, subject: 'اللغة الإنكليزية', front: 'Used to + infinitive', back: 'تُستخدم للتعبير عن عادة أو حالة ماضية كانت تحدث بانتظام وتوقفت الآن.' },
-        { id: 5, subject: 'الرياضيات', front: 'النقطة الحرجة', back: 'نقطة تنتمي لمجال الدالة وتكون عندها المشتقة الأولى f\'(x) = 0 أو غير معرفة.' },
-        { id: 6, subject: 'الكيمياء', front: 'قاعدة لوشاتليه', back: 'إذا طرأ مؤثر خارجي على نظام متزن فإن النظام يتجه بالاتجاه الذي يقلل من أثر ذلك المؤثر.' },
-        { id: 7, subject: 'الأحياء', front: 'التنفس اللاهوائي (التخمر)', back: 'عملية تحرر الطاقة بغياب الأكسجين وتحدث في السيتوبلازم مثل التخمر الكحولي واللبني.' }
+        { id: 2, subject: 'الفيزياء', front: 'قانون لنز', back: 'التيار المحتث يمتلك اتجاهاً بحيث يقاوم التغير في الفيض المغناطيسي الذي ولّده.' },
+        { id: 3, subject: 'اللغة العربية', front: 'الاستثناء المفرغ', back: 'استثناء يكون فيه المستثنى منه محذوفاً والكلام منفياً، ويعرب حسب موقعه في الجملة.' },
+        { id: 4, subject: 'اللغة العربية', front: 'الاستفهام المجازي', back: 'استفهام لا يراد به الجواب بل يخرج لمعانٍ بلاغية مثل النفي أو التعجب.' },
+        { id: 5, subject: 'الأدب', front: 'وحدة التفعيلة في الشعر الحر', back: 'الأساس الإيقاعي للشعر الحر حيث يتكرر عدد غير متساوٍ من التفعيلات في كل سطر شعري.' },
+        { id: 6, subject: 'الأدب', front: 'مدرسة الإحياء', back: 'اتجاه شعري حديث أعاد للشعر العربي جزالته ومتانة تركيبه وتواصله مع التراث.' },
+        { id: 7, subject: 'اللغة الإنكليزية', front: 'Used to + infinitive', back: 'تُستخدم للتعبير عن عادة أو حالة ماضية كانت تحدث بانتظام وتوقفت الآن.' },
+        { id: 8, subject: 'اللغة الإنكليزية', front: 'First Conditional (If + present, will + base)', back: 'تُستخدم للتعبير عن نتيجة محتملة أو متوقعة في المستقبل عند تحقق شرط واقعي.' },
+        { id: 9, subject: 'الرياضيات', front: 'النقطة الحرجة', back: 'نقطة تنتمي لمجال الدالة وتكون عندها المشتقة الأولى f\'(x) = 0 أو غير معرفة.' },
+        { id: 10, subject: 'الرياضيات', front: 'نقطة الانقلاب', back: 'نقطة تنتمي لمنحنى الدالة ويتغير عندها تقعر المنحنى من تحدب إلى تقعر أو العكس.' },
+        { id: 11, subject: 'الكيمياء', front: 'قاعدة لوشاتليه', back: 'إذا طرأ مؤثر خارجي على نظام متزن فإن النظام يتجه بالاتجاه الذي يقلل من أثر ذلك المؤثر.' },
+        { id: 12, subject: 'الكيمياء', front: 'التفاعل الماص للحرارة', back: 'تفاعل يمتص حرارة من المحيط فتكون قيمة ΔH موجبة وتزداد سرعة الاتجاه الأمامي برفع الحرارة.' },
+        { id: 13, subject: 'الأحياء', front: 'التنفس اللاهوائي (التخمر)', back: 'عملية تحرر الطاقة بغياب الأكسجين وتحدث في السيتوبلازم مثل التخمر الكحولي واللبني.' },
+        { id: 14, subject: 'الأحياء', front: 'الفسفرة التأكسدية', back: 'عملية تكوين جزيئات ATP بمساعدة سلسلة نقل الإلكترون في المايتوكوندريا بوجود الأكسجين.' }
       ],
       tasks: [
         { id: 1, text: 'مراجعة الفصل الأول وحل مسائل وزارية', done: false }
@@ -1309,14 +1445,41 @@
       `).join('') : '<p class="font-bold opacity-70">ما كو بيانات للطلاب لحد هسه.</p>';
     }
 
+    let selectedQuizSubject = 'الكل';
     let qPos = 0;
     let qAnswered = false;
 
+    function getFilteredQuestions() {
+      if (selectedQuizSubject === 'الكل') return state.questions;
+      const sub = state.questions.filter(q => q.subject === selectedQuizSubject);
+      return sub.length ? sub : state.questions;
+    }
+
+    function setQuizSubjectFilter(subj) {
+      selectedQuizSubject = subj;
+      qPos = 0;
+      renderQuizSection();
+    }
+
     function renderQuizSection() {
-      if (!state.questions.length) return;
-      if (qPos >= state.questions.length) qPos = 0;
+      const totalBadge = document.getElementById('quizTotalBadge');
+      if (totalBadge) totalBadge.textContent = `${state.questions.length} سؤال`;
+
+      const subjects = ['الكل', ...Array.from(new Set(state.questions.map(q => q.subject).filter(Boolean)))];
+      const filterBar = document.getElementById('quizSubjectFilterBar');
+      if (filterBar) {
+        filterBar.innerHTML = subjects.map(s => `
+          <button type="button" onclick="setQuizSubjectFilter('${esc(s)}')" class="px-3 py-1.5 rounded-xl text-xs font-extrabold whitespace-nowrap shrink-0 transition ${selectedQuizSubject === s ? 'bg-navy text-white border border-gold' : 'bg-cream text-navy border border-gold/50'}">
+            ${esc(s)}
+          </button>
+        `).join('');
+      }
+
+      const pool = getFilteredQuestions();
+      if (!pool.length) return;
+      if (qPos >= pool.length) qPos = 0;
       qAnswered = false;
-      const q = state.questions[qPos];
+      const q = pool[qPos];
       document.getElementById('qNumBadge').textContent = qPos + 1;
       document.getElementById('qSubjBadge').textContent = q.subject;
       document.getElementById('qQuestionDisplay').textContent = q.question;
@@ -1328,15 +1491,14 @@
         const b = document.createElement('button');
         b.className = 'text-right p-3.5 rounded-2xl bg-cream text-navy border border-gold/55 text-sm font-extrabold hover:bg-gold/20 transition';
         b.textContent = opt;
-        b.onclick = () => pickOption(idx, b);
+        b.onclick = () => pickOption(idx, b, q);
         box.appendChild(b);
       });
     }
 
-    function pickOption(idx, btn) {
+    function pickOption(idx, btn, q) {
       if (qAnswered) return;
       qAnswered = true;
-      const q = state.questions[qPos];
       const msg = document.getElementById('qResultDisplay');
       msg.classList.remove('hidden');
       if (idx === q.correct) {
@@ -1353,25 +1515,53 @@
     }
 
     function nextQuizQuestion() {
-      qPos = (qPos + 1) % state.questions.length;
+      const pool = getFilteredQuestions();
+      if (!pool.length) return;
+      qPos = (qPos + 1) % pool.length;
       renderQuizSection();
     }
 
+    let selectedFcSubject = 'الكل';
     let fcPos = 0;
 
+    function getFilteredFlashcards() {
+      if (selectedFcSubject === 'الكل') return state.flashcards;
+      const sub = state.flashcards.filter(c => c.subject === selectedFcSubject);
+      return sub.length ? sub : state.flashcards;
+    }
+
+    function setFcSubjectFilter(subj) {
+      selectedFcSubject = subj;
+      fcPos = 0;
+      renderFcSection();
+    }
+
     function renderFcSection() {
-      if (!state.flashcards.length) return;
-      if (fcPos >= state.flashcards.length) fcPos = 0;
-      const c = state.flashcards[fcPos];
+      const subjects = ['الكل', ...Array.from(new Set(state.flashcards.map(c => c.subject).filter(Boolean)))];
+      const fcBar = document.getElementById('fcSubjectFilterBar');
+      if (fcBar) {
+        fcBar.innerHTML = subjects.map(s => `
+          <button type="button" onclick="setFcSubjectFilter('${esc(s)}')" class="px-3 py-1.5 rounded-xl text-xs font-extrabold whitespace-nowrap shrink-0 transition ${selectedFcSubject === s ? 'bg-navy text-white border border-gold' : 'bg-cream text-navy border border-gold/50'}">
+            ${esc(s)}
+          </button>
+        `).join('');
+      }
+
+      const pool = getFilteredFlashcards();
+      if (!pool.length) return;
+      if (fcPos >= pool.length) fcPos = 0;
+      const c = pool[fcPos];
       document.getElementById('fcBox').classList.remove('flipped');
       document.getElementById('fcSubjText').textContent = c.subject;
       document.getElementById('fcFrontDisplay').textContent = c.front;
       document.getElementById('fcBackDisplay').textContent = c.back;
-      document.getElementById('fcPagerLabel').textContent = `${fcPos + 1} / ${state.flashcards.length}`;
+      document.getElementById('fcPagerLabel').textContent = `${fcPos + 1} / ${pool.length}`;
     }
 
     function shiftFc(step) {
-      fcPos = (fcPos + step + state.flashcards.length) % state.flashcards.length;
+      const pool = getFilteredFlashcards();
+      if (!pool.length) return;
+      fcPos = (fcPos + step + pool.length) % pool.length;
       renderFcSection();
     }
 
