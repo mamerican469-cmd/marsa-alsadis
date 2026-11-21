@@ -528,6 +528,47 @@
     </div>
   </div>
 
+  <!-- ===== واجهة الدخول الرئيسية (جديد) ===== -->
+  <div id="gateBox" class="hidden fixed inset-0 overflow-y-auto" style="z-index:45;background:linear-gradient(170deg,#0B1A30 0%,#14294A 60%,#060F1D 100%)">
+    <div class="min-h-full flex items-center justify-center p-4">
+      <div class="w-full max-w-md space-y-4">
+
+        <div class="text-center space-y-2 text-white">
+          <div id="gateLogo" class="w-28 h-28 mx-auto rounded-3xl bg-white p-1 border-2 border-gold shadow-lg overflow-hidden flex items-center justify-center"></div>
+          <h1 class="text-2xl font-black">مرسى السادس</h1>
+          <p class="text-xs font-bold text-goldBright">✦ سجّل دخولك وشوف الطلاب المتفاعلين ✦</p>
+        </div>
+
+        <div class="bg-white text-navy rounded-[28px] p-5 border-2 border-gold space-y-4 shadow-xl">
+          <button type="button" onclick="gateGoogle()" class="w-full py-3 px-4 rounded-2xl bg-cream hover:bg-gold/15 border-2 border-gold text-navy font-black text-sm flex items-center justify-center gap-2 transition">
+            <span>🌐</span><span>المتابعة بحساب Google</span>
+          </button>
+
+          <div class="flex items-center gap-3 text-[11px] font-bold text-navy/50">
+            <span class="flex-1 h-px bg-gold/40"></span>أو بالإيميل والرمز<span class="flex-1 h-px bg-gold/40"></span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 p-1 rounded-2xl bg-cream text-xs font-black">
+            <button id="gateTabIn" type="button" onclick="gateMode('in')" class="py-2 rounded-xl bg-navy text-white">دخول</button>
+            <button id="gateTabUp" type="button" onclick="gateMode('up')" class="py-2 rounded-xl text-navy">حساب جديد</button>
+          </div>
+
+          <form onsubmit="gateSubmit(event)" class="space-y-2.5">
+            <input id="gateName" type="text" placeholder="اسم الطالب" class="hidden w-full px-4 py-2.5 rounded-2xl bg-cream border border-gold/60 text-sm font-bold focus:outline-none" />
+            <input id="gateEmail" type="email" placeholder="البريد الإلكتروني" required class="w-full px-4 py-2.5 rounded-2xl bg-cream border border-gold/60 text-sm font-bold focus:outline-none" />
+            <input id="gatePass" type="password" placeholder="الرمز (6 أحرف أو أكثر)" minlength="6" required class="w-full px-4 py-2.5 rounded-2xl bg-cream border border-gold/60 text-sm font-bold focus:outline-none" />
+            <p id="gateErr" class="hidden text-xs font-extrabold text-rose-700"></p>
+            <button id="gateBtn" type="submit" class="w-full py-3 rounded-2xl bg-navy text-white border-2 border-gold font-black text-sm">دخول</button>
+          </form>
+
+          <button type="button" onclick="openLoginScreen('admin')" class="w-full text-center text-[11px] font-extrabold text-navy/60 underline">دخول الأدمن</button>
+        </div>
+
+        <p class="text-center text-xs font-extrabold text-white/80">إعداد: مساعدين مرسى السادس ⚓</p>
+      </div>
+    </div>
+  </div>
+
   <script>
     const STORE_KEY = 'marsa_alsadis_radar_v6';
     let tempAvatarDataUrl = '';
@@ -1052,6 +1093,133 @@
 
     hydrateBrandLogos();
     refreshStudyClock();
+    renderUI();
+  </script>
+
+  <!-- ===== واجهة الدخول + الطلاب المتفاعلون (جديد) ===== -->
+  <script>
+    /* ضع هنا Client ID من Google Cloud لتفعيل الدخول الحقيقي بحساب جوجل */
+    const GOOGLE_CLIENT_ID = '';
+
+    let gateModeNow = 'in';
+
+    async function gateHash(t) {
+      try {
+        const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t));
+        return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join('');
+      } catch (e) { return btoa(unescape(encodeURIComponent(t))); }
+    }
+
+    function gateAccounts() { try { return JSON.parse(localStorage.getItem('marsa_accounts') || '{}'); } catch (e) { return {}; } }
+
+    function gateMode(m) {
+      gateModeNow = m;
+      document.getElementById('gateName').classList.toggle('hidden', m === 'in');
+      document.getElementById('gateName').required = m === 'up';
+      document.getElementById('gateTabIn').className = 'py-2 rounded-xl ' + (m === 'in' ? 'bg-navy text-white' : 'text-navy');
+      document.getElementById('gateTabUp').className = 'py-2 rounded-xl ' + (m === 'up' ? 'bg-navy text-white' : 'text-navy');
+      document.getElementById('gateBtn').textContent = m === 'in' ? 'دخول' : 'إنشاء الحساب';
+      document.getElementById('gateErr').classList.add('hidden');
+    }
+
+    function gateFail(msg) {
+      const e = document.getElementById('gateErr');
+      e.textContent = msg; e.classList.remove('hidden');
+    }
+
+    function gateDone(name, email) {
+      state.user = { role: 'student', name, email, title: 'بطل السادس الإعدادي', avatar: '', status: 'active' };
+      persist();
+      goToPage('top');
+    }
+
+    async function gateSubmit(e) {
+      e.preventDefault();
+      const form = e.target;
+      const email = document.getElementById('gateEmail').value.trim().toLowerCase();
+      const pass = document.getElementById('gatePass').value;
+      const acc = gateAccounts();
+      const h = await gateHash(pass);
+      if (gateModeNow === 'up') {
+        const name = document.getElementById('gateName').value.trim();
+        if (!name) return gateFail('اكتب اسمك.');
+        if (acc[email]) return gateFail('هذا الإيميل مسجّل من قبل، سجّل دخول.');
+        acc[email] = { name, h };
+        localStorage.setItem('marsa_accounts', JSON.stringify(acc));
+        form.reset();
+        gateDone(name, email);
+      } else {
+        if (!acc[email] || acc[email].h !== h) return gateFail('الإيميل أو الرمز غير صحيح.');
+        form.reset();
+        gateDone(acc[email].name, email);
+      }
+    }
+
+    function gateGoogle() {
+      if (!GOOGLE_CLIENT_ID) {
+        const em = (prompt('اكتب بريد Gmail الخاص بك') || '').trim().toLowerCase();
+        if (!em.includes('@')) return;
+        return gateDone(em.split('@')[0], em);
+      }
+      const start = () => {
+        google.accounts.id.initialize({
+          client_id: GOOGLE_CLIENT_ID,
+          callback: r => {
+            const p = JSON.parse(decodeURIComponent(escape(atob(r.credential.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')))));
+            gateDone(p.name || p.email.split('@')[0], p.email);
+          }
+        });
+        google.accounts.id.prompt();
+      };
+      if (window.google && google.accounts) return start();
+      const s = document.createElement('script');
+      s.src = 'https://accounts.google.com/gsi/client';
+      s.onload = start;
+      document.head.appendChild(s);
+    }
+
+    /* الطلاب المتفاعلون: بطاقة بالرئيسية وبصفحة التوب */
+    function activeStripHtml() {
+      const me = state.user && state.user.status === 'active'
+        ? [{ name: state.user.name + ' (أنت)', title: state.user.title, avatar: state.user.avatar || '' }] : [];
+      const list = me.concat(state.peers.filter(p => p.status === 'active'));
+      const body = list.length ? list.map(m => `
+        <div class="shrink-0 w-24 text-center space-y-1">
+          <div class="w-14 h-14 mx-auto rounded-full bg-navy text-goldBright border-2 border-gold flex items-center justify-center font-black overflow-hidden">
+            ${m.avatar ? `<img src="${m.avatar}" class="w-full h-full object-cover" />` : '🎓'}
+          </div>
+          <p class="text-xs font-black truncate">${m.name}</p>
+          <p class="text-[10px] font-bold text-gold truncate">${m.title}</p>
+        </div>`).join('')
+        : '<p class="text-xs font-bold opacity-70">ما أحد متفاعل هسه، كون أول واحد! 🔥</p>';
+      return `
+        <div class="flex items-center justify-between">
+          <h3 class="text-base font-black">🔥 الطلاب المتفاعلون الآن</h3>
+          <span class="text-xs font-extrabold px-3 py-1 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-400">${list.length} متفاعل</span>
+        </div>
+        <div class="flex gap-3 overflow-x-auto pb-1">${body}</div>`;
+    }
+
+    function gateSync() {
+      document.getElementById('gateBox').classList.toggle('hidden', !!state.user);
+      const slot = document.querySelector('.brand-logo-slot');
+      const gl = document.getElementById('gateLogo');
+      if (slot && !gl.innerHTML.trim()) gl.innerHTML = slot.innerHTML;
+
+      [['activeStripHome', '#page-home', 1], ['activeStripTop', '#page-top', 0]].forEach(([id, sel, pos]) => {
+        let el = document.getElementById(id);
+        if (!el) {
+          el = document.createElement('div');
+          el.id = id; el.className = 'app-card p-5 space-y-3';
+          const host = document.querySelector(sel);
+          host.insertBefore(el, host.children[pos] || null);
+        }
+        el.innerHTML = activeStripHtml();
+      });
+    }
+
+    const _renderUIOrig = renderUI;
+    renderUI = function () { _renderUIOrig(); gateSync(); };
     renderUI();
   </script>
 </body>
