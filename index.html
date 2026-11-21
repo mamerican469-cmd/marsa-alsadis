@@ -73,7 +73,6 @@
 </head>
 <body class="theme-light min-h-screen">
 
-  <!-- قالب SVG مضمون الظهور للوكو مرسى السادس إذا لم يتم تحميل الصورة الخارجية -->
   <svg id="brandSvgTemplate" class="hidden" viewBox="0 0 120 120">
     <circle cx="60" cy="60" r="56" fill="#FBF8EE" stroke="#0B1A30" stroke-width="5" />
     <circle cx="60" cy="60" r="50" fill="none" stroke="#E5C37A" stroke-width="3" />
@@ -87,7 +86,6 @@
     <text x="60" y="101" text-anchor="middle" fill="#F6C838" font-family="Cairo, sans-serif" font-weight="900" font-size="14">مرسى السادس</text>
   </svg>
 
-  <!-- الهيدر العلوي -->
   <header class="sticky top-0 z-30 backdrop-blur-md border-b border-gold/35">
     <div id="topHeaderBar" class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between gap-3 bg-white/95 text-navy transition-colors">
       <div class="flex items-center gap-3">
@@ -103,7 +101,7 @@
           🎨
         </button>
         <button id="authOpenBtn" onclick="openLoginScreen()" class="px-3.5 py-2 rounded-2xl bg-navy text-white border border-gold text-xs font-extrabold shadow-xs hover:bg-navyLight transition">
-          🔐 دخول / حساب
+          👤 ملفي
         </button>
         <button id="logoutBtn" onclick="logoutAccount()" class="hidden px-3 py-2 rounded-2xl bg-rose-600/10 text-rose-700 border border-rose-400/40 text-xs font-extrabold">
           خروج
@@ -112,13 +110,10 @@
     </div>
   </header>
 
-  <!-- المحتوى الرئيسي -->
   <main class="max-w-3xl mx-auto px-4 pt-4 space-y-5">
 
-    <!-- 1. الشاشة الرئيسية -->
     <section id="page-home" class="page-view space-y-5">
 
-      <!-- بطاقة الترحيب واللوكو -->
       <div class="rounded-[28px] p-5 sm:p-6 bg-gradient-to-l from-navy via-navyLight to-[#1D3B68] text-white border-2 border-gold shadow-lg">
         <div class="flex items-center justify-between gap-4">
           <div class="space-y-2">
@@ -145,7 +140,6 @@
         </div>
       </div>
 
-      <!-- شريط متابعة الجلسة الحالية -->
       <div onclick="goToPage('study')" class="cursor-pointer rounded-3xl p-4 bg-navy text-white border border-gold/60 flex items-center justify-between gap-3 shadow-md hover:brightness-105 transition">
         <div class="flex items-center gap-3">
           <div class="w-11 h-11 rounded-2xl bg-gold text-navyDeep flex items-center justify-center font-black text-lg shrink-0">
@@ -161,7 +155,6 @@
         </span>
       </div>
 
-      <!-- بطاقات الاختصارات العريضة -->
       <div class="space-y-3">
         <div onclick="goToPage('quiz')" class="cursor-pointer rounded-[26px] p-4 sm:p-5 bg-gradient-to-l from-[#133A5E] to-[#1D5B79] text-white border border-gold/40 flex items-center justify-between shadow-sm hover:scale-[1.01] transition">
           <div class="flex items-center gap-3.5">
@@ -186,7 +179,6 @@
         </div>
       </div>
 
-      <!-- شبكة البطاقات الأربع -->
       <div class="grid grid-cols-2 gap-3.5">
         <div onclick="goToPage('study')" class="cursor-pointer rounded-[26px] p-4 bg-[#EFEAFB] text-navy border border-purple-300/70 flex flex-col justify-between min-h-[125px] hover:shadow-md transition">
           <div class="w-11 h-11 rounded-2xl bg-[#6C4CE6] text-white flex items-center justify-center text-xl shadow-xs">⏳</div>
@@ -221,13 +213,11 @@
         </div>
       </div>
 
-      <!-- توقيع الإعداد -->
       <div class="text-center py-3 text-xs font-extrabold opacity-80">
         إعداد: مساعدين مرسى السادس ⚓
       </div>
     </section>
 
-    <!-- 2. صفحة الدراسة والمهام -->
     <section id="page-study" class="page-view hidden space-y-5">
       <div class="app-card p-6 text-center space-y-5">
         <div class="flex items-center justify-between">
@@ -270,7 +260,6 @@
       </div>
     </section>
 
-    <!-- 3. صفحة التحدي والفلاش كارد والمهام -->
     <section id="page-quiz" class="page-view hidden space-y-5">
       <div class="app-card p-6 space-y-4">
         <div class="flex items-center justify-between border-b border-gold/35 pb-3">
@@ -329,9 +318,7 @@
       </div>
     </section>
 
-    <!-- 4. صفحة التوب ورادار النشاط (منو متفاعل ومنو نايم) -->
     <section id="page-top" class="page-view hidden space-y-5">
-      <!-- بطاقة حالتي الحالية وتعديل الملف الشخصي -->
       <div class="app-card p-5 space-y-4">
         <div class="flex flex-wrap items-center justify-between gap-3">
           <div class="flex items-center gap-3">
@@ -347,7 +334,6 @@
           </button>
         </div>
 
-        <!-- أزرار تحديد حالتك للجميع -->
         <div class="pt-2 border-t border-gold/30">
           <span class="block text-xs font-extrabold mb-2">حدد حالتك الحالية أمام الجميع:</span>
           <div class="grid grid-cols-3 gap-2 text-xs font-black">
@@ -364,7 +350,6 @@
         </div>
       </div>
 
-      <!-- قائمة المتفاعلين والنايمين -->
       <div class="app-card p-5 space-y-3">
         <div class="flex items-center justify-between">
           <h3 class="text-base sm:text-lg font-black">📡 رادار الطلاب — منو متفاعل ومنو نايم؟</h3>
@@ -374,7 +359,6 @@
       </div>
     </section>
 
-    <!-- 5. صفحة الإعدادات، الملف الشخصي، ولوحة الأدمن -->
     <section id="page-settings" class="page-view hidden space-y-5">
       <div class="app-card p-6 space-y-4">
         <h3 class="text-lg font-black">⚙️ الإعدادات والملف الشخصي</h3>
@@ -385,13 +369,10 @@
           <button onclick="openProfileEditor()" class="px-4 py-2.5 rounded-2xl bg-cream text-navy border border-gold/60 text-xs font-extrabold">
             🪪 تعديل الاسم واللقب والصورة
           </button>
-          <button onclick="openLoginScreen('admin')" class="px-4 py-2.5 rounded-2xl bg-navy text-white border border-gold text-xs font-black">
-            🛠️ لوحة تحكم الأدمن
-          </button>
         </div>
       </div>
 
-      <!-- لوحة الأدمن -->
+      <!-- لوحة الأدمن: تظهر فقط لحسابات ADMIN_UIDS -->
       <div id="adminPanelBox" class="hidden app-card p-6 border-2 border-gold space-y-5">
         <div class="flex items-center justify-between border-b border-gold/40 pb-3">
           <h3 class="text-lg font-black text-gold">🛠️ لوحة تحكم الأدمن</h3>
@@ -402,12 +383,6 @@
           <label class="block text-xs font-extrabold">تعديل العنوان الرئيسي:</label>
           <input id="admHeroField" type="text" required class="w-full px-3.5 py-2 rounded-xl bg-cream text-navy border border-gold/60 text-sm font-bold" />
           <button type="submit" class="px-4 py-2 rounded-xl bg-navy text-white border border-gold text-xs font-black">حفظ</button>
-        </form>
-
-        <form onsubmit="updateAdminCode(event)" class="space-y-2.5">
-          <label class="block text-xs font-extrabold">تغيير رمز الأدمن:</label>
-          <input id="admPassUpdate" type="password" placeholder="رمز جديد" minlength="4" required class="w-full px-3.5 py-2 rounded-xl bg-cream text-navy border border-gold/60 text-sm font-bold" />
-          <button type="submit" class="px-4 py-2 rounded-xl bg-navy text-white border border-gold text-xs font-black">تحديث الرمز</button>
         </form>
 
         <form onsubmit="adminAddQ(event)" class="space-y-2.5 pt-2 border-t border-gold/30">
@@ -447,7 +422,6 @@
 
   </main>
 
-  <!-- شريط التنقل السفلي -->
   <nav class="fixed bottom-0 inset-x-0 z-40 bg-white/95 text-navy border-t-2 border-gold/50 shadow-lg">
     <div class="max-w-3xl mx-auto px-4 py-2 grid grid-cols-4 gap-1 text-center text-xs font-extrabold">
       <button onclick="goToPage('home')" data-nav="home" class="bottom-nav-item py-1.5 rounded-2xl bg-navy text-white flex flex-col items-center gap-0.5">
@@ -469,42 +443,6 @@
     </div>
   </nav>
 
-  <!-- نافذة تسجيل الدخول (إيميل / حساب جوجل / طالب / أدمن) -->
-  <div id="loginModalBox" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white text-navy w-full max-w-md rounded-[28px] p-6 border-2 border-gold relative space-y-4">
-      <button onclick="closeLoginScreen()" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-cream font-black">✕</button>
-      <h3 class="text-lg font-black">تسجيل الدخول — مرسى السادس</h3>
-
-      <div class="grid grid-cols-2 gap-2 p-1 rounded-2xl bg-cream text-xs font-black">
-        <button id="loginTabStudent" type="button" onclick="setLoginTab('student')" class="py-2 rounded-xl bg-navy text-white">🎓 طالب (إيميل / جوجل)</button>
-        <button id="loginTabAdmin" type="button" onclick="setLoginTab('admin')" class="py-2 rounded-xl text-navy">🛠️ أدمن</button>
-      </div>
-
-      <!-- دخول الطالب عبر الإيميل أو حساب جوجل -->
-      <div id="studentLoginPanel" class="space-y-3">
-        <button type="button" onclick="quickGoogleStyleLogin()" class="w-full py-2.5 px-4 rounded-2xl bg-cream hover:bg-gold/15 border-2 border-gold text-navy font-black text-xs sm:text-sm flex items-center justify-center gap-2 transition">
-          <span>🌐</span>
-          <span>متابعة سريعة بحساب Google</span>
-        </button>
-
-        <form onsubmit="submitEmailStudentLogin(event)" class="space-y-2.5 pt-1">
-          <input id="loginStudentName" type="text" placeholder="اسم الطالب" required class="w-full px-4 py-2.5 rounded-2xl bg-cream border border-gold/60 text-sm font-bold" />
-          <input id="loginStudentEmail" type="email" placeholder="البريد الإلكتروني (example@gmail.com)" required class="w-full px-4 py-2.5 rounded-2xl bg-cream border border-gold/60 text-sm font-bold" />
-          <input id="loginStudentTitle" type="text" placeholder="اللقب الدراسي (مثال: صياد الـ 100)" class="w-full px-4 py-2.5 rounded-2xl bg-cream border border-gold/60 text-sm font-bold" />
-          <button type="submit" class="w-full py-3 rounded-2xl bg-navy text-white border border-gold font-black text-sm">دخول بالبريد الإلكتروني</button>
-        </form>
-      </div>
-
-      <!-- دخول الأدمن -->
-      <form id="adminLoginPanel" onsubmit="submitAdminLogin(event)" class="hidden space-y-3">
-        <input id="loginAdminName" type="text" value="الأستاذ علي العبيدي" required class="w-full px-4 py-2.5 rounded-2xl bg-cream border border-gold/60 text-sm font-bold" />
-        <input id="loginAdminPass" type="password" placeholder="رمز الأدمن (الافتراضي: MarsaAdmin2026)" required class="w-full px-4 py-2.5 rounded-2xl bg-cream border border-gold/60 text-sm font-bold" />
-        <button type="submit" class="w-full py-3 rounded-2xl bg-gold text-navyDeep font-black text-sm">دخول كأدمن</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- نافذة تعديل الملف الشخصي (الاسم + اللقب + الصورة) -->
   <div id="profileEditModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
     <div class="bg-white text-navy w-full max-w-md rounded-[28px] p-6 border-2 border-gold relative space-y-4">
       <button onclick="document.getElementById('profileEditModal').classList.add('hidden')" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-cream font-black">✕</button>
@@ -528,7 +466,6 @@
     </div>
   </div>
 
-  <!-- ===== واجهة الدخول الرئيسية (جديد) ===== -->
   <div id="gateBox" class="hidden fixed inset-0 overflow-y-auto" style="z-index:45;background:linear-gradient(170deg,#0B1A30 0%,#14294A 60%,#060F1D 100%)">
     <div class="min-h-full flex items-center justify-center p-4">
       <div class="w-full max-w-md space-y-4">
@@ -560,8 +497,6 @@
             <p id="gateErr" class="hidden text-xs font-extrabold text-rose-700"></p>
             <button id="gateBtn" type="submit" class="w-full py-3 rounded-2xl bg-navy text-white border-2 border-gold font-black text-sm">دخول</button>
           </form>
-
-          <button type="button" onclick="openLoginScreen('admin')" class="w-full text-center text-[11px] font-extrabold text-navy/60 underline">دخول الأدمن</button>
         </div>
 
         <p class="text-center text-xs font-extrabold text-white/80">إعداد: مساعدين مرسى السادس ⚓</p>
@@ -571,13 +506,14 @@
 
   <script>
     const STORE_KEY = 'marsa_alsadis_radar_v6';
+    /* حسابات الأدمن (Firebase UID). أضف UID الشخص الثاني هنا بين علامتي الاقتباس مفصولاً بفاصلة */
+    const ADMIN_UIDS = ["6YfSco5cbJNYMlNtDVTnEGT2WC32"];
     let tempAvatarDataUrl = '';
 
     const defaultState = {
       theme: 'light',
       headline: 'حلم الـ 100 يبدأ بجلسة تركيز واحدة!',
-      adminPass: 'MarsaAdmin2026',
-      user: null, // { role, name, email, title, avatar, status }
+      user: null, // { role, uid, name, email, title, avatar, status }
       points: 45,
       minutes: 30,
       peers: [
@@ -609,12 +545,15 @@
 
     const state = JSON.parse(localStorage.getItem(STORE_KEY) || 'null') || defaultState;
 
+    function isAdminUser() {
+      return !!(state.user && state.user.uid && ADMIN_UIDS.includes(state.user.uid));
+    }
+
     function persist() {
       localStorage.setItem(STORE_KEY, JSON.stringify(state));
       renderUI();
     }
 
-    // حقن صورة اللوكو 167499_2.png مع بديل SVG فوري لا يختفي أبداً
     function hydrateBrandLogos() {
       const svgMarkup = document.getElementById('brandSvgTemplate').innerHTML;
       document.querySelectorAll('.brand-logo-slot').forEach(slot => {
@@ -648,72 +587,9 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // تسجيل الدخول
-    function openLoginScreen(role = 'student') {
-      document.getElementById('loginModalBox').classList.remove('hidden');
-      setLoginTab(role);
-    }
-
-    function closeLoginScreen() {
-      document.getElementById('loginModalBox').classList.add('hidden');
-    }
-
-    function setLoginTab(role) {
-      const sBtn = document.getElementById('loginTabStudent');
-      const aBtn = document.getElementById('loginTabAdmin');
-      const sPanel = document.getElementById('studentLoginPanel');
-      const aPanel = document.getElementById('adminLoginPanel');
-      if (role === 'admin') {
-        aBtn.className = 'py-2 rounded-xl bg-navy text-white';
-        sBtn.className = 'py-2 rounded-xl text-navy';
-        aPanel.classList.remove('hidden');
-        sPanel.classList.add('hidden');
-      } else {
-        sBtn.className = 'py-2 rounded-xl bg-navy text-white';
-        aBtn.className = 'py-2 rounded-xl text-navy';
-        sPanel.classList.remove('hidden');
-        aPanel.classList.add('hidden');
-      }
-    }
-
-    function quickGoogleStyleLogin() {
-      state.user = {
-        role: 'student',
-        name: 'طالب حساب Google',
-        email: 'student.google@gmail.com',
-        title: 'طالب السادس الطموح',
-        avatar: '',
-        status: 'active'
-      };
-      closeLoginScreen();
-      persist();
-    }
-
-    function submitEmailStudentLogin(e) {
-      e.preventDefault();
-      const name = document.getElementById('loginStudentName').value.trim();
-      const email = document.getElementById('loginStudentEmail').value.trim();
-      const title = document.getElementById('loginStudentTitle').value.trim() || 'بطل السادس الإعدادي';
-      if (!name || !email) return;
-      state.user = { role: 'student', name, email, title, avatar: '', status: 'active' };
-      e.target.reset();
-      closeLoginScreen();
-      persist();
-    }
-
-    function submitAdminLogin(e) {
-      e.preventDefault();
-      const name = document.getElementById('loginAdminName').value.trim();
-      const pass = document.getElementById('loginAdminPass').value;
-      if (pass !== state.adminPass) {
-        alert('رمز مرور الأدمن غير صحيح.');
-        return;
-      }
-      state.user = { role: 'admin', name: name || 'الأستاذ علي العبيدي', email: '', title: 'مشرف المنصة', avatar: '', status: 'active' };
-      document.getElementById('loginAdminPass').value = '';
-      closeLoginScreen();
-      persist();
-      goToPage('settings');
+    /* زر الحساب: يفتح الملف الشخصي (الدخول عن طريق شاشة الدخول فقط) */
+    function openLoginScreen() {
+      if (state.user) openProfileEditor();
     }
 
     function logoutAccount() {
@@ -721,7 +597,6 @@
       persist();
     }
 
-    // الملف الشخصي والحالة
     function openProfileEditor() {
       const currentName = state.user ? state.user.name : 'بطل مرسى السادس';
       const currentTitle = state.user ? state.user.title : 'طالب السادس الطموح';
@@ -765,7 +640,6 @@
       persist();
     }
 
-    // المؤقت
     let totalSec = 25 * 60;
     let remSec = totalSec;
     let timerId = null;
@@ -830,7 +704,6 @@
       refreshStudyClock();
     }
 
-    // المهام
     function addTaskItem(e, inputId) {
       e.preventDefault();
       const inp = document.getElementById(inputId);
@@ -855,7 +728,6 @@
       persist();
     }
 
-    // الأسئلة
     let qPos = 0;
     let qAnswered = false;
 
@@ -904,7 +776,6 @@
       renderQuizSection();
     }
 
-    // الفلاش كارد
     let fcPos = 0;
 
     function renderFcSection() {
@@ -923,24 +794,18 @@
       renderFcSection();
     }
 
-    // إدارة الأدمن
+    /* إدارة الأدمن (كلها تتحقق من صلاحية الأدمن) */
     function updateHeroText(e) {
       e.preventDefault();
+      if (!isAdminUser()) return;
       state.headline = document.getElementById('admHeroField').value.trim();
       persist();
       alert('تم حفظ العنوان.');
     }
 
-    function updateAdminCode(e) {
-      e.preventDefault();
-      state.adminPass = document.getElementById('admPassUpdate').value;
-      document.getElementById('admPassUpdate').value = '';
-      persist();
-      alert('تم تحديث رمز الأدمن.');
-    }
-
     function adminAddQ(e) {
       e.preventDefault();
+      if (!isAdminUser()) return;
       state.questions.push({
         id: Date.now(),
         subject: document.getElementById('aqSubj').value.trim(),
@@ -959,12 +824,14 @@
     }
 
     function adminDelQ(id) {
+      if (!isAdminUser()) return;
       state.questions = state.questions.filter(q => q.id !== id);
       persist();
     }
 
     function adminAddFc(e) {
       e.preventDefault();
+      if (!isAdminUser()) return;
       state.flashcards.push({
         id: Date.now(),
         subject: document.getElementById('afcSubj').value.trim(),
@@ -977,11 +844,13 @@
     }
 
     function adminDelFc(id) {
+      if (!isAdminUser()) return;
       state.flashcards = state.flashcards.filter(c => c.id !== id);
       persist();
     }
 
     function exportJsonData() {
+      if (!isAdminUser()) return;
       navigator.clipboard?.writeText(JSON.stringify({
         headline: state.headline,
         questions: state.questions,
@@ -1017,16 +886,12 @@
       document.getElementById('myProfileNameDisplay').textContent = myName;
       document.getElementById('myProfileTitleDisplay').textContent = `لقب: ${myTitle}`;
 
-      if (state.user) {
-        logoutBtn.classList.remove('hidden');
-        if (state.user.role === 'admin') adminBox.classList.remove('hidden');
-        else adminBox.classList.add('hidden');
-      } else {
-        logoutBtn.classList.add('hidden');
-        adminBox.classList.add('hidden');
-      }
+      if (state.user) logoutBtn.classList.remove('hidden');
+      else logoutBtn.classList.add('hidden');
 
-      // صورة الملف الشخصي
+      if (isAdminUser()) adminBox.classList.remove('hidden');
+      else adminBox.classList.add('hidden');
+
       const avatarImg = document.getElementById('myAvatarImg');
       const avatarFb = document.getElementById('myAvatarFallback');
       if (state.user && state.user.avatar) {
@@ -1038,7 +903,6 @@
         avatarFb.classList.remove('hidden');
       }
 
-      // قائمة المتفاعلين والنايمين
       const roster = [
         { name: `${myName} (أنت)`, title: myTitle, status: myStatus, points: state.points, avatar: state.user?.avatar || '' },
         ...state.peers
@@ -1059,7 +923,6 @@
         </div>
       `).join('');
 
-      // المهام
       const taskMarkup = state.tasks.map(t => `
         <div class="flex items-center justify-between gap-2 p-3 rounded-2xl bg-cream text-navy border border-gold/45">
           <label class="flex items-center gap-2.5 cursor-pointer text-sm font-extrabold">
@@ -1072,7 +935,6 @@
       document.getElementById('studyTaskList').innerHTML = taskMarkup;
       document.getElementById('tasksTabList').innerHTML = taskMarkup;
 
-      // قوائم الأدمن
       document.getElementById('admQListView').innerHTML = state.questions.map(q => `
         <div class="flex items-center justify-between p-2.5 rounded-xl bg-cream text-navy font-bold">
           <span>[${q.subject}] ${q.question}</span>
@@ -1096,21 +958,8 @@
     renderUI();
   </script>
 
-  <!-- ===== واجهة الدخول + الطلاب المتفاعلون (جديد) ===== -->
   <script>
-    /* ضع هنا Client ID من Google Cloud لتفعيل الدخول الحقيقي بحساب جوجل */
-    const GOOGLE_CLIENT_ID = '';
-
     let gateModeNow = 'in';
-
-    async function gateHash(t) {
-      try {
-        const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t));
-        return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join('');
-      } catch (e) { return btoa(unescape(encodeURIComponent(t))); }
-    }
-
-    function gateAccounts() { try { return JSON.parse(localStorage.getItem('marsa_accounts') || '{}'); } catch (e) { return {}; } }
 
     function gateMode(m) {
       gateModeNow = m;
@@ -1127,58 +976,6 @@
       e.textContent = msg; e.classList.remove('hidden');
     }
 
-    function gateDone(name, email) {
-      state.user = { role: 'student', name, email, title: 'بطل السادس الإعدادي', avatar: '', status: 'active' };
-      persist();
-      goToPage('top');
-    }
-
-    async function gateSubmit(e) {
-      e.preventDefault();
-      const form = e.target;
-      const email = document.getElementById('gateEmail').value.trim().toLowerCase();
-      const pass = document.getElementById('gatePass').value;
-      const acc = gateAccounts();
-      const h = await gateHash(pass);
-      if (gateModeNow === 'up') {
-        const name = document.getElementById('gateName').value.trim();
-        if (!name) return gateFail('اكتب اسمك.');
-        if (acc[email]) return gateFail('هذا الإيميل مسجّل من قبل، سجّل دخول.');
-        acc[email] = { name, h };
-        localStorage.setItem('marsa_accounts', JSON.stringify(acc));
-        form.reset();
-        gateDone(name, email);
-      } else {
-        if (!acc[email] || acc[email].h !== h) return gateFail('الإيميل أو الرمز غير صحيح.');
-        form.reset();
-        gateDone(acc[email].name, email);
-      }
-    }
-
-    function gateGoogle() {
-      if (!GOOGLE_CLIENT_ID) {
-        const em = (prompt('اكتب بريد Gmail الخاص بك') || '').trim().toLowerCase();
-        if (!em.includes('@')) return;
-        return gateDone(em.split('@')[0], em);
-      }
-      const start = () => {
-        google.accounts.id.initialize({
-          client_id: GOOGLE_CLIENT_ID,
-          callback: r => {
-            const p = JSON.parse(decodeURIComponent(escape(atob(r.credential.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')))));
-            gateDone(p.name || p.email.split('@')[0], p.email);
-          }
-        });
-        google.accounts.id.prompt();
-      };
-      if (window.google && google.accounts) return start();
-      const s = document.createElement('script');
-      s.src = 'https://accounts.google.com/gsi/client';
-      s.onload = start;
-      document.head.appendChild(s);
-    }
-
-    /* الطلاب المتفاعلون: بطاقة بالرئيسية وبصفحة التوب */
     function activeStripHtml() {
       const me = state.user && state.user.status === 'active'
         ? [{ name: state.user.name + ' (أنت)', title: state.user.title, avatar: state.user.avatar || '' }] : [];
@@ -1223,7 +1020,6 @@
     renderUI();
   </script>
 
-  <!-- ===== ربط Firebase: دخول حقيقي + طلاب حقيقيين ===== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, onAuthStateChanged, signInWithPopup, signInWithRedirect, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -1258,7 +1054,6 @@
     };
     const fail = e => gateFail(ERR[e.code] || ('صار خطأ: ' + (e.code || e.message)));
 
-    /* مزامنة بياناتي مع Firestore */
     async function fbSyncNow() {
       if (!myUid || !state.user || state.user.uid !== myUid) return;
       try {
@@ -1272,7 +1067,6 @@
     const _persist = persist;
     persist = function () { _persist(); fbSync(); };
 
-    /* الطلاب الحقيقيين: لو ما رسل نبضة من 3 دقائق يعتبر نايم */
     function applyPeers() {
       const now = Date.now();
       state.peers = cache.filter(p => p.id !== myUid).map(p => ({
@@ -1288,7 +1082,7 @@
         myUid = null; clearInterval(hb);
         if (unsub) { unsub(); unsub = null; }
         cache = []; state.peers = [];
-        if (state.user && state.user.role !== 'admin') state.user = null;
+        state.user = null;
         persist();
         return;
       }
@@ -1296,7 +1090,7 @@
       let p = {};
       try { const s = await getDoc(doc(db, 'users', u.uid)); if (s.exists()) p = s.data(); } catch (e) {}
       state.user = {
-        role: 'student', uid: u.uid, email: u.email || '',
+        role: ADMIN_UIDS.includes(u.uid) ? 'admin' : 'student', uid: u.uid, email: u.email || '',
         name: p.name || pendingName || u.displayName || (u.email || 'طالب').split('@')[0],
         title: p.title || 'بطل السادس الإعدادي', avatar: p.avatar || '', status: p.status || 'active'
       };
@@ -1313,7 +1107,6 @@
       if (justLogged) { justLogged = false; goToPage('top'); }
     });
 
-    /* دخول Google الحقيقي */
     window.gateGoogle = async function () {
       justLogged = true;
       const pr = new GoogleAuthProvider();
@@ -1325,7 +1118,6 @@
       }
     };
 
-    /* دخول وتسجيل بالإيميل والرمز */
     window.gateSubmit = async function (e) {
       e.preventDefault();
       const form = e.target;
@@ -1353,14 +1145,6 @@
       persist();
     };
 
-    /* نافذة الدخول القديمة: تبقى للأدمن فقط */
-    const _openLogin = openLoginScreen;
-    window.openLoginScreen = function (role = 'student') {
-      if (role === 'admin') { document.getElementById('loginTabStudent').style.display = 'none'; _openLogin('admin'); }
-      else if (state.user) openProfileEditor();
-    };
-
-    /* تصغير الصورة الشخصية حتى تنحفظ بسرعة */
     window.handleAvatarFile = function (input) {
       const f = input.files && input.files[0];
       if (!f) return;
