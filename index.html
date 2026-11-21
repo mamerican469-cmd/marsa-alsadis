@@ -435,8 +435,8 @@
 
       <div class="app-card p-5 space-y-4">
         <h3 class="text-base font-black">📚 مهام اليوم</h3>
-        <form onsubmit="addTaskItem(event, 'studyTaskInput')" class="flex gap-2">
-          <input id="studyTaskInput" type="text" placeholder="اكتب مهمة دراسية جديدة..." required class="flex-1 h-11 px-4 rounded-2xl bg-cream text-navy border border-gold/50 text-sm font-bold focus:outline-none" />
+        <form onsubmit="addTaskItem(event, 'studyTaskInput')" class="flex gap-2 items-start">
+          <textarea id="studyTaskInput" rows="2" placeholder="اكتب مهمة بكل سطر..." required class="flex-1 px-4 py-2.5 rounded-2xl bg-cream text-navy border border-gold/50 text-sm font-bold focus:outline-none"></textarea>
           <button type="submit" class="h-11 px-4 rounded-2xl bg-navy text-white border border-gold text-xs font-black whitespace-nowrap shrink-0">+ إضافة</button>
         </form>
         <div id="studyTaskList" class="space-y-2"></div>
@@ -493,11 +493,20 @@
     <section id="page-tasks" class="page-view hidden space-y-5">
       <div class="app-card p-6 space-y-4">
         <h3 class="text-base font-black">✅ قائمة المهام الدراسية</h3>
-        <form onsubmit="addTaskItem(event, 'tasksTabInput')" class="flex gap-2">
-          <input id="tasksTabInput" type="text" placeholder="أضف مهمة جديدة..." required class="flex-1 h-11 px-4 rounded-2xl bg-cream text-navy border border-gold/50 text-sm font-bold focus:outline-none" />
+        <form onsubmit="addTaskItem(event, 'tasksTabInput')" class="flex gap-2 items-start">
+          <textarea id="tasksTabInput" rows="2" placeholder="اكتب مهمة بكل سطر..." required class="flex-1 px-4 py-2.5 rounded-2xl bg-cream text-navy border border-gold/50 text-sm font-bold focus:outline-none"></textarea>
           <button type="submit" class="h-11 px-4 rounded-2xl bg-navy text-white border border-gold text-xs font-black whitespace-nowrap shrink-0">+ إضافة</button>
         </form>
         <div id="tasksTabList" class="space-y-2"></div>
+      </div>
+
+      <div class="app-card p-6 space-y-4">
+        <h3 class="text-base font-black">🎯 أهدافي</h3>
+        <form onsubmit="addGoalItem(event)" class="flex gap-2 items-start">
+          <textarea id="goalInput" rows="2" placeholder="اكتب هدف بكل سطر..." required class="flex-1 px-4 py-2.5 rounded-2xl bg-cream text-navy border border-gold/50 text-sm font-bold focus:outline-none"></textarea>
+          <button type="submit" class="h-11 px-4 rounded-2xl bg-navy text-white border border-gold text-xs font-black whitespace-nowrap shrink-0">+ إضافة</button>
+        </form>
+        <div id="goalList" class="space-y-2"></div>
       </div>
     </section>
 
@@ -599,6 +608,11 @@
         </form>
 
         <div id="admCListView" class="space-y-2 text-xs"></div>
+
+        <div class="pt-2 border-t border-gold/30 space-y-2.5">
+          <h4 class="text-sm font-black">👀 أهداف ومهام الطلاب</h4>
+          <div id="adminStudentsData" class="space-y-2 text-xs"></div>
+        </div>
       </div>
     </section>
 
@@ -721,10 +735,14 @@
       ],
       tasks: [
         { id: 1, text: 'مراجعة الفصل الأول وحل مسائل وزارية', done: false }
-      ]
+      ],
+      goals: []
     };
 
     const state = JSON.parse(localStorage.getItem(STORE_KEY) || 'null') || defaultState;
+    if (!Array.isArray(state.goals)) state.goals = [];
+
+    const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
     function isAdminUser() {
       return !!(state.user && state.user.uid && ADMIN_UIDS.includes(state.user.uid));
@@ -1097,12 +1115,14 @@
       }
     }
 
+    // إضافة عدة مهام دفعة وحدة: كل سطر = مهمة
     function addTaskItem(e, inputId) {
       e.preventDefault();
       const inp = document.getElementById(inputId);
-      const val = inp.value.trim();
-      if (!val) return;
-      state.tasks.unshift({ id: Date.now(), text: val, done: false });
+      const lines = inp.value.split(/\n+/).map(s => s.trim()).filter(Boolean);
+      if (!lines.length) return;
+      const base = Date.now();
+      lines.reverse().forEach((text, i) => state.tasks.unshift({ id: base + i, text, done: false }));
       inp.value = '';
       persist();
     }
@@ -1119,6 +1139,57 @@
     function deleteTaskItem(id) {
       state.tasks = state.tasks.filter(x => x.id !== id);
       persist();
+    }
+
+    // الأهداف (تنحفظ بمجموعة منفصلة بالـ Firestore)
+    function addGoalItem(e) {
+      e.preventDefault();
+      const inp = document.getElementById('goalInput');
+      const lines = inp.value.split(/\n+/).map(s => s.trim()).filter(Boolean);
+      if (!lines.length) return;
+      const base = Date.now();
+      lines.reverse().forEach((text, i) => state.goals.unshift({ id: base + i, text, done: false }));
+      inp.value = '';
+      persist();
+    }
+
+    function toggleGoalItem(id) {
+      const g = state.goals.find(x => x.id === id);
+      if (g) { g.done = !g.done; persist(); }
+    }
+
+    function deleteGoalItem(id) {
+      state.goals = state.goals.filter(x => x.id !== id);
+      persist();
+    }
+
+    function renderGoals() {
+      const el = document.getElementById('goalList');
+      if (!el) return;
+      el.innerHTML = state.goals.map(g => `
+        <div class="flex items-center justify-between gap-2 p-3 rounded-2xl bg-cream text-navy border border-gold/45">
+          <label class="flex items-center gap-2.5 cursor-pointer text-sm font-extrabold">
+            <input type="checkbox" ${g.done ? 'checked' : ''} onchange="toggleGoalItem(${g.id})" class="w-4 h-4 accent-navy" />
+            <span class="${g.done ? 'line-through opacity-50' : ''}">${esc(g.text)}</span>
+          </label>
+          <button onclick="deleteGoalItem(${g.id})" class="text-xs font-bold text-rose-700 px-2 py-1">حذف</button>
+        </div>
+      `).join('');
+    }
+
+    function renderAdminStudents() {
+      const box = document.getElementById('adminStudentsData');
+      if (!box || !isAdminUser()) return;
+      const list = (window.adminStudents || []).filter(s => (s.goals || []).length || (s.tasks || []).length);
+      box.innerHTML = list.length ? list.map(s => `
+        <div class="p-3 rounded-xl bg-cream text-navy border border-gold/45 space-y-1.5">
+          <p class="font-black text-sm">${esc(s.name || 'طالب')}</p>
+          <p class="font-extrabold text-gold">🎯 الأهداف (${(s.goals || []).length})</p>
+          ${(s.goals || []).map(g => `<p class="${g.done ? 'line-through opacity-50' : ''}">• ${esc(g.text)}</p>`).join('')}
+          <p class="font-extrabold text-gold pt-1">✅ المهام (${(s.tasks || []).length})</p>
+          ${(s.tasks || []).map(t => `<p class="${t.done ? 'line-through opacity-50' : ''}">• ${esc(t.text)}</p>`).join('')}
+        </div>
+      `).join('') : '<p class="font-bold opacity-70">ما كو بيانات للطلاب لحد هسه.</p>';
     }
 
     let qPos = 0;
@@ -1319,7 +1390,7 @@
         <div class="flex items-center justify-between gap-2 p-3 rounded-2xl bg-cream text-navy border border-gold/45">
           <label class="flex items-center gap-2.5 cursor-pointer text-sm font-extrabold">
             <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTaskItem(${t.id})" class="w-4 h-4 accent-navy" />
-            <span class="${t.done ? 'line-through opacity-50' : ''}">${t.text}</span>
+            <span class="${t.done ? 'line-through opacity-50' : ''}">${esc(t.text)}</span>
           </label>
           <button onclick="deleteTaskItem(${t.id})" class="text-xs font-bold text-rose-700 px-2 py-1">حذف</button>
         </div>
@@ -1343,6 +1414,8 @@
 
       renderQuizSection();
       renderFcSection();
+      renderGoals();
+      renderAdminStudents();
     }
 
     hydrateBrandLogos();
@@ -1431,7 +1504,7 @@
     auth.languageCode = 'ar';
     const db = getFirestore(app);
 
-    let myUid = null, unsub = null, cache = [], hb = null, justLogged = false, pendingName = '';
+    let myUid = null, unsub = null, unsubAdmin = null, cache = [], hb = null, justLogged = false, pendingName = '';
 
     const ERR = {
       'auth/email-already-in-use': 'هذا الإيميل مسجّل من قبل، سجّل دخول.',
@@ -1456,6 +1529,11 @@
           status: state.user.status || 'active', points: state.points, minutes: state.minutes, lastSeen: Date.now()
         }, { merge: true });
       } catch (e) { console.warn('sync', e); }
+      try {
+        await setDoc(doc(db, 'userData', myUid), {
+          name: state.user.name, tasks: state.tasks, goals: state.goals || [], updatedAt: Date.now()
+        }, { merge: true });
+      } catch (e) { console.warn('syncData', e); }
     }
     let st; function fbSync() { clearTimeout(st); st = setTimeout(fbSyncNow, 1500); }
     const _persist = persist;
@@ -1475,6 +1553,8 @@
       if (!u) {
         myUid = null; clearInterval(hb);
         if (unsub) { unsub(); unsub = null; }
+        if (unsubAdmin) { unsubAdmin(); unsubAdmin = null; }
+        window.adminStudents = [];
         cache = []; state.peers = [];
         state.user = null;
         persist();
@@ -1490,6 +1570,10 @@
       };
       state.points = p.points ?? 0;
       state.minutes = p.minutes ?? 0;
+      try {
+        const sd = await getDoc(doc(db, 'userData', u.uid));
+        if (sd.exists()) { state.tasks = sd.data().tasks || []; state.goals = sd.data().goals || []; }
+      } catch (e) {}
       pendingName = '';
       persist();
       fbSyncNow();
@@ -1497,6 +1581,12 @@
         cache = s.docs.map(d => ({ id: d.id, ...d.data() }));
         applyPeers();
       }, err => console.warn('listen', err));
+      if (ADMIN_UIDS.includes(u.uid) && !unsubAdmin) {
+        unsubAdmin = onSnapshot(collection(db, 'userData'), s => {
+          window.adminStudents = s.docs.map(d => ({ id: d.id, ...d.data() }));
+          renderAdminStudents();
+        }, err => console.warn('admin listen', err));
+      }
       clearInterval(hb); hb = setInterval(fbSyncNow, 60000);
       if (justLogged) { justLogged = false; goToPage('top'); }
     });
