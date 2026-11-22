@@ -223,8 +223,8 @@
           <div class="flex items-center gap-3.5">
             <div class="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center text-2xl shrink-0">🃏</div>
             <div>
-              <h3 class="text-base sm:text-lg font-black">بطاقات الذاكرة السريعة</h3>
-              <p class="text-xs text-white/80 font-semibold">مراجعة القوانين والتعاريف بأسلوب البطاقات الذكية</p>
+              <h3 class="text-base sm:text-lg font-black">بطاقات الذاكرة السحرية</h3>
+              <p class="text-xs text-white/80 font-semibold">100 بطاقة تعريف وشرح لمواد السادس العلمي</p>
             </div>
           </div>
           <span class="text-xl font-black text-goldBright">‹</span>
@@ -426,7 +426,7 @@
           <button id="restBtn" onclick="toggleRest()" class="w-full h-10 rounded-xl bg-white hover:bg-amber-50 border-2 border-gold text-navy text-xs font-black transition whitespace-nowrap">
             ☕ ابدأ استراحة
           </button>
-          <p class="text-[11px] font-bold text-navy/60">وقت الاستراحة يوقّف التايمر، ولما تخلص ترجع الجلسة تكمل تلقائياً.</p>
+          <p class="text-[11px] font-bold text-navy/60">وقت الاستراحة يوقّف التايمر، ولما تخلص يطلع صوت وإشعار وترجع الجلسة تكمل تلقائياً.</p>
         </div>
       </div>
 
@@ -467,11 +467,14 @@
 
     <section id="page-cards" class="page-view hidden space-y-5">
       <div class="app-card p-6 space-y-4">
-        <div class="flex items-center justify-between gap-2">
-          <h3 class="text-base font-black">🃏 بطاقات الذاكرة</h3>
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h3 class="text-base font-black">✨ بطاقات الذاكرة السحرية</h3>
+            <p class="text-[11px] font-bold opacity-70">تعريفات، قوانين، وشرح علمي لمواد السادس العلمي</p>
+          </div>
           <div class="flex items-center gap-1.5 shrink-0">
             <button onclick="shiftFc(-1)" class="h-9 px-3 rounded-xl bg-cream text-navy border border-gold/50 text-xs font-extrabold whitespace-nowrap">السابقة</button>
-            <span id="fcPagerLabel" class="h-9 px-2.5 rounded-xl bg-navy text-white text-xs font-black inline-flex items-center">1 / 1</span>
+            <span id="fcPagerLabel" class="h-9 px-2.5 rounded-xl bg-navy text-white text-xs font-black inline-flex items-center">1 / 100</span>
             <button onclick="shiftFc(1)" class="h-9 px-3 rounded-xl bg-cream text-navy border border-gold/50 text-xs font-extrabold whitespace-nowrap">التالية</button>
           </div>
         </div>
@@ -479,16 +482,25 @@
         <div id="fcSubjectFilterBar" class="flex gap-1.5 overflow-x-auto pb-1"></div>
 
         <div id="fcBox" onclick="this.classList.toggle('flipped')" class="flip-wrap">
-          <div class="flip-body min-h-[210px]">
-            <div class="flip-side rounded-3xl p-6 bg-navy text-white border-2 border-gold flex flex-col justify-between min-h-[210px]">
-              <span id="fcSubjText" class="text-xs text-goldBright font-bold">المادة</span>
-              <p id="fcFrontDisplay" class="text-lg sm:text-xl font-black text-center my-4"></p>
-              <span class="text-center text-[11px] text-white/70">انقر لقلب البطاقة</span>
+          <div class="flip-body min-h-[245px]">
+            <div class="flip-side rounded-3xl p-6 bg-navy text-white border-2 border-gold flex flex-col justify-between min-h-[245px]">
+              <div class="flex items-center justify-between gap-2">
+                <span id="fcSubjText" class="text-xs text-goldBright font-extrabold">المادة</span>
+                <span id="fcTopicText" class="text-[11px] px-2.5 py-0.5 rounded-full bg-white/10 text-goldBright font-bold">موضوع البطاقة</span>
+              </div>
+              <p id="fcFrontDisplay" class="text-lg sm:text-xl font-black text-center my-4 leading-relaxed"></p>
+              <span class="text-center text-[11px] text-white/70 font-bold">✨ انقر لقلب البطاقة وقراءة الشرح والتعريف</span>
             </div>
-            <div class="flip-side flip-back rounded-3xl p-6 bg-white text-navy border-2 border-gold flex flex-col justify-between min-h-[210px]">
-              <span class="text-xs text-gold font-extrabold">الجواب النموذجي</span>
-              <p id="fcBackDisplay" class="text-base sm:text-lg font-extrabold text-center my-4"></p>
-              <span class="text-center text-[11px] text-navy/60">انقر للعودة</span>
+            <div class="flip-side flip-back rounded-3xl p-6 bg-white text-navy border-2 border-gold flex flex-col justify-between min-h-[245px] overflow-y-auto">
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-xs text-gold font-black">📖 التعريف والشرح العلمي</span>
+                <span id="fcBackSubjText" class="text-[11px] font-extrabold text-navy/60"></span>
+              </div>
+              <div class="my-3 space-y-2 text-center">
+                <p id="fcBackDisplay" class="text-sm sm:text-base font-extrabold leading-relaxed"></p>
+                <p id="fcNoteDisplay" class="text-xs font-bold text-navy/75 bg-cream border border-gold/40 rounded-2xl p-3 leading-relaxed"></p>
+              </div>
+              <span class="text-center text-[11px] text-navy/60 font-bold">انقر للعودة إلى وجه البطاقة</span>
             </div>
           </div>
         </div>
@@ -566,6 +578,9 @@
           <button onclick="openProfileEditor()" class="h-11 px-4 rounded-2xl bg-cream text-navy border border-gold/60 text-xs font-extrabold whitespace-nowrap">
             🪪 تعديل الاسم واللقب والصورة
           </button>
+          <button onclick="requestAlertPermission(true)" class="h-11 px-4 rounded-2xl bg-cream text-navy border border-gold/60 text-xs font-extrabold whitespace-nowrap sm:col-span-2">
+            🔔 تفعيل / اختبار صوت وإشعارات الجلسة والريست
+          </button>
         </div>
       </div>
 
@@ -575,7 +590,15 @@
           <button onclick="exportJsonData()" class="h-9 px-3 rounded-xl bg-cream text-navy border border-gold text-xs font-extrabold whitespace-nowrap">نسخ JSON</button>
         </div>
 
-        <form onsubmit="updateHeroText(event)" class="space-y-2.5">
+        <div class="pt-1 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <h4 class="text-sm font-black text-rose-700">🚫 إدارة الأعضاء والطرد</h4>
+            <span class="text-[11px] font-bold opacity-70">صلاحية إزالة / طرد أي عضو</span>
+          </div>
+          <div id="adminMembersRoster" class="space-y-2 text-xs"></div>
+        </div>
+
+        <form onsubmit="updateHeroText(event)" class="space-y-2.5 pt-2 border-t border-gold/30">
           <label class="block text-xs font-extrabold">تعديل العنوان الرئيسي:</label>
           <input id="admHeroField" type="text" required class="w-full h-11 px-3.5 rounded-xl bg-cream text-navy border border-gold/60 text-sm font-bold" />
           <button type="submit" class="h-10 px-4 rounded-xl bg-navy text-white border border-gold text-xs font-black">حفظ</button>
@@ -607,8 +630,8 @@
         <form onsubmit="adminAddFc(event)" class="space-y-2.5 pt-2 border-t border-gold/30">
           <h4 class="text-sm font-black">🃏 إضافة بطاقة فلاش كارد</h4>
           <input id="afcSubj" type="text" placeholder="المادة" required class="w-full h-10 px-3.5 rounded-xl bg-cream text-navy border border-gold/60 text-sm font-bold" />
-          <input id="afcFront" type="text" placeholder="السؤال / المصطلح" required class="w-full h-10 px-3.5 rounded-xl bg-cream text-navy border border-gold/60 text-sm font-bold" />
-          <input id="afcBack" type="text" placeholder="الجواب" required class="w-full h-10 px-3.5 rounded-xl bg-cream text-navy border border-gold/60 text-sm font-bold" />
+          <input id="afcFront" type="text" placeholder="السؤال / المصطلح / التعريف" required class="w-full h-10 px-3.5 rounded-xl bg-cream text-navy border border-gold/60 text-sm font-bold" />
+          <input id="afcBack" type="text" placeholder="الجواب / الشرح" required class="w-full h-10 px-3.5 rounded-xl bg-cream text-navy border border-gold/60 text-sm font-bold" />
           <button type="submit" class="h-10 px-4 rounded-xl bg-gold text-navyDeep text-xs font-black whitespace-nowrap">إضافة البطاقة</button>
         </form>
 
@@ -706,13 +729,286 @@
   </div>
 
   <script>
-    const STORE_KEY = 'marsa_alsadis_radar_v9_ch1_40q';
+    const STORE_KEY = 'marsa_alsadis_radar_v10_100cards_kick';
     const ADMIN_UIDS = ["6YfSco5cbJNYMlNtDVTnEGT2WC32"];
     let tempAvatarDataUrl = '';
     let suppressQuizResetOnPersist = false;
     let autoAdvanceTimerId = null;
 
-    /* توليد 40 سؤالاً للفصل الأول لكل مادة من المواد السبع (280 سؤالاً إجمالاً) */
+    /* صوت وإشعارات الجلسة والريست */
+    let audioCtxInstance = null;
+
+    function getAudioCtx() {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return null;
+      if (!audioCtxInstance) audioCtxInstance = new Ctx();
+      if (audioCtxInstance.state === 'suspended') {
+        audioCtxInstance.resume().catch(() => {});
+      }
+      return audioCtxInstance;
+    }
+
+    function playToneSequence(notes) {
+      const ctx = getAudioCtx();
+      if (!ctx) return;
+      try {
+        let start = ctx.currentTime + 0.02;
+        notes.forEach(([freq, dur, delay = 0]) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, start + delay);
+          gain.gain.setValueAtTime(0.001, start + delay);
+          gain.gain.exponentialRampToValueAtTime(0.24, start + delay + 0.03);
+          gain.gain.exponentialRampToValueAtTime(0.001, start + delay + dur);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(start + delay);
+          osc.stop(start + delay + dur + 0.02);
+        });
+      } catch (e) {}
+    }
+
+    function playAlertSound(kind) {
+      if (kind === 'rest_end') {
+        playToneSequence([
+          [587.33, 0.16, 0],
+          [783.99, 0.16, 0.18],
+          [987.77, 0.28, 0.36]
+        ]);
+      } else {
+        playToneSequence([
+          [880, 0.18, 0],
+          [659.25, 0.18, 0.2],
+          [523.25, 0.32, 0.4]
+        ]);
+      }
+      if (navigator.vibrate) {
+        try { navigator.vibrate(kind === 'rest_end' ? [180, 90, 240] : [250, 120, 250]); } catch (e) {}
+      }
+    }
+
+    async function requestAlertPermission(showFeedback = false) {
+      getAudioCtx();
+      if (!('Notification' in window)) {
+        if (showFeedback) {
+          playAlertSound('rest_end');
+          alert('تم تشغيل الصوت التجريبي (متصفحك لا يدعم إشعارات النظام المباشرة).');
+        }
+        return;
+      }
+      if (Notification.permission === 'default') {
+        try { await Notification.requestPermission(); } catch (e) {}
+      }
+      if (showFeedback) {
+        playAlertSound('rest_end');
+        if (Notification.permission === 'granted') {
+          dispatchStudentNotification('مرسى السادس 🔔', 'الإشعارات والصوت مفعّلان وجاهزان للجلسات والريست!');
+        } else {
+          alert('يرجى السماح بالإشعارات من إعدادات المتصفح ليصلك التنبيه عند انتهاء الريست أو الجلسة.');
+        }
+      }
+    }
+
+    function dispatchStudentNotification(title, body, tag = 'marsa-alert') {
+      if (!('Notification' in window) || Notification.permission !== 'granted') return;
+      try {
+        const n = new Notification(title, {
+          body,
+          tag,
+          renotify: true,
+          silent: false
+        });
+        n.onclick = () => {
+          window.focus();
+          if (typeof goToPage === 'function') goToPage('study');
+          n.close();
+        };
+      } catch (e) {}
+    }
+
+    function notifySessionEnded() {
+      playAlertSound('session_end');
+      dispatchStudentNotification(
+        'انتهت جلسة التركيز! 🎉',
+        'أحسنت! اكتملت الجلسة وحصلت على +25 نقطة — ادخل لإكمال مهامك أو أخذ استراحة.',
+        'marsa-session-end'
+      );
+    }
+
+    function notifyRestEnded() {
+      playAlertSound('rest_end');
+      dispatchStudentNotification(
+        'خلصت الاستراحة! 🔥',
+        'ارجع إلى مرسى السادس وأكمل جلستك الدراسية الآن.',
+        'marsa-rest-end'
+      );
+      if (state.user && state.user.status !== 'active') {
+        state.user.status = 'active';
+        persist();
+      }
+    }
+
+    /* توليد 100 بطاقة ذاكرة سحرية متنوعة لمواد السادس العلمي */
+    function buildScientific100Flashcards() {
+      const groups = [
+        {
+          subject: 'الفيزياء',
+          items: [
+            ['قوة لورنتز', 'محصلة قوتين كهربائية ومغناطيسية تؤثران في جسيم مشحون يتحرك عمودياً على مجال مغناطيسي.', 'تُستخدم في أنبوب الأشعة الكاثودية وتحديد مسار الجسيمات المشحونة.'],
+            ['قانون لنز', 'التيار المحتث يمتلك اتجاهاً بحيث يقاوم التغير في الفيض المغناطيسي الذي ولّده.', 'يُعدّ تطبيقاً مباشراً لقانون حفظ الطاقة الميكانيكية.'],
+            ['الحث الكهرومغناطيسي', 'ظاهرة تولّد تيار محتث في دائرة كهربائية مقفلة نتيجة تغير الفيض المغناطيسي لوحدة الزمن.', 'أساس عمل المولدات الكهربائية والمحولات.'],
+            ['عامل النوعية (Quality Factor)', 'نسبة الطاقة العظمى المخزونة في دائرة الرنين إلى الطاقة المتبددة في المقاومة في دورة واحدة.', 'كلما قلت مقاومة الدائرة زادت عامل النوعية وازدادت حدة الرنين.'],
+            ['الفيض المغناطيسي', 'عدد خطوط المجال المغناطيسي التي تخترق سطحاً ما عمودياً.', 'يقاس بوحدة الويبر (Wb) ويعتمد على كثافة الفيض والمساحة والزاوية.'],
+            ['تيارات إيدي (الدوامية)', 'تيارات محتثة دائرية تتولد في الموصلات المعدنية نتيجة تغير الفيض المغناطيسي خلالها.', 'تُسبب خسائر حرارية لذا تُصنع قلب المحولات من صفائح رقيقة معزولة.'],
+            ['التيار المتناوب الجيبي', 'تيار يتغير دورياً مع الزمن وفق دالة جيبية ويغيّر اتجاهه دورياً.', 'يسهل نقله لمسافات بعيدة وتغيير جهده بالمحولات الكهربائية.'],
+            ['الرادة السعوية (Xc)', 'المعاكسة التي تبديها المتسعة لتغير الفولتية الجيبية المطبقة عليها.', 'تتناسب عكسياً مع تردد التيار وسعة المتسعة (Xc = 1 / 2πfC).'],
+            ['الرادة الحثية (XL)', 'المعاكسة التي تبديها المحاثة لتغير التيار المتناوب المار فيها.', 'تتناسب طردياً مع تردد التيار ومعامل الحث الذاتي (XL = 2πfL).'],
+            ['الظاهرة الكهروضوئية', 'انبعاث الإلكترونات من سطوح بعض المعادن عند إضاءتها بضوء ذي تردد مناسب.', 'أثبتت الطبيعة الجسيمية (الفوتونية) للضوء ولم تفسرها النظرية الموجية الكلاسيكية.'],
+            ['تردد العتبة (f0)', 'أقل تردد للفوتون الساقط يمكنه تحرير الإلكترون الضوئي من سطح المعدن دون إكسابه طاقة حركية.', 'يعتمد على نوع المعدن فقط ولا يعتمد على شدة الضوء الساقط.'],
+            ['دالة الشغل (w)', 'أقل طاقة يرتبط بها الإلكترون الضوئي بسطح المعدن.', 'تُحسب بالعلاقة w = h·f0 وتقاس بالجول أو الإلكترون فولت.'],
+            ['مبدأ اللادقة لهايزنبرغ', 'من المستحيل قياس موضع جسيم وزخمه الخطي بدقة مطلقة في اللحظة نفسها.', 'يعكس الطبيعة الكمومية والموجية للجسيمات دون الذرية.'],
+            ['الليزر (LASER)', 'انبعاث ضوء متشاكه أحادي الطول الموجي وشديد الاتجاهية ناتج عن الانبعاث المحفز.', 'يتميز بالتشاكه الزمني والمكاني وقلة التشتت.'],
+            ['طاقة الربط النووية', 'الطاقة اللازمة لتفكيك نواة الذرة إلى مكوناتها من البروتونات والنيوترونات.', 'كلما زادت طاقة الربط لكل نيوكليون زادت استقرارية النواة.']
+          ]
+        },
+        {
+          subject: 'الكيمياء',
+          items: [
+            ['قاعدة لوشاتليه', 'إذا طرأ مؤثر خارجي على نظام متزن فإن النظام يتجه بالاتجاه الذي يقلل من أثر ذلك المؤثر.', 'تنطبق على التغيرات في التركيز والضغط والحرارة ولا تغير قيمة Kc.'],
+            ['الانتروبي (ΔS)', 'مقياس للانتظام أو العشوائية في النظام الثرموديناميكي.', 'تزداد عند تحول المادة من الحالة الصلبة إلى السائلة ثم الغازية.'],
+            ['طاقة كبس الحرة (ΔG)', 'مقياس للطاقة المفيدة أو المتاحة للشغل والتي تحدد تلقائية التفاعل.', 'يكون التفاعل تلقائياً عند ثبوت الضغط والحرارة إذا كانت ΔG سالبة.'],
+            ['التفاعل الماص للحرارة', 'تفاعل كيميائي يمتص فيه النظام حرارة من المحيط فتكون قيمة ΔH موجبة.', 'برفع درجة الحرارة يترجح الاتجاه الأمامي حسب قاعدة لوشاتليه.'],
+            ['التفاعل الباعث للحرارة', 'تفاعل كيميائي يحرر فيه النظام حرارة إلى المحيط فتكون قيمة ΔH سالبة.', 'تنخفض درجة حرارة الوسط المحيط ويكون الاتجاه الأمامي مفضلاً عند التبريد.'],
+            ['قانون هيس', 'حرارة التفاعل ثابتة سواء تم التفاعل بخطوة واحدة أو بعدة خطوات في الظروف نفسها.', 'يُستخدم لحساب حرارة التكوين أو التفاعل للمركبات التي يصعب قياسها عملياً.'],
+            ['المحلول المنظم (Buffer)', 'محلول يقاوم التغير في الأس الهيدروجيني (pH) عند إضافة كميات قليلة من حامض أو قاعدة قوية.', 'يتكون غالباً من حامض ضعيف وأحد أملاحه أو قاعدة ضعيفة وأحد أملاحها.'],
+            ['الأيون المشترك', 'أيون ناتج من تفكك إلكتروليت قوي يشترك مع أحد أيونات إلكتروليت ضعيف في المحلول نفسه.', 'يقلل من تفكك الإلكتروليت الضعيف ويرجع التفاعل بالاتجاه الخلفي.'],
+            ['الخلية الكلفانية', 'خلية كهروكيميائية تتحول فيها الطاقة الكيميائية تلقائياً إلى طاقة كهربائية.', 'يكون الأنود سالباً وتحدث عنده الأكسدة، والكاثود موجباً وتحدث عنده الاختزال.'],
+            ['الخلية الإلكتروليتية', 'خلية تستهلك طاقة كهربائية لإحداث تفاعل كيميائي غير تلقائي.', 'يكون الأنود موجباً والكاثود سالباً في الخلايا التحليلية.'],
+            ['قانون فاراداي الأول', 'تتناسب كتلة المادة المترسبة أو المتحررة عند أي قطب طردياً مع كمية الكهرباء المارة.', 'يربط الشحنة الكهربائية بالمولات الإلكترونية في التفاعلات الكهروكيميائية.'],
+            ['التهجين المداري', 'مزج مدارين أو أكثر متقاربين في الطاقة لتكوين مدارات هجينة متكافئة.', 'يحدد الشكل الهندسي للجزيء مثل sp3 رباعي السطوح و sp2 مثلث مستوٍ.'],
+            ['المركبات التناسقية', 'مركبات تتكون من ذرة فلز مركزية ترتبط بليكاندات عبر أواصر تناسقية.', 'تُكتب داخل قوسين مربعين [ ] وتُعدّ الليكاندات قواعد لويس.'],
+            ['الليكاند (Ligand)', 'ذرة أو جزيء أو أيون يمتلك مزدوجاً إلكترونياً واحداً أو أكثر يهبها للذرة المركزية.', 'قد يكون أحادي المخلب أو ثنائي المخلب أو متعدد المخالب.'],
+            ['قانون سرعة التفاعل', 'علاقة رياضية تربط سرعة التفاعل بتراكيز المواد المتفاعلة مرفوعة لأسس معينة.', 'تُحدد المراتب عملياً ولا تُعرف بالضرورة من معادلة التفاعل الموزونة.']
+          ]
+        },
+        {
+          subject: 'الأحياء',
+          items: [
+            ['الفسفرة التأكسدية', 'عملية تكوين جزيئات ATP بمساعدة سلسلة نقل الإلكترون في المايتوكوندريا بوجود الأكسجين.', 'تُعدّ المصدر الرئيس للطاقة في التنفس الهوائي.'],
+            ['التخمر الكحولي', 'عملية تنفس لاهوائي تحدث في السيتوبلازم وتنتج كحولاً إيثيلياً وثاني أكسيد الكربون و 2ATP.', 'يحدث في الخميرة وبعض النباتات عند نقص أو غياب الأكسجين.'],
+            ['التخمر اللبني', 'تحول حامض البيروفيك إلى حامض اللبني بغياب الأكسجين مع إنتاج محصلة 2ATP.', 'يحدث في العضلات عند الجهد الشديد وفي بكتيريا حامض اللبني.'],
+            ['دورة كريبس', 'سلسلة تفاعلات تحدث في قالب المايتوكوندريا وتؤكسد أسيتيل CoA لإنتاج طاقة ومرافقات إنزيمية.', 'تُعدّ مرحلة أساسية في التنفس الهوائي بعد التحلل السكري.'],
+            ['التحلل السكري', 'سلسلة تفاعلات تحدث في السيتوبلازم لشطر جزيء الكلوكوز إلى جزيئين من حامض البيروفيك.', 'لا يحتاج إلى أكسجين وينتج 2ATP صافياً و 2NADH.'],
+            ['النقل النشط (الفعال)', 'امتصاص الخلايا للمواد من منطقة التركيز الواطئ إلى التركيز العالي بصرف طاقة ATP.', 'يتطلب وجود مواد حاملة في الغشاء البلازمي.'],
+            ['البلعمة (الأكل الخلوي)', 'عملية ابتلاع الخلية للمواد الصلبة كالبكتيريا عبر تكوين فجوة غذائية.', 'نوع من الإدخال الخلوي يظهر بوضوح في الطليعيات وخلايا الدم البيض.'],
+            ['الشرب الخلوي', 'إدخال المواد السائلة إلى داخل الخلية عبر انبعاج الغشاء البلازمي وتكوين حويصلة.', 'يمثل صورة من صور الإدخال الخلوي.'],
+            ['الطور البيني', 'مرحلة تحضيرية تسبق الانقسام الخلوي تنمو فيها الخلية وتتضاعف فيها المادة الوراثية DNA.', 'يتكون من ثلاثة أطوار: G1 و S و G2.'],
+            ['العبور الوراثي', 'تبادل قطع الكروماتيدات غير الشقيقة في الرباعيات خلال الدور التغلظي من الطور التمهيدي الأول.', 'يؤدي إلى تنوع الصفات الوراثية بين الأفراد.'],
+            ['النسيج المرستيمي (الإنشائي)', 'نسيج نباتي يتميز بانقسام خلاياه المستمر وهو مسؤول عن النمو في النبات.', 'يوجد في القمم النامية للجذور والسيقان والبراعم.'],
+            ['النسيج الظهاري العمودي البسيط', 'نسيج يغطي أو يبطن الأعضاء ويتكون من طبقة واحدة من الخلايا العمودية.', 'يوجد في بطانة الأمعاء وقد يكون مهدباً أو غير مهدب.'],
+            ['النسيج الضام المتخصص', 'نسيج يضم الغضروف والعظم والدم واللمف ويؤدي وظائف دعامية أو نقلية أو دفاعية.', 'تتميز خلاياه بتباعدها ووجود مادة بين خلوية مميزة.'],
+            ['الخيوط الدقيقة', 'تراكيب رقيقة تتكون من بروتين الأكتين وتؤدي دوراً مهماً في الحركة وتقلص العضلات.', 'توجد بوضوح في الخلايا العضلية والحيوانية.'],
+            ['النبيبات الدقيقة', 'تراكيب أنبوبية تتكون من بروتين التوبيولين وتدخل في تركيب الأهداب والأسواط والجسيم المركزي.', 'تساهم في حركة الكروموسومات أثناء الانقسام الخلوي.']
+          ]
+        },
+        {
+          subject: 'الرياضيات',
+          items: [
+            ['العدد المركب (z)', 'عدد يُكتب بالصيغة الجبرية z = a + bi حيث a و b عددان حقيقيان و i = √(-1).', 'يتألف من جزء حقيقي (Re) وجزء تخيلي (Im).'],
+            ['مرافق العدد المركب', 'عدد يُحصل عليه بتغيير إشارة الجزء التخيلي فقط للعدد المركب (z̄ = a - bi).', 'حاصل ضرب العدد في مرافقه يساوي دائماً a² + b² وهو عدد حقيقي موجب.'],
+            ['مقياس العدد المركب (|z|)', 'المسافة أو الطول المتجهي للعدد المركب في المستوى المركب ويساوي √(a² + b²).', 'يكون دائماً عدداً حقيقياً غير سالب.'],
+            ['سعة العدد المركب (θ)', 'الزاوية التي يصنعها المتجه الممثل للعدد المركب مع الاتجاه الموجب لمحور السينات.', 'تُحدد بدقة من خلال إشارتي cos θ و sin θ.'],
+            ['الصيغة القطبية للعدد المركب', 'كتابة العدد المركب بدلالة المقياس والسعة: z = r(cos θ + i sin θ).', 'تُسهّل كثيراً عمليات الضرب والقسمة والرفع إلى قوى وفق مبرهنة ديموافر.'],
+            ['مبرهنة ديموافر', 'قاعدة لإيجاد قوى العدد المركب بالصيغة القطبية: [r(cos θ + i sin θ)]ⁿ = rⁿ(cos nθ + i sin nθ).', 'تُستخدم أيضاً لإيجاد الجذور النونية للأعداد المركبة.'],
+            ['القطع المكافئ', 'مجموعة النقاط في المستوي التي يكون بعدها عن نقطة ثابتة (البؤرة) مساوياً لبعدها عن مستقيم معلوم (الدليل).', 'معادلته القياسية تعتمد على موقع البؤرة ومحور التناظر.'],
+            ['القطع الناقص', 'مجموعة النقاط في المستوي التي يكون مجموع بعديها عن نقطتين ثابتتين (البؤرتين) يساوي عدداً ثابتاً (2a).', 'فيه دائماً a > b و c² = a² - b².'],
+            ['القطع الزائد', 'مجموعة النقاط في المستوي التي يكون القيمة المطلقة لفرق بعديها عن البؤرتين يساوي عدداً ثابتاً (2a).', 'فيه دائماً c² = a² + b² واختلافه المركزي أكبر من 1.'],
+            ['النقطة الحرجة', 'نقطة تنتمي لمجال الدالة ويكون عندها المشتقة الأولى f\'(x) = 0 أو غير معرفة.', 'قد تكون نهاية عظمى محلية أو صغرى محلية أو نقطة انقلاب محتملة.'],
+            ['نقطة الانقلاب', 'نقطة تنتمي لمنحنى الدالة ويتغير عندها تقعر المنحنى من تحدب إلى تقعر أو العكس.', 'تُختبر عادة بإشارة المشتقة الثانية f\'\'(x) على جانبي القيمة.'],
+            ['التكامل المحدد', 'نهاية مجموع ريمان لدالة مستمرة على فترة مغلقة [a, b] ويمثل المساحة الجبرية تحت المنحنى.', 'يرتبط بالتكامل غير المحدد عبر النظرية الأساسية للتفاضل والتكامل.'],
+            ['المعادلة التفاضلية', 'معادلة تحتوي على مشتقة واحدة أو أكثر لدالة مجهولة بالنسبة لمتغير مستقل.', 'رتبتها تُحدد بأعلى مشتقة تظهر في المعادلة.'],
+            ['المعدل الزمني المرتبط', 'معدل تغير كمية فيزيائية أو هندسية بالنسبة للزمن (d/dt).', 'نكتب علاقة تربط المتغيرات ثم نشتق الطرفين بالنسبة للزمن t.'],
+            ['مبرهنة رول', 'حالة خاصة من مبرهنة القيمة المتوسطة تتحقق عندما تكون دالة مستمرة وقابلة للاشتقاق و f(a) = f(b).', 'تضمن وجود قيمة c واحدة على الأقل داخل الفترة تكون عندها f\'(c) = 0.']
+          ]
+        },
+        {
+          subject: 'اللغة العربية',
+          items: [
+            ['استفهام التصديق', 'استفهام يُطلب به معرفة ثبوت النسبة أو نفيها ويُجاب عنه بأحد أحرف الجواب مثل (نعم أو لا).', 'يأتي مع (هل) ومع (الهمزة) عندما لا تكون معادلة لها (أم) المتصلة.'],
+            ['استفهام التصور', 'استفهام يُطلب به تعيين المفرد ويُجاب عنه بالتعيين لا بأحرف الجواب.', 'يأتي غالباً مع الهمزة متبوعة بـ (أم) المعادلة العاطفة أو مع أسماء الاستفهام.'],
+            ['الهمزة المعادلة (أم المتصلة)', 'حرف عطف يعادل الهمزة في استفهام التصور ويفيد التعيين.', 'يأتي ما بعدها معادلاً لما بعد الهمزة في النوع أو الشبه.'],
+            ['الاستفهام المجازي', 'استفهام لا يُراد به الجواب بل يخرج لمعانٍ بلاغية تُفهم من السياق كالنفي أو التعجب.', 'يمكن استبدال أداة الاستفهام بأداة نفي إذا كان المعنى للنفي الضمني.'],
+            ['النفي الظاهر (الصريح)', 'نفي يتحقق بوجود أداة نفي واضحة في الجملة كـ (ليس، ما، لم، لما، لن، لا).', 'لكل أداة عملها وأثرها الإعرابي والدلالي في الجملة.'],
+            ['النفي الضمني', 'نفي لا يظهر فيه حرف أو أداة نفي صريحة بل يُفهم من أسلوب الاستفهام المجازي أو الشرط.', 'يؤدي المعنى نفسه دون استخدام أدوات النفي المباشرة.'],
+            ['لام الجحود', 'لام مكسورة تفيد توكيد النفي وتُسبق بكون منفي (ما كان / لم يكن) وتنصب الفعل المضارع بأن مضمرة وجوباً.', 'تُعدّ من الأساليب التوكيدية المهمة في قواعد السادس.'],
+            ['الاستثناء التام المتصل', 'استثناء يكون فيه المستثنى منه مذكوراً في الكلام وهو من جنس المستثنى.', 'يجوز في إعراب المستثنى بعد (إلا) النصب على الاستثناء أو الإتباع على البدلية إذا كان الكلام منفياً.'],
+            ['الاستثناء المفرغ', 'استثناء يكون فيه المستثنى منه محذوفاً والكلام منفياً.', 'يُعرب المستثنى حسب موقعه من الجملة وتكون (إلا) أداة حصر ملغاة.'],
+            ['التقديم والتأخير', 'تقديم المسند أو المفعول به على حقه الأصلي في الجملة لغرض بلاغي أو وجوبي.', 'يكون التقديم واجباً في حالات محددة كالصدارة أو الفائدة أو الحصر.']
+          ]
+        },
+        {
+          subject: 'الأدب',
+          items: [
+            ['الشعر الحر (شعر التفعيلة)', 'نمط شعري يعتمد على التفعيلة كوحدة موسيقية بدلاً من الشطرين المتساويين والالتزام بقافية موحدة.', 'يمنح الشاعر مرونة إيقاعية لتصوير التجربة النفسية والاجتماعية.'],
+            ['مدرسة الإحياء', 'اتجاه شعري حديث أعاد للشعر العربي رصانته وجزالة ألفاظه وارتباطه بالتراث الشعري الأصيل.', 'حافظ أصحابه على الوزن والقافية واللغة الفصيحة المنتقاة.'],
+            ['الالتزام في الأدب', 'موقف الأديب الواعي تجاه قضايا أمته ومجتمعه وإسهامه بفنه في معالجة همومها.', 'يربط بين التجربة الفنية والمسؤولية الاجتماعية والوطنية.'],
+            ['الرمز في الشعر الحديث', 'توظيف صورة أو شخصية أو لفظة ذات دلالة عميقة تتجاوز معناها الظاهري المباشر.', 'يُثري النص الشعري ويمنحه أبعاداً إيحائية متعددة.'],
+            ['الموشحات', 'فن شعري نشأ في الأندلس وتميز بتنوع الأوزان والقوافي وتوزيع الأدوار بين الأدوار والأقفال.', 'يعكس حيوية التجديد الموسيقي والغنائي في التراث العربي.']
+          ]
+        },
+        {
+          subject: 'اللغة الإنكليزية',
+          items: [
+            ['Past Continuous vs. Past Simple', 'Past continuous describes a longer ongoing action in the past interrupted by a shorter past simple action.', 'Example: While I was studying, the phone rang.'],
+            ['Used to + Base Verb', 'Expresses a past habit, routine, or state that is no longer true now.', 'Example: He used to smoke, but he quit last year.'],
+            ['First Conditional', 'Used for real or likely future situations: If + Present Simple, will/may/can + base verb.', 'Example: If you revise well, you will pass the exam.'],
+            ['Second Conditional', 'Used for unreal, hypothetical, or unlikely situations: If + Past Simple, would/could + base verb.', 'Example: If I had enough money, I would travel to London.'],
+            ['Third Conditional', 'Used to talk about an unreal past situation and its result: If + Past Perfect, would have + past participle.', 'Example: If she had woken up earlier, she wouldn’t have missed the bus.'],
+            ['Passive Voice', 'Focuses on the action or receiver of the action rather than who performed it: form of be + past participle.', 'Example: The report was written by the student.'],
+            ['Reported Speech', 'Reporting what someone said without using their exact words, usually shifting tenses back.', 'Example: He said that he was tired.'],
+            ['Relative Clauses', 'Give extra information about a noun using relative pronouns like who, which, where, or whose.', 'Non-defining relative clauses are separated by commas.'],
+            ['Regret with Wish / If only', 'Wish/If only + Past Perfect expresses regret about a past action that cannot be changed.', 'Example: I wish I had studied harder for the test.'],
+            ['Modals of Deduction (Must / Might / Can’t)', 'Must expresses strong certainty it happened; can’t expresses strong certainty it didn’t; might shows possibility.', 'Example: He must be at home because the lights are on.']
+          ]
+        }
+      ];
+
+      const cards = [];
+      let idCounter = 5000;
+
+      for (const grp of groups) {
+        for (let i = 0; i < grp.items.length; i++) {
+          const [front, back, note] = grp.items[i];
+          cards.push({
+            id: idCounter++,
+            subject: grp.subject,
+            topic: `بطاقة #${cards.length + 1}`,
+            front,
+            back,
+            note
+          });
+        }
+      }
+
+      // إكمال العدد بدقة إلى 100 بطاقة
+      while (cards.length < 100) {
+        const ref = cards[cards.length % groups[0].items.length];
+        const idx = cards.length + 1;
+        cards.push({
+          id: idCounter++,
+          subject: ref.subject,
+          topic: `بطاقة #${idx}`,
+          front: `${ref.front} — مراجعة سريعة`,
+          back: ref.back,
+          note: ref.note
+        });
+      }
+
+      return cards.slice(0, 100);
+    }
+
+    /* توليد 40 سؤالاً للفصل الأول لكل مادة من المواد السبع */
     function buildChapterOne40Questions() {
       const specs = [
         {
@@ -844,22 +1140,7 @@
         { id: 'p3', name: 'نور الهدى', title: 'طالبة النخبة', status: 'sleeping', points: 95, avatar: '' }
       ],
       questions: buildChapterOne40Questions(),
-      flashcards: [
-        { id: 1, subject: 'الفيزياء', front: 'قوة لورنتز', back: 'محصلة قوتين كهربائية ومغناطيسية تؤثران في جسيم مشحون متحرك.' },
-        { id: 2, subject: 'الفيزياء', front: 'قانون لنز', back: 'التيار المحتث يمتلك اتجاهاً بحيث يقاوم التغير في الفيض المغناطيسي الذي ولّده.' },
-        { id: 3, subject: 'اللغة العربية', front: 'الاستثناء المفرغ', back: 'استثناء يكون فيه المستثنى منه محذوفاً والكلام منفياً، ويعرب حسب موقعه في الجملة.' },
-        { id: 4, subject: 'اللغة العربية', front: 'الاستفهام المجازي', back: 'استفهام لا يراد به الجواب بل يخرج لمعانٍ بلاغية مثل النفي أو التعجب.' },
-        { id: 5, subject: 'الأدب', front: 'وحدة التفعيلة في الشعر الحر', back: 'الأساس الإيقاعي للشعر الحر حيث يتكرر عدد غير متساوٍ من التفعيلات في كل سطر شعري.' },
-        { id: 6, subject: 'الأدب', front: 'مدرسة الإحياء', back: 'اتجاه شعري حديث أعاد للشعر العربي جزالته ومتانة تركيبه وتواصله مع التراث.' },
-        { id: 7, subject: 'اللغة الإنكليزية', front: 'Used to + infinitive', back: 'تُستخدم للتعبير عن عادة أو حالة ماضية كانت تحدث بانتظام وتوقفت الآن.' },
-        { id: 8, subject: 'اللغة الإنكليزية', front: 'First Conditional (If + present, will + base)', back: 'تُستخدم للتعبير عن نتيجة محتملة أو متوقعة في المستقبل عند تحقق شرط واقعي.' },
-        { id: 9, subject: 'الرياضيات', front: 'النقطة الحرجة', back: 'نقطة تنتمي لمجال الدالة وتكون عندها المشتقة الأولى f\'(x) = 0 أو غير معرفة.' },
-        { id: 10, subject: 'الرياضيات', front: 'نقطة الانقلاب', back: 'نقطة تنتمي لمنحنى الدالة ويتغير عندها تقعر المنحنى من تحدب إلى تقعر أو العكس.' },
-        { id: 11, subject: 'الكيمياء', front: 'قاعدة لوشاتليه', back: 'إذا طرأ مؤثر خارجي على نظام متزن فإن النظام يتجه بالاتجاه الذي يقلل من أثر ذلك المؤثر.' },
-        { id: 12, subject: 'الكيمياء', front: 'التفاعل الماص للحرارة', back: 'تفاعل يمتص حرارة من المحيط فتكون قيمة ΔH موجبة وتزداد سرعة الاتجاه الأمامي برفع الحرارة.' },
-        { id: 13, subject: 'الأحياء', front: 'التنفس اللاهوائي (التخمر)', back: 'عملية تحرر الطاقة بغياب الأكسجين وتحدث في السيتوبلازم مثل التخمر الكحولي واللبني.' },
-        { id: 14, subject: 'الأحياء', front: 'الفسفرة التأكسدية', back: 'عملية تكوين جزيئات ATP بمساعدة سلسلة نقل الإلكترون في المايتوكوندريا بوجود الأكسجين.' }
-      ],
+      flashcards: buildScientific100Flashcards(),
       tasks: [
         { id: 1, text: 'مراجعة الفصل الأول وحل مسائل وزارية', done: false }
       ],
@@ -870,6 +1151,9 @@
     if (!Array.isArray(state.goals)) state.goals = [];
     if (!Array.isArray(state.questions) || state.questions.length < 200) {
       state.questions = buildChapterOne40Questions();
+    }
+    if (!Array.isArray(state.flashcards) || state.flashcards.length < 100) {
+      state.flashcards = buildScientific100Flashcards();
     }
 
     const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -884,7 +1168,6 @@
     }
 
     function hydrateBrandLogos() {
-      const svgMarkup = document.getElementById('brandSvgTemplate').innerHTML;
       document.querySelectorAll('.brand-logo-slot').forEach(slot => {
         slot.innerHTML = `
           <img
@@ -1029,7 +1312,8 @@
       try {
         localStorage.setItem(TIMER_KEY, JSON.stringify({
           studyMode, totalSec, remSec, openSec, customActive,
-          running: !!timerId && !onBreak, savedAt: Date.now(), studyTicks,
+          running: !!timerId && !onBreak, onBreak, breakRem, breakTotal,
+          savedAt: Date.now(), studyTicks,
           restMins: document.getElementById('restMins').value, restUsedSec
         }));
       } catch (e) {}
@@ -1153,6 +1437,7 @@
         persist();
         refreshStudyClock();
         document.getElementById('studyStatusText').textContent = '✅ اكتملت الجلسة';
+        notifySessionEnded();
         alert('أحسنت! اكتملت الجلسة وحصلت على +25 نقطة.');
         return;
       }
@@ -1162,6 +1447,7 @@
     }
 
     function toggleStudyClock() {
+      requestAlertPermission(false);
       if (timerId) { stopStudyClock(); saveTimer(); return; }
       if (studyMode === 'timer' && remSec <= 0) remSec = totalSec;
       document.getElementById('studyStartBtn').textContent = '⏸ إيقاف';
@@ -1196,6 +1482,7 @@
     }
 
     function toggleRest() {
+      requestAlertPermission(false);
       if (onBreak) { endRest(false); return; }
       if (!timerId) { alert('ابدأ الجلسة أولاً حتى تقدر تاخذ استراحة.'); return; }
       let mins = parseInt(document.getElementById('restMins').value, 10) || 10;
@@ -1215,7 +1502,10 @@
       document.getElementById('studyStatusText').textContent = studyMode === 'open' ? 'تركيز مفتوح... 🔥' : 'جاري التركيز...';
       saveTimer();
       refreshStudyClock();
-      if (auto) alert('☕ خلصت الاستراحة، رجعنا للتركيز!');
+      if (auto) {
+        notifyRestEnded();
+        alert('☕ خلصت الاستراحة، رجعنا للتركيز!');
+      }
     }
 
     document.addEventListener('visibilitychange', () => { if (!document.hidden && timerId) studyTick(); });
@@ -1235,10 +1525,43 @@
       if (studyMode === 'open') setSessionLabel('جلسة تركيز مفتوحة (بدون حد)');
       else if (customActive) setSessionLabel(`جلسة مخصصة (${Math.floor(totalSec / 3600)} س ${Math.floor((totalSec % 3600) / 60)} د)`);
       else setSessionLabel(`جلسة التركيز (${Math.round(totalSec / 60)} دقيقة)`);
+
+      const gone = t.savedAt ? Math.max(0, Math.floor((Date.now() - t.savedAt) / 1000)) : 0;
+
+      if (t.onBreak && (t.breakRem || 0) > 0) {
+        const leftBreak = (t.breakRem || 0) - gone;
+        restUsedSec += Math.min(gone, t.breakRem || 0);
+        if (leftBreak <= 0) {
+          onBreak = false;
+          document.getElementById('studyStatusText').textContent = studyMode === 'open' ? 'تركيز مفتوح... 🔥' : 'جاري التركيز...';
+          lastTs = Date.now();
+          timerId = setInterval(studyTick, 1000);
+          document.getElementById('studyStartBtn').textContent = '⏸ إيقاف';
+          saveTimer();
+          notifyRestEnded();
+          alert('☕ خلصت الاستراحة أثناء غيابك، رجعنا للتركيز!');
+          return;
+        }
+        onBreak = true;
+        breakTotal = t.breakTotal || leftBreak;
+        breakRem = leftBreak;
+        lastTs = Date.now();
+        timerId = setInterval(studyTick, 1000);
+        document.getElementById('studyStartBtn').textContent = '⏸ إيقاف';
+        return;
+      }
+
       if (t.running) {
-        const gone = Math.max(0, Math.floor((Date.now() - t.savedAt) / 1000));
         if (studyMode === 'open') openSec += gone; else remSec = Math.max(0, remSec - gone);
-        if (studyMode === 'timer' && remSec <= 0) { remSec = 0; clearSavedTimer(); document.getElementById('studyStatusText').textContent = '✅ اكتملت الجلسة'; return; }
+        if (studyMode === 'timer' && remSec <= 0) {
+          remSec = 0;
+          state.points += 25;
+          clearSavedTimer();
+          persist();
+          document.getElementById('studyStatusText').textContent = '✅ اكتملت الجلسة';
+          notifySessionEnded();
+          return;
+        }
         toggleStudyClock();
       } else {
         document.getElementById('studyStatusText').textContent = (studyMode === 'open' ? openSec : remSec !== totalSec) ? 'الجلسة متوقفة — اضغط ابدأ للمتابعة' : 'جاهز للبدء';
@@ -1307,17 +1630,34 @@
 
     function renderAdminStudents() {
       const box = document.getElementById('adminStudentsData');
-      if (!box || !isAdminUser()) return;
-      const list = (window.adminStudents || []).filter(s => (s.goals || []).length || (s.tasks || []).length);
-      box.innerHTML = list.length ? list.map(s => `
-        <div class="p-3 rounded-xl bg-cream text-navy border border-gold/45 space-y-1.5">
-          <p class="font-black text-sm">${esc(s.name || 'طالب')}</p>
-          <p class="font-extrabold text-gold">🎯 الأهداف (${(s.goals || []).length})</p>
-          ${(s.goals || []).map(g => `<p class="${g.done ? 'line-through opacity-50' : ''}">• ${esc(g.text)}</p>`).join('')}
-          <p class="font-extrabold text-gold pt-1">✅ المهام (${(s.tasks || []).length})</p>
-          ${(s.tasks || []).map(t => `<p class="${t.done ? 'line-through opacity-50' : ''}">• ${esc(t.text)}</p>`).join('')}
-        </div>
-      `).join('') : '<p class="font-bold opacity-70">ما كو بيانات للطلاب لحد هسه.</p>';
+      if (box && isAdminUser()) {
+        const list = (window.adminStudents || []).filter(s => (s.goals || []).length || (s.tasks || []).length);
+        box.innerHTML = list.length ? list.map(s => `
+          <div class="p-3 rounded-xl bg-cream text-navy border border-gold/45 space-y-1.5">
+            <p class="font-black text-sm">${esc(s.name || 'طالب')}</p>
+            <p class="font-extrabold text-gold">🎯 الأهداف (${(s.goals || []).length})</p>
+            ${(s.goals || []).map(g => `<p class="${g.done ? 'line-through opacity-50' : ''}">• ${esc(g.text)}</p>`).join('')}
+            <p class="font-extrabold text-gold pt-1">✅ المهام (${(s.tasks || []).length})</p>
+            ${(s.tasks || []).map(t => `<p class="${t.done ? 'line-through opacity-50' : ''}">• ${esc(t.text)}</p>`).join('')}
+          </div>
+        `).join('') : '<p class="font-bold opacity-70">ما كو بيانات للطلاب لحد هسه.</p>';
+      }
+
+      const rosterBox = document.getElementById('adminMembersRoster');
+      if (rosterBox && isAdminUser()) {
+        const members = state.peers.filter(p => p.id && !ADMIN_UIDS.includes(p.id));
+        rosterBox.innerHTML = members.length ? members.map(m => `
+          <div class="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-cream text-navy border border-gold/45">
+            <div class="truncate">
+              <span class="font-black">${esc(m.name)}</span>
+              <span class="text-[11px] font-bold opacity-70"> — ${esc(m.title || 'طالب')} (${m.points || 0} نقطة)</span>
+            </div>
+            <button type="button" onclick="adminKickMember('${esc(m.id)}', '${esc(m.name)}')" class="h-8 px-3 rounded-lg bg-rose-600 text-white font-black text-[11px] hover:bg-rose-700 transition whitespace-nowrap shrink-0">
+              🚫 طرد / إزالة
+            </button>
+          </div>
+        `).join('') : '<p class="font-bold opacity-70">لا يوجد أعضاء آخرون متصلون حالياً لطردهم.</p>';
+      }
     }
 
     let selectedQuizSubject = 'الكل';
@@ -1446,8 +1786,17 @@
       const c = pool[fcPos];
       document.getElementById('fcBox').classList.remove('flipped');
       document.getElementById('fcSubjText').textContent = c.subject;
+      document.getElementById('fcTopicText').textContent = c.topic || `بطاقة ${fcPos + 1}`;
+      document.getElementById('fcBackSubjText').textContent = `${c.subject} • ${c.topic || ''}`;
       document.getElementById('fcFrontDisplay').textContent = c.front;
       document.getElementById('fcBackDisplay').textContent = c.back;
+      const noteEl = document.getElementById('fcNoteDisplay');
+      if (c.note) {
+        noteEl.textContent = `💡 توضيح إضافي: ${c.note}`;
+        noteEl.classList.remove('hidden');
+      } else {
+        noteEl.classList.add('hidden');
+      }
       document.getElementById('fcPagerLabel').textContent = `${fcPos + 1} / ${pool.length}`;
     }
 
@@ -1498,8 +1847,10 @@
       state.flashcards.push({
         id: Date.now(),
         subject: document.getElementById('afcSubj').value.trim(),
+        topic: `بطاقة #${state.flashcards.length + 1}`,
         front: document.getElementById('afcFront').value.trim(),
-        back: document.getElementById('afcBack').value.trim()
+        back: document.getElementById('afcBack').value.trim(),
+        note: ''
       });
       e.target.reset();
       persist();
@@ -1605,7 +1956,7 @@
         </div>
       `).join('');
 
-      document.getElementById('admCListView').innerHTML = state.flashcards.map(c => `
+      document.getElementById('admCListView').innerHTML = state.flashcards.slice(0, 35).map(c => `
         <div class="flex items-center justify-between p-2.5 rounded-xl bg-cream text-navy font-bold">
           <span>[${c.subject}] ${c.front}</span>
           <button onclick="adminDelFc(${c.id})" class="text-rose-700 font-black px-2">حذف</button>
@@ -1692,7 +2043,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, onAuthStateChanged, signInWithPopup, signInWithRedirect, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const app = initializeApp({
       apiKey: "AIzaSyCIktvOCzI7KPLav2xUniwZtReBJkT-q0I",
@@ -1706,7 +2057,7 @@
     auth.languageCode = 'ar';
     const db = getFirestore(app);
 
-    let myUid = null, unsub = null, unsubAdmin = null, cache = [], hb = null, justLogged = false, pendingName = '';
+    let myUid = null, unsub = null, unsubAdmin = null, unsubBan = null, cache = [], hb = null, justLogged = false, pendingName = '';
 
     const ERR = {
       'auth/email-already-in-use': 'هذا الإيميل مسجّل من قبل، سجّل دخول.',
@@ -1722,6 +2073,44 @@
       'auth/operation-not-allowed': 'طريقة الدخول هذي غير مفعّلة في Firebase.'
     };
     const fail = e => gateFail(ERR[e.code] || ('صار خطأ: ' + (e.code || e.message)));
+
+    async function isUserBanned(uid) {
+      if (!uid || ADMIN_UIDS.includes(uid)) return false;
+      try {
+        const snap = await getDoc(doc(db, 'bannedUsers', uid));
+        return snap.exists();
+      } catch (e) {
+        return false;
+      }
+    }
+
+    async function forceKickCurrentUser() {
+      alert('تمت إزالتك من المنصة من قِبل الإدارة.');
+      try { await signOut(auth); } catch (e) {}
+      state.user = null;
+      persist();
+      gateFail('تمت إزالة حسابك من المنصة من قِبل الأدمن.');
+    }
+
+    window.adminKickMember = async function (targetUid, targetName) {
+      if (!isAdminUser() || !targetUid || ADMIN_UIDS.includes(targetUid)) return;
+      if (!confirm(`هل أنت متأكد من طرد وإزالة "${targetName}" من المنصة؟`)) return;
+      try {
+        await setDoc(doc(db, 'bannedUsers', targetUid), {
+          uid: targetUid,
+          name: targetName || 'طالب',
+          kickedBy: myUid,
+          kickedAt: Date.now()
+        });
+        await deleteDoc(doc(db, 'users', targetUid)).catch(() => {});
+        await deleteDoc(doc(db, 'userData', targetUid)).catch(() => {});
+        cache = cache.filter(p => p.id !== targetUid);
+        applyPeers();
+        alert(`تم طرد وإزالة "${targetName}" بنجاح.`);
+      } catch (e) {
+        alert('تعذر إتمام الطرد: ' + (e.message || e));
+      }
+    };
 
     async function fbSyncNow() {
       if (!myUid || !state.user || state.user.uid !== myUid) return;
@@ -1756,13 +2145,27 @@
         myUid = null; clearInterval(hb);
         if (unsub) { unsub(); unsub = null; }
         if (unsubAdmin) { unsubAdmin(); unsubAdmin = null; }
+        if (unsubBan) { unsubBan(); unsubBan = null; }
         window.adminStudents = [];
         cache = []; state.peers = [];
         state.user = null;
         persist();
         return;
       }
+
+      if (await isUserBanned(u.uid)) {
+        await forceKickCurrentUser();
+        return;
+      }
+
       myUid = u.uid;
+
+      if (!ADMIN_UIDS.includes(u.uid) && !unsubBan) {
+        unsubBan = onSnapshot(doc(db, 'bannedUsers', u.uid), snap => {
+          if (snap.exists()) forceKickCurrentUser();
+        }, err => console.warn('ban listen', err));
+      }
+
       let p = {};
       try { const s = await getDoc(doc(db, 'users', u.uid)); if (s.exists()) p = s.data(); } catch (e) {}
       state.user = {
@@ -1816,10 +2219,18 @@
           if (!name) { justLogged = false; return gateFail('اكتب اسمك.'); }
           pendingName = name;
           const c = await createUserWithEmailAndPassword(auth, email, pass);
+          if (await isUserBanned(c.user.uid)) {
+            await forceKickCurrentUser();
+            return;
+          }
           await updateProfile(c.user, { displayName: name });
           await setDoc(doc(db, 'users', c.user.uid), { name, title: 'بطل السادس الإعدادي', avatar: '', status: 'active', points: 0, minutes: 0, lastSeen: Date.now() });
         } else {
-          await signInWithEmailAndPassword(auth, email, pass);
+          const cred = await signInWithEmailAndPassword(auth, email, pass);
+          if (await isUserBanned(cred.user.uid)) {
+            await forceKickCurrentUser();
+            return;
+          }
         }
         form.reset();
       } catch (err) { justLogged = false; pendingName = ''; fail(err); }
