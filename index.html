@@ -75,19 +75,17 @@
     .hg-flip { animation: hgturn .75s cubic-bezier(0.22, 1, 0.36, 1); transform-origin: 50% 50%; }
     @keyframes hgturn { from { transform: rotate(180deg); } to { transform: rotate(360deg); } }
 
-    /* سمسم سادس العائم: نط، حركة، ورزلة */
-    @keyframes simsimHop {
+    /* مجسم SIMSIM العائم: حركة واقعية وهادئة («بشويش») ورزلة عند الكبس */
+    @keyframes simsimGentleBreath {
       0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
-      30% { transform: translateY(-16px) rotate(-6deg) scale(1.05); }
-      55% { transform: translateY(0px) rotate(4deg) scale(0.97); }
-      78% { transform: translateY(-9px) rotate(6deg) scale(1.03); }
+      50% { transform: translateY(-4px) rotate(1.5deg) scale(1.015); }
     }
     @keyframes simsimRoastShake {
-      0%, 100% { transform: translateX(0) rotate(0deg) scale(1.06); }
-      20% { transform: translateX(-7px) rotate(-8deg) scale(1.08); }
-      40% { transform: translateX(7px) rotate(8deg) scale(1.08); }
-      60% { transform: translateX(-6px) rotate(-6deg) scale(1.06); }
-      80% { transform: translateX(6px) rotate(6deg) scale(1.06); }
+      0%, 100% { transform: translateX(0) rotate(0deg) scale(1.03); }
+      20% { transform: translateX(-5px) rotate(-4deg) scale(1.04); }
+      40% { transform: translateX(5px) rotate(4deg) scale(1.04); }
+      60% { transform: translateX(-4px) rotate(-3deg) scale(1.03); }
+      80% { transform: translateX(4px) rotate(3deg) scale(1.03); }
     }
     .simsim-floating-widget {
       position: fixed;
@@ -96,11 +94,11 @@
       user-select: none;
       -webkit-user-select: none;
     }
-    .simsim-hop {
-      animation: simsimHop 1.1s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
+    .simsim-gentle-motion {
+      animation: simsimGentleBreath 3.2s ease-in-out infinite;
     }
     .simsim-roast-anim {
-      animation: simsimRoastShake 0.45s ease-in-out 3;
+      animation: simsimRoastShake 0.45s ease-in-out 2;
     }
 
     .lux-pill {
@@ -190,19 +188,19 @@
     </div>
   </header>
 
-  <!-- رفيق اللوغو العائم التفاعلي: سمسم سادس -->
-  <div id="simsimFloatingRoot" class="simsim-floating-widget" style="left: 18px; bottom: 104px;">
-    <div class="flex flex-col items-center gap-1.5 max-w-[235px]">
-      <div id="simsimSpeechBubble" class="hidden rounded-2xl px-3 py-2 bg-navy text-white border-2 border-gold shadow-xl text-xs font-black leading-snug text-right relative">
+  <!-- مجسم SIMSIM العائم التفاعلي -->
+  <div id="simsimFloatingRoot" class="simsim-floating-widget" style="left: 16px; bottom: 98px;">
+    <div class="flex flex-col items-center gap-1.5 max-w-[250px]">
+      <div id="simsimSpeechBubble" class="hidden rounded-2xl px-3.5 py-2.5 bg-navy text-white border-2 border-gold shadow-xl text-xs font-black leading-snug text-right">
         <span id="simsimSpeechMsg">ليش صار هواي ما فاتح المنصة وتدرس؟ 😤</span>
       </div>
 
-      <div id="simsimBodyMotion" class="simsim-hop flex flex-col items-center">
-        <div id="simsimDragHandle" title="اسحب سمسم سادس أو اكبس عليه ليرزلك" class="w-16 h-16 rounded-full bg-white border-3 border-gold shadow-xl overflow-hidden flex items-center justify-center cursor-grab active:cursor-grabbing relative">
+      <div id="simsimBodyMotion" class="simsim-gentle-motion flex flex-col items-center">
+        <div id="simsimDragHandle" title="اسحب مجسم SIMSIM أو اكبس عليه ليرزلك" class="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-cream border-2 border-gold shadow-2xl overflow-hidden flex items-center justify-center cursor-grab active:cursor-grabbing relative">
           <div id="simsimLogoAvatar" class="w-full h-full flex items-center justify-center pointer-events-none"></div>
         </div>
-        <span class="mt-0.5 px-2.5 py-0.5 rounded-full bg-navy text-goldBright border border-gold text-[10px] font-black shadow">
-          سمسم سادس ⚓
+        <span class="mt-1 px-3 py-0.5 rounded-full bg-navy text-goldBright border border-gold text-xs font-extrabold tracking-wide shadow" style="font-family: ui-rounded, 'SF Pro Rounded', 'Cairo', sans-serif;">
+          SIMSIM
         </span>
       </div>
     </div>
@@ -1001,14 +999,24 @@
       }, 4200);
     }
 
-    /* سمسم سادس العائم: صورة اللوغو، السحب والحركة والنط، والرزلة عند الكبس */
+    /* مجسم SIMSIM العائم: حركة واقعية وهادئة («بشويش») ورزلة عند الكبس */
     function renderSimsimLogoAvatar() {
       const target = document.getElementById('simsimLogoAvatar');
       if (!target) return;
       const svgTpl = document.getElementById('brandSvgTemplate');
-      target.innerHTML = svgTpl
+      const fallbackSvg = svgTpl
         ? `<svg viewBox="0 0 120 120" class="w-full h-full">${svgTpl.innerHTML}</svg>`
         : '<span class="text-2xl font-black text-navy">⚓</span>';
+
+      target.innerHTML = `
+        <img
+          src="image_generation_content/9606334523716542747"
+          alt="SIMSIM"
+          class="w-full h-full object-cover"
+          onload="this.dataset.loaded='1';"
+          onerror="if(!this.dataset.loaded){ this.parentElement.innerHTML = ${JSON.stringify(fallbackSvg)}; }"
+        />
+      `;
     }
 
     function showSimsimBubble(text, durationMs = 4200) {
@@ -1048,17 +1056,17 @@
       let movedDuringDrag = false;
       let startX = 0;
       let startY = 0;
-      let origLeft = 18;
+      let origLeft = 16;
       let origTop = null;
 
       function clampPosition(leftVal, topVal) {
-        const w = root.offsetWidth || 80;
-        const h = root.offsetHeight || 90;
+        const w = root.offsetWidth || 112;
+        const h = root.offsetHeight || 130;
         const maxLeft = Math.max(8, window.innerWidth - w - 8);
-        const maxTop = Math.max(64, window.innerHeight - h - 84);
+        const maxTop = Math.max(68, window.innerHeight - h - 84);
         return {
           left: Math.min(maxLeft, Math.max(8, leftVal)),
-          top: Math.min(maxTop, Math.max(64, topVal))
+          top: Math.min(maxTop, Math.max(68, topVal))
         };
       }
 
@@ -1099,23 +1107,23 @@
       handle.addEventListener('pointerup', finishPointer);
       handle.addEventListener('pointercancel', finishPointer);
 
-      /* يتحرك وينط براحته بين فترة وأخرى بدون إزعاج */
+      /* انتقال هادئ وبشويش على الصفحة بدون نط مبالغ */
       setInterval(() => {
         if (dragging) return;
         const rect = root.getBoundingClientRect();
         const curLeft = rect.left;
         const curTop = rect.top;
-        const jumpX = (Math.random() - 0.5) * 90;
-        const jumpY = (Math.random() - 0.5) * 90;
-        const next = clampPosition(curLeft + jumpX, curTop + jumpY);
-        root.style.transition = 'left 0.75s ease-in-out, top 0.75s ease-in-out';
+        const driftX = (Math.random() - 0.5) * 44;
+        const driftY = (Math.random() - 0.5) * 44;
+        const next = clampPosition(curLeft + driftX, curTop + driftY);
+        root.style.transition = 'left 1.8s ease-in-out, top 1.8s ease-in-out';
         root.style.bottom = 'auto';
         root.style.left = `${next.left}px`;
         root.style.top = `${next.top}px`;
         setTimeout(() => {
           root.style.transition = '';
-        }, 800);
-      }, 6500);
+        }, 1900);
+      }, 9000);
     }
 
     function checkAbsenceRoastOnLoad() {
