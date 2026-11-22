@@ -75,17 +75,17 @@
     .hg-flip { animation: hgturn .75s cubic-bezier(0.22, 1, 0.36, 1); transform-origin: 50% 50%; }
     @keyframes hgturn { from { transform: rotate(180deg); } to { transform: rotate(360deg); } }
 
-    /* مجسم SIMSIM العائم: حركة واقعية وهادئة («بشويش») ورزلة عند الكبس */
+    /* مجسم SIMSIM العائم الحر (بدون مربع) مع حركة هادئة «بشويش» ورزلة عند الكبس */
     @keyframes simsimGentleBreath {
       0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
       50% { transform: translateY(-4px) rotate(1.5deg) scale(1.015); }
     }
     @keyframes simsimRoastShake {
-      0%, 100% { transform: translateX(0) rotate(0deg) scale(1.03); }
-      20% { transform: translateX(-5px) rotate(-4deg) scale(1.04); }
-      40% { transform: translateX(5px) rotate(4deg) scale(1.04); }
-      60% { transform: translateX(-4px) rotate(-3deg) scale(1.03); }
-      80% { transform: translateX(4px) rotate(3deg) scale(1.03); }
+      0%, 100% { transform: translateX(0) rotate(0deg) scale(1.04); }
+      20% { transform: translateX(-5px) rotate(-4deg) scale(1.05); }
+      40% { transform: translateX(5px) rotate(4deg) scale(1.05); }
+      60% { transform: translateX(-4px) rotate(-3deg) scale(1.04); }
+      80% { transform: translateX(4px) rotate(3deg) scale(1.04); }
     }
     .simsim-floating-widget {
       position: fixed;
@@ -93,6 +93,9 @@
       touch-action: none;
       user-select: none;
       -webkit-user-select: none;
+      background: transparent;
+      border: none;
+      box-shadow: none;
     }
     .simsim-gentle-motion {
       animation: simsimGentleBreath 3.2s ease-in-out infinite;
@@ -188,18 +191,18 @@
     </div>
   </header>
 
-  <!-- مجسم SIMSIM العائم التفاعلي -->
-  <div id="simsimFloatingRoot" class="simsim-floating-widget" style="left: 16px; bottom: 98px;">
-    <div class="flex flex-col items-center gap-1.5 max-w-[250px]">
-      <div id="simsimSpeechBubble" class="hidden rounded-2xl px-3.5 py-2.5 bg-navy text-white border-2 border-gold shadow-xl text-xs font-black leading-snug text-right">
-        <span id="simsimSpeechMsg">ليش صار هواي ما فاتح المنصة وتدرس؟ 😤</span>
+  <!-- مجسم SIMSIM العائم الحر (بدون مربع) مع بالون كلام -->
+  <div id="simsimFloatingRoot" class="simsim-floating-widget" style="left: 18px; bottom: 102px;">
+    <div class="flex flex-col items-end gap-1.5 max-w-[240px]">
+      <div id="simsimSpeechBubble" class="hidden rounded-2xl px-3.5 py-2.5 bg-navy/95 text-white border border-gold/70 shadow-xl text-xs font-extrabold leading-snug text-right">
+        <span id="simsimSpeechMsg">ليش صار هواي ما فاتح المنصة وتدرس؟ السادس ما يرحم! 😤</span>
       </div>
 
       <div id="simsimBodyMotion" class="simsim-gentle-motion flex flex-col items-center">
-        <div id="simsimDragHandle" title="اسحب مجسم SIMSIM أو اكبس عليه ليرزلك" class="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-cream border-2 border-gold shadow-2xl overflow-hidden flex items-center justify-center cursor-grab active:cursor-grabbing relative">
+        <div id="simsimDragHandle" title="اسحب مجسم SIMSIM أو اكبس عليه ليرزلك" class="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center cursor-grab active:cursor-grabbing drop-shadow-[0_12px_18px_rgba(11,26,48,0.32)]">
           <div id="simsimLogoAvatar" class="w-full h-full flex items-center justify-center pointer-events-none"></div>
         </div>
-        <span class="mt-1 px-3 py-0.5 rounded-full bg-navy text-goldBright border border-gold text-xs font-extrabold tracking-wide shadow" style="font-family: ui-rounded, 'SF Pro Rounded', 'Cairo', sans-serif;">
+        <span class="mt-0.5 text-xs font-extrabold tracking-wide text-navy dark:text-goldBright" style="font-family: ui-rounded, 'SF Pro Rounded', 'Cairo', sans-serif;">
           SIMSIM
         </span>
       </div>
@@ -999,23 +1002,63 @@
       }, 4200);
     }
 
-    /* مجسم SIMSIM العائم: حركة واقعية وهادئة («بشويش») ورزلة عند الكبس */
+    /* مجسم SIMSIM العائم الحر (بدون مربع) مع حركة هادئة «بشويش» ورزلة عند الكبس */
     function renderSimsimLogoAvatar() {
       const target = document.getElementById('simsimLogoAvatar');
       if (!target) return;
-      const svgTpl = document.getElementById('brandSvgTemplate');
-      const fallbackSvg = svgTpl
-        ? `<svg viewBox="0 0 120 120" class="w-full h-full">${svgTpl.innerHTML}</svg>`
-        : '<span class="text-2xl font-black text-navy">⚓</span>';
 
       target.innerHTML = `
-        <img
-          src="image_generation_content/9606334523716542747"
-          alt="SIMSIM"
-          class="w-full h-full object-cover"
-          onload="this.dataset.loaded='1';"
-          onerror="if(!this.dataset.loaded){ this.parentElement.innerHTML = ${JSON.stringify(fallbackSvg)}; }"
-        />
+        <svg viewBox="0 0 160 160" class="w-full h-full overflow-visible">
+          <defs>
+            <linearGradient id="simNavy3d" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#1E3A66" />
+              <stop offset="65%" stop-color="#0B1A30" />
+              <stop offset="100%" stop-color="#060F1D" />
+            </linearGradient>
+            <linearGradient id="simGold3d" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#F3D68A" />
+              <stop offset="60%" stop-color="#C69C4E" />
+              <stop offset="100%" stop-color="#8F6A28" />
+            </linearGradient>
+            <linearGradient id="simFace3d" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#FFFDF9" />
+              <stop offset="100%" stop-color="#EFE5D0" />
+            </linearGradient>
+          </defs>
+
+          <ellipse cx="80" cy="146" rx="40" ry="7" fill="#0B1A30" fill-opacity="0.18" />
+
+          <!-- جسم المجسم الكحلي والذهبي -->
+          <path d="M46 102 C46 78, 114 78, 114 102 L118 134 C118 139, 112 142, 106 142 L54 142 C48 142, 42 139, 42 134 Z" fill="url(#simNavy3d)" stroke="#060F1D" stroke-width="3" />
+          <!-- وشاح التخرج الذهبي -->
+          <path d="M58 84 L80 112 L102 84 L94 84 L80 102 L66 84 Z" fill="url(#simGold3d)" />
+
+          <!-- اليدان -->
+          <path d="M46 96 C28 92, 22 76, 30 70 C36 66, 42 74, 48 86" fill="url(#simNavy3d)" stroke="#060F1D" stroke-width="2.5" stroke-linecap="round" />
+          <circle cx="29" cy="71" r="7" fill="url(#simFace3d)" stroke="#0B1A30" stroke-width="2" />
+
+          <path d="M114 96 C130 102, 134 116, 124 122 C118 125, 112 118, 110 108" fill="url(#simNavy3d)" stroke="#060F1D" stroke-width="2.5" stroke-linecap="round" />
+          <circle cx="125" cy="118" r="7" fill="url(#simFace3d)" stroke="#0B1A30" stroke-width="2" />
+
+          <!-- الرأس والوجه -->
+          <circle cx="80" cy="68" r="30" fill="url(#simFace3d)" stroke="#0B1A30" stroke-width="3" />
+          <!-- العيون والحواجب -->
+          <ellipse cx="69" cy="66" rx="5.2" ry="6.8" fill="#0B1A30" />
+          <circle cx="67.2" cy="63.5" r="2" fill="#FFFFFF" />
+          <ellipse cx="91" cy="66" rx="5.2" ry="6.8" fill="#0B1A30" />
+          <circle cx="89.2" cy="63.5" r="2" fill="#FFFFFF" />
+          <path d="M62 56 Q69 52 75 56" fill="none" stroke="#0B1A30" stroke-width="2.5" stroke-linecap="round" />
+          <path d="M85 56 Q91 52 98 56" fill="none" stroke="#0B1A30" stroke-width="2.5" stroke-linecap="round" />
+          <!-- ابتسامة / تعبير لطيف -->
+          <path d="M71 78 Q80 86 89 78" fill="none" stroke="#0B1A30" stroke-width="2.8" stroke-linecap="round" />
+
+          <!-- قبعة التخرج الكحلية والذهبية -->
+          <polygon points="34,42 80,22 126,42 80,58" fill="url(#simNavy3d)" stroke="#C69C4E" stroke-width="2.2" />
+          <path d="M56 46 L56 56 C56 61, 104 61, 104 56 L104 46" fill="url(#simNavy3d)" stroke="#060F1D" stroke-width="2.5" />
+          <!-- الشرابة الذهبية -->
+          <path d="M116 44 L118 72" stroke="url(#simGold3d)" stroke-width="3.2" stroke-linecap="round" />
+          <circle cx="118" cy="75" r="5" fill="url(#simGold3d)" />
+        </svg>
       `;
     }
 
@@ -1056,7 +1099,7 @@
       let movedDuringDrag = false;
       let startX = 0;
       let startY = 0;
-      let origLeft = 16;
+      let origLeft = 18;
       let origTop = null;
 
       function clampPosition(leftVal, topVal) {
