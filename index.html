@@ -81,7 +81,7 @@
       justify-content: center;
       gap: 6px;
       height: 38px;
-      padding: 0 14px;
+      padding: 0 12px;
       border-radius: 14px;
       font-size: 12px;
       font-weight: 800;
@@ -163,6 +163,11 @@
   </header>
 
   <main class="max-w-3xl mx-auto px-4 pt-4 space-y-5">
+
+    <div id="cheerToastBanner" class="hidden rounded-2xl px-4 py-3 bg-navy text-white border-2 border-gold shadow-md flex items-center justify-between gap-3">
+      <p id="cheerToastText" class="text-xs sm:text-sm font-black text-goldBright">كفو! خطوة إضافية نحو الـ 100 🔥</p>
+      <button type="button" onclick="document.getElementById('cheerToastBanner').classList.add('hidden')" class="text-xs font-black text-white/75 px-2">✕</button>
+    </div>
 
     <section id="page-home" class="page-view space-y-5">
 
@@ -247,7 +252,7 @@
           <div class="w-11 h-11 rounded-2xl bg-[#E09F24] text-white flex items-center justify-center text-xl shadow-xs">⚡</div>
           <div class="mt-3">
             <h4 class="font-black text-sm sm:text-base">رادار المتفاعلين</h4>
-            <p class="text-xs text-navy/70 font-bold">شوف منو متفاعل ومنو نايم</p>
+            <p class="text-xs text-navy/70 font-bold">شوف أبطال الجلسات النشطين</p>
           </div>
         </div>
 
@@ -278,7 +283,7 @@
         <div class="space-y-3">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-cream text-navy border border-gold/60 text-xs font-black">
-              <span>⏳</span><span>غرفة التركيز</span>
+              <span>⏳</span><span>غرفة التركيز (أي مدة يحددها الطالب)</span>
             </span>
             <button type="button" onclick="openZenFocusMode()" class="h-9 px-3.5 rounded-xl bg-navy text-goldBright border border-gold text-xs font-black hover:bg-navyLight transition whitespace-nowrap">
               🧘 وضع الهدوء
@@ -298,37 +303,38 @@
             <p id="activeSessionTaskBanner" class="text-[11px] font-bold text-navy/70">لم يتم اختيار مهمة محددة لهذه الجلسة بعد.</p>
           </div>
 
-          <div class="grid grid-cols-3 sm:grid-cols-5 gap-2">
+          <div class="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
             <button id="modeBtn10" onclick="setStudyDuration(10)" class="lux-pill lux-pill-idle w-full">10 د</button>
             <button id="modeBtn25" onclick="setStudyDuration(25)" class="lux-pill lux-pill-active w-full">25 د</button>
+            <button id="modeBtn45" onclick="setStudyDuration(45)" class="lux-pill lux-pill-idle w-full">45 د</button>
             <button id="modeBtn50" onclick="setStudyDuration(50)" class="lux-pill lux-pill-idle w-full">50 د</button>
             <button id="modeBtnOpen" onclick="setStudyDuration(0)" class="lux-pill lux-pill-idle w-full">∞ مفتوح</button>
-            <button id="modeBtnCustom" onclick="showCustomRow()" class="lux-pill lux-pill-idle w-full col-span-2 sm:col-span-1">⏱ مخصص</button>
+            <button id="modeBtnCustom" onclick="showCustomRow()" class="lux-pill lux-pill-idle w-full">⏱ مخصص</button>
           </div>
         </div>
 
         <div id="customRow" class="hidden rounded-2xl bg-cream text-navy border border-gold/55 p-3.5 space-y-3 text-right">
-          <span class="block text-xs font-extrabold">حدد مدة التايمر (حد أقصى 24 ساعة = 24 نقطة):</span>
+          <span class="block text-xs font-extrabold">حدد مدة الجلسة الي تناسبك (من دقيقة واحدة حتى 24 ساعة):</span>
           <div class="grid grid-cols-3 gap-2 items-end">
             <div>
               <label class="block text-[11px] font-bold mb-1">ساعات</label>
-              <input id="cHours" type="number" inputmode="numeric" min="0" max="24" value="1" class="w-full h-10 px-2.5 rounded-xl bg-white border border-gold/60 text-sm font-black text-center" />
+              <input id="cHours" type="number" inputmode="numeric" min="0" max="24" value="0" class="w-full h-10 px-2.5 rounded-xl bg-white border border-gold/60 text-sm font-black text-center" />
             </div>
             <div>
               <label class="block text-[11px] font-bold mb-1">دقائق</label>
-              <input id="cMins" type="number" inputmode="numeric" min="0" max="59" value="0" class="w-full h-10 px-2.5 rounded-xl bg-white border border-gold/60 text-sm font-black text-center" />
+              <input id="cMins" type="number" inputmode="numeric" min="0" max="59" value="30" class="w-full h-10 px-2.5 rounded-xl bg-white border border-gold/60 text-sm font-black text-center" />
             </div>
             <button onclick="applyCustomFromInputs()" class="h-10 px-4 rounded-xl bg-navy text-white border border-gold text-xs font-black hover:bg-navyLight transition whitespace-nowrap">
               تطبيق
             </button>
           </div>
           <div class="grid grid-cols-3 sm:grid-cols-6 gap-1.5 pt-0.5">
+            <button onclick="applyCustom(0,15)" class="quick-hr-btn w-full">15 د</button>
+            <button onclick="applyCustom(0,35)" class="quick-hr-btn w-full">35 د</button>
             <button onclick="applyCustom(1,0)" class="quick-hr-btn w-full">1 س</button>
+            <button onclick="applyCustom(1,30)" class="quick-hr-btn w-full">1.5 س</button>
             <button onclick="applyCustom(2,0)" class="quick-hr-btn w-full">2 س</button>
             <button onclick="applyCustom(4,0)" class="quick-hr-btn w-full">4 س</button>
-            <button onclick="applyCustom(8,0)" class="quick-hr-btn w-full">8 س</button>
-            <button onclick="applyCustom(12,0)" class="quick-hr-btn w-full">12 س</button>
-            <button onclick="applyCustom(24,0)" class="quick-hr-btn w-full">24 س</button>
           </div>
         </div>
 
@@ -576,7 +582,7 @@
               ☕ استراحة قصيرة
             </button>
             <button onclick="setMyStatus('sleeping')" class="h-10 px-2 rounded-2xl bg-slate-200 text-slate-900 border border-slate-500 whitespace-nowrap">
-              😴 نايم / أوفلاين
+              🌙 خارج الجلسة حالياً
             </button>
           </div>
         </div>
@@ -584,7 +590,7 @@
 
       <div class="app-card p-5 space-y-3">
         <div class="flex items-center justify-between">
-          <h3 class="text-base sm:text-lg font-black">📡 رادار الطلاب — منو متفاعل ومنو نايم؟</h3>
+          <h3 class="text-base sm:text-lg font-black">📡 رادار أبطال السادس — المتفاعلون الآن</h3>
           <span class="text-xs font-extrabold px-3 py-1 rounded-full bg-cream text-navy border border-gold/50">مباشر</span>
         </div>
         <div id="membersActivityList" class="space-y-2.5"></div>
@@ -753,7 +759,6 @@
           <p class="text-xs font-bold text-navy/70">بطاقة إنجاز مرتبة وجاهزة للمشاركة أو التنزيل كصورة</p>
         </div>
 
-        <!-- البطاقة المرئية المصممة -->
         <div id="designedSummaryCard" class="rounded-[28px] p-5 sm:p-6 bg-gradient-to-br from-navy via-navyLight to-navyDeep text-white border-2 border-gold shadow-xl space-y-4">
           <div class="flex items-center justify-between gap-3 border-b border-gold/35 pb-3.5">
             <div class="flex items-center gap-3 min-w-0">
@@ -884,6 +889,19 @@
     let tempAvatarDataUrl = '';
     let suppressQuizResetOnPersist = false;
     let autoAdvanceTimerId = null;
+    let cheerTimeoutId = null;
+
+    function showCheerMessage(msg) {
+      const banner = document.getElementById('cheerToastBanner');
+      const txt = document.getElementById('cheerToastText');
+      if (!banner || !txt) return;
+      txt.textContent = msg;
+      banner.classList.remove('hidden');
+      if (cheerTimeoutId) clearTimeout(cheerTimeoutId);
+      cheerTimeoutId = setTimeout(() => {
+        banner.classList.add('hidden');
+      }, 4200);
+    }
 
     /* صوت وإشعارات الجلسة والريست */
     let audioCtxInstance = null;
@@ -979,6 +997,7 @@
 
     function notifySessionEnded(earnedPts) {
       playAlertSound('session_end');
+      showCheerMessage('كفو! أتممت الجلسة بنجاح — كل خطوة تقرّبك من الـ 100 🔥');
       const ptsMsg = earnedPts > 0
         ? `حصلت في هذه الجلسة على +${earnedPts} نقطة (بمعدل نقطة لكل ساعة).`
         : 'أكمل ساعة دراسية كاملة للحصول على +1 نقطة (حتى 24 نقطة للجلسة).';
@@ -1482,7 +1501,7 @@
       }
       task.done = true;
       persist();
-      alert(`تم إتمام المهمة: "${task.text}" ✅`);
+      showCheerMessage(`عاش! أتممت مهمة "${task.text}" بنجاح ✅`);
     }
 
     function renderSessionTaskSelectors() {
@@ -1788,10 +1807,10 @@
 
     function paintModeButtons() {
       const active = studyMode === 'open' ? 'Open' : (customActive ? 'Custom' : String(totalSec / 60));
-      ['10', '25', '50', 'Open', 'Custom'].forEach(k => {
+      ['10', '25', '45', '50', 'Open', 'Custom'].forEach(k => {
         const b = document.getElementById('modeBtn' + k);
         if (!b) return;
-        const baseCls = k === 'Custom' ? 'lux-pill w-full col-span-2 sm:col-span-1 ' : 'lux-pill w-full ';
+        const baseCls = 'lux-pill w-full ';
         b.className = baseCls + (k === active ? 'lux-pill-active' : 'lux-pill-idle');
       });
     }
@@ -1893,7 +1912,8 @@
       document.getElementById('cHours').value = h;
       document.getElementById('cMins').value = m;
       document.getElementById('customRow').classList.add('hidden');
-      setSessionLabel(`جلسة مخصصة (${h} س ${m} د)`);
+      const labelPart = h > 0 && m > 0 ? `${h} س ${m} د` : (h > 0 ? `${h} ساعة` : `${m} دقيقة`);
+      setSessionLabel(`جلسة مخصصة (${labelPart})`);
       document.getElementById('studyStatusText').textContent = 'جاهز للبدء';
       saveTimer();
       refreshStudyClock();
@@ -1949,11 +1969,6 @@
         refreshStudyClock();
         document.getElementById('studyStatusText').textContent = '✅ اكتملت الجلسة';
         notifySessionEnded(earned);
-        alert(
-          earned > 0
-            ? `أحسنت! اكتملت الجلسة وحصلت على +${earned} نقطة (1 نقطة لكل ساعة دراسة).`
-            : 'أحسنت! اكتملت الجلسة. (تُمنح +1 نقطة لكل ساعة دراسية كاملة حتى 24 نقطة).'
-        );
         return;
       }
       if (changed) persist();
@@ -1971,10 +1986,15 @@
       }
       document.getElementById('studyStartBtn').textContent = '⏸ إيقاف';
       document.getElementById('studyStatusText').textContent = studyMode === 'open' ? 'تركيز مفتوح... 🔥' : 'جاري التركيز...';
+      if (state.user && state.user.status !== 'active') {
+        state.user.status = 'active';
+        writeKeepaliveSession(state.user, false);
+      }
       lastTs = Date.now();
       timerId = setInterval(studyTick, 1000);
       saveTimer();
       refreshStudyClock();
+      renderUI();
     }
 
     function stopStudyClock() {
@@ -2025,7 +2045,7 @@
       refreshStudyClock();
       if (auto) {
         notifyRestEnded();
-        alert('☕ خلصت الاستراحة، رجعنا للتركيز!');
+        showCheerMessage('☕ خلصت الاستراحة، رجعنا للتركيز بكل نشاط!');
       }
     }
 
@@ -2062,7 +2082,6 @@
           document.getElementById('studyStartBtn').textContent = '⏸ إيقاف';
           saveTimer();
           notifyRestEnded();
-          alert('☕ خلصت الاستراحة أثناء غيابك، رجعنا للتركيز!');
           return;
         }
         onBreak = true;
@@ -2116,7 +2135,11 @@
       const item = state.tasks.find(x => x.id === id);
       if (item) {
         item.done = !item.done;
+        const justCompleted = item.done;
         persist();
+        if (justCompleted) {
+          showCheerMessage(`كفو! أتممت "${item.text}" — خطوة أقرب للـ 100 🔥`);
+        }
       }
     }
 
@@ -2407,9 +2430,9 @@
     }
 
     function statusBadgeHtml(st) {
-      if (st === 'active') return '<span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-400 text-xs font-black">🔥 متفاعل</span>';
+      if (st === 'active') return '<span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-400 text-xs font-black">🔥 متفاعل • بطل جلسة</span>';
       if (st === 'idle') return '<span class="px-2.5 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-400 text-xs font-black">☕ استراحة</span>';
-      return '<span class="px-2.5 py-1 rounded-full bg-slate-200 text-slate-800 border border-slate-400 text-xs font-black">😴 نايم</span>';
+      return '<span class="px-2.5 py-1 rounded-full bg-slate-200 text-slate-800 border border-slate-400 text-xs font-black">🌙 خارج الجلسة حالياً</span>';
     }
 
     function renderUI() {
@@ -2455,10 +2478,15 @@
       const roster = [
         { name: `${myName} (أنت)`, title: myTitle, status: myStatus, points: state.points, avatar: state.user?.avatar || '' },
         ...state.peers
-      ].sort((a, b) => b.points - a.points);
+      ].sort((a, b) => {
+        const aAct = a.status === 'active' ? 1 : 0;
+        const bAct = b.status === 'active' ? 1 : 0;
+        if (bAct !== aAct) return bAct - aAct;
+        return b.points - a.points;
+      });
 
       document.getElementById('membersActivityList').innerHTML = roster.map(m => `
-        <div class="flex items-center justify-between gap-3 p-3.5 rounded-2xl bg-cream text-navy border border-gold/45">
+        <div class="flex items-center justify-between gap-3 p-3.5 rounded-2xl bg-cream text-navy border ${m.status === 'active' ? 'border-2 border-emerald-500/70' : 'border-gold/45'}">
           <div class="flex items-center gap-3 min-w-0">
             <div class="w-10 h-10 rounded-full bg-navy text-goldBright border border-gold flex items-center justify-center font-black shrink-0 overflow-hidden">
               ${m.avatar ? `<img src="${m.avatar}" class="w-full h-full object-cover" />` : '🎓'}
@@ -2543,7 +2571,7 @@
 
     function activeStripHtml() {
       const me = state.user && state.user.status === 'active'
-        ? [{ name: state.user.name + ' (أنت)', title: state.user.title, avatar: state.user.avatar || '' }] : [];
+        ? [{ name: state.user.name + ' (أنت)', title: state.user.title + ' • بطل جلسة', avatar: state.user.avatar || '' }] : [];
       const list = me.concat(state.peers.filter(p => p.status === 'active'));
       const body = list.length ? list.map(m => `
         <div class="shrink-0 w-24 text-center space-y-1">
@@ -2553,7 +2581,7 @@
           <p class="text-xs font-black truncate">${m.name}</p>
           <p class="text-[10px] font-bold text-gold truncate">${m.title}</p>
         </div>`).join('')
-        : '<p class="text-xs font-bold opacity-70">ما أحد متفاعل هسه، كون أول واحد! 🔥</p>';
+        : '<p class="text-xs font-bold opacity-70">ابدأ جلستك بأي وقت يعجبك وكن أول بطل متفاعل هسه! 🔥</p>';
       return `
         <div class="flex items-center justify-between">
           <h3 class="text-base font-black">🔥 الطلاب المتفاعلون الآن</h3>
