@@ -1015,26 +1015,57 @@
       }, 4200);
     }
 
-    /* مجسم SIMSIM الحر (بدون مربع): عرض نظيف بدون أي نص مكسور + طيران وترحيب 10 ثواني + سحب ورزلة */
+    /* مجسم SIMSIM الحر (بدون مربع): شخصية المجسم المرفقة مباشرة بدون اعتماد على ملف خارجي مفقود */
     function renderSimsimLogoAvatar() {
       const target = document.getElementById('simsimLogoAvatar');
       if (!target) return;
-      target.innerHTML = '';
 
-      const img = document.createElement('img');
-      img.src = '169101_3.png';
-      img.alt = 'SIMSIM';
-      img.className = 'w-full h-full object-contain';
-      img.onerror = function () {
-        this.remove();
-        const svgTpl = document.getElementById('brandSvgTemplate');
-        if (svgTpl) {
-          target.innerHTML = `<svg viewBox="0 0 120 120" class="w-full h-full">${svgTpl.innerHTML}</svg>`;
-        } else {
-          target.innerHTML = '<span class="text-2xl font-black text-navy">⚓</span>';
-        }
-      };
-      target.appendChild(img);
+      target.innerHTML = `
+        <svg viewBox="0 0 180 180" class="w-full h-full overflow-visible">
+          <!-- الحقيبة الحمراء خلف المجسم -->
+          <path d="M114 96 C142 92, 152 122, 134 140 C124 150, 108 148, 102 138 Z" fill="#D9232E" stroke="#111827" stroke-width="4" stroke-linejoin="round" />
+          <path d="M124 102 C136 105, 140 120, 130 130" fill="none" stroke="#FF6B74" stroke-width="3" stroke-linecap="round" />
+
+          <!-- جسم المجسم الأبيض -->
+          <path d="M52 146 C44 105, 48 56, 86 52 C122 48, 130 98, 124 146 Z" fill="#FFFFFF" stroke="#111827" stroke-width="4.2" stroke-linejoin="round" />
+
+          <!-- العيون الكبيرة التعبيرية -->
+          <ellipse cx="66" cy="78" rx="18" ry="12" transform="rotate(-10 66 78)" fill="#FFFFFF" stroke="#111827" stroke-width="3.6" />
+          <circle cx="71" cy="79" r="7.5" fill="#111827" />
+          <circle cx="73.5" cy="76.5" r="2.3" fill="#FFFFFF" />
+
+          <ellipse cx="106" cy="75" rx="18" ry="12" transform="rotate(8 106 75)" fill="#FFFFFF" stroke="#111827" stroke-width="3.6" />
+          <circle cx="101" cy="76" r="7.5" fill="#111827" />
+          <circle cx="103.5" cy="73.5" r="2.3" fill="#FFFFFF" />
+
+          <!-- قبعة التخرج الكحلية والذهبية -->
+          <polygon points="34,42 94,18 154,42 94,62" fill="#0F2A5F" stroke="#111827" stroke-width="4" stroke-linejoin="round" />
+          <path d="M62 49 L62 63 C62 70, 126 70, 126 63 L126 49" fill="#0F2A5F" stroke="#111827" stroke-width="4" stroke-linejoin="round" />
+          <path d="M144 45 L147 84" stroke="#F4B400" stroke-width="4.5" stroke-linecap="round" />
+          <circle cx="147" cy="87" r="6" fill="#F4B400" stroke="#111827" stroke-width="2.5" />
+          <path d="M142 92 L147 112 L152 92 Z" fill="#F4B400" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" />
+
+          <!-- الكتاب الأزرق بالمرساة -->
+          <g transform="translate(46, 94)">
+            <path d="M6 12 L44 4 L44 52 L6 60 Z" fill="#123273" stroke="#111827" stroke-width="3.8" stroke-linejoin="round" />
+            <path d="M44 4 L84 12 L84 60 L44 52 Z" fill="#183F8E" stroke="#111827" stroke-width="3.8" stroke-linejoin="round" />
+            <rect x="41" y="4" width="6" height="48" fill="#F4B400" stroke="#111827" stroke-width="2.2" />
+            <!-- علامة المرساة البيضاء على الكتاب -->
+            <circle cx="65" cy="24" r="3.5" fill="none" stroke="#FFFFFF" stroke-width="2.6" />
+            <line x1="65" y1="27.5" x2="65" y2="43" stroke="#FFFFFF" stroke-width="2.8" stroke-linecap="round" />
+            <line x1="59" y1="32" x2="71" y2="32" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" />
+            <path d="M56 37 C56 44, 74 44, 74 37" fill="none" stroke="#FFFFFF" stroke-width="2.8" stroke-linecap="round" />
+          </g>
+
+          <!-- اليدان الممسكتان بالكتاب -->
+          <path d="M44 102 C36 104, 34 114, 42 117 C36 121, 39 129, 46 129 C42 134, 48 139, 55 135" fill="#FFFFFF" stroke="#111827" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M132 104 C140 106, 142 116, 134 119 C140 123, 137 131, 130 131 C134 136, 128 141, 121 137" fill="#FFFFFF" stroke="#111827" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+
+          <!-- القدمان -->
+          <ellipse cx="64" cy="154" rx="16" ry="10" fill="#FFFFFF" stroke="#111827" stroke-width="3.8" />
+          <ellipse cx="112" cy="154" rx="16" ry="10" fill="#FFFFFF" stroke="#111827" stroke-width="3.8" />
+        </svg>
+      `;
     }
 
     function showSimsimBubble(text, durationMs = 4200) {
