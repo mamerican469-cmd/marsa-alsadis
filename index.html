@@ -75,6 +75,22 @@
     .hg-flip { animation: hgturn .75s cubic-bezier(0.22, 1, 0.36, 1); transform-origin: 50% 50%; }
     @keyframes hgturn { from { transform: rotate(180deg); } to { transform: rotate(360deg); } }
 
+    @keyframes mascotDance {
+      0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+      25% { transform: translateY(-7px) rotate(-9deg) scale(1.06); }
+      50% { transform: translateY(0) rotate(0deg) scale(1); }
+      75% { transform: translateY(-7px) rotate(9deg) scale(1.06); }
+    }
+    @keyframes mascotAngryShake {
+      0%, 100% { transform: translateX(0) rotate(0deg); }
+      20% { transform: translateX(-4px) rotate(-4deg); }
+      40% { transform: translateX(4px) rotate(4deg); }
+      60% { transform: translateX(-4px) rotate(-3deg); }
+      80% { transform: translateX(4px) rotate(3deg); }
+    }
+    .mascot-dance { animation: mascotDance 0.65s ease-in-out infinite; }
+    .mascot-angry { animation: mascotAngryShake 0.45s ease-in-out 2; }
+
     .lux-pill {
       display: inline-flex;
       align-items: center;
@@ -169,6 +185,34 @@
       <button type="button" onclick="document.getElementById('cheerToastBanner').classList.add('hidden')" class="text-xs font-black text-white/75 px-2">✕</button>
     </div>
 
+    <!-- رفيق اللوغو التفاعلي (يرقص، يحفّز، ويعصب إذا سخت أو غاب) -->
+    <div id="mascotCompanionCard" class="app-card p-4 flex items-center justify-between gap-3">
+      <div class="flex items-center gap-3 min-w-0">
+        <button type="button" id="mascotAvatarBtn" onclick="triggerMascotDance()" title="اضغط على رفيق اللوغو" class="w-14 h-14 rounded-2xl bg-navy text-goldBright border-2 border-gold flex items-center justify-center text-2xl shrink-0 shadow-sm relative transition">
+          <span id="mascotEmojiFace">🎓</span>
+          <span id="mascotMoodTag" class="absolute -bottom-1.5 px-1.5 py-0.2 rounded-full bg-gold text-navyDeep text-[9px] font-black whitespace-nowrap">قبطان السادس</span>
+        </button>
+        <div class="min-w-0 space-y-0.5">
+          <div class="flex items-center gap-1.5">
+            <span class="text-xs font-black text-gold">رفيق اللوغو التفاعلي</span>
+            <span id="mascotStatePill" class="px-2 py-0.5 rounded-full bg-cream text-navy border border-gold/50 text-[10px] font-black">جاهز</span>
+          </div>
+          <p id="mascotSpeechText" class="text-xs sm:text-sm font-extrabold leading-snug">
+            أهلاً ببطل السادس! اضغط عليّ حتى أركص أو جرّب رزلة إذا سخّتت 😄
+          </p>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-1.5 shrink-0">
+        <button type="button" onclick="triggerMascotDance()" class="px-2.5 py-1.5 rounded-xl bg-navy text-goldBright border border-gold text-[11px] font-black hover:bg-navyLight transition whitespace-nowrap">
+          💃 اركص
+        </button>
+        <button type="button" onclick="triggerMascotRoast('ليش صار هواي ما فاتح المنصة وتدرس؟ السادس ما يرحم، شد حيلك! 😤')" class="px-2.5 py-1.5 rounded-xl bg-rose-100 text-rose-950 border border-rose-400 text-[11px] font-black hover:bg-rose-200 transition whitespace-nowrap">
+          😤 رزّلني
+        </button>
+      </div>
+    </div>
+
     <section id="page-home" class="page-view space-y-5">
 
       <div class="rounded-[28px] p-5 sm:p-6 bg-gradient-to-l from-navy via-navyLight to-[#1D3B68] text-white border-2 border-gold shadow-lg">
@@ -252,7 +296,7 @@
           <div class="w-11 h-11 rounded-2xl bg-[#E09F24] text-white flex items-center justify-center text-xl shadow-xs">⚡</div>
           <div class="mt-3">
             <h4 class="font-black text-sm sm:text-base">رادار المتفاعلين</h4>
-            <p class="text-xs text-navy/70 font-bold">دعم، فلاتر، وأبطال الجلسات</p>
+            <p class="text-xs text-navy/70 font-bold">دعم مرة واحدة وفلاتر الأبطال</p>
           </div>
         </div>
 
@@ -569,7 +613,7 @@
               </div>
               <p id="myProfileTitleDisplay" class="text-xs font-bold text-gold">لقب: طالب السادس الطموح</p>
               <p class="text-[11px] font-extrabold text-navy/70 mt-0.5">
-                💌 رسائل الدعم المرسلة: <span id="sentSupportCountLabel">0</span> • <span id="leaderGapLabel">أنت بالصدارة ⭐</span>
+                💌 دعم أرسلته (مرة واحدة لكل شخص): <span id="sentSupportCountLabel">0</span> • <span id="leaderGapLabel">أنت بالصدارة ⭐</span>
               </p>
             </div>
           </div>
@@ -598,9 +642,7 @@
       <div class="app-card p-5 space-y-3">
         <div class="flex items-center justify-between gap-2">
           <h3 class="text-base font-black">💌 صندوق التحفيز المستلم (آخر 3 رسائل)</h3>
-          <button type="button" onclick="supportAllActivePeers()" class="h-9 px-3 rounded-xl bg-gold text-navyDeep font-black text-xs hover:brightness-105 transition whitespace-nowrap">
-            🔥 ادعم كل المتفاعلين هسه
-          </button>
+          <span class="text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-cream text-navy border border-gold/50">مرة واحدة لكل شخص</span>
         </div>
         <div id="receivedSupportBox" class="space-y-2"></div>
       </div>
@@ -734,6 +776,21 @@
       </button>
     </div>
   </nav>
+
+  <!-- تذكير حفظ المعلومة قبل قفل الجلسة -->
+  <div id="recallReminderModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white text-navy w-full max-w-md rounded-[28px] p-6 border-2 border-gold relative space-y-4 shadow-2xl">
+      <h3 class="text-lg font-black text-navy">🧠 تذكير حفظ المعلومة قبل قفل الجلسة</h3>
+      <p class="text-xs font-bold text-navy/75">شنو أهم قانون أو تعريف أو فكرة ثبتت ببالك من هاي الجلسة؟</p>
+      <form onsubmit="submitRecallNote(event)" class="space-y-3">
+        <textarea id="recallNoteInput" rows="3" placeholder="اكتب ملخص سريع لقانون أو تعريف ثبت ببالك..." class="w-full px-3.5 py-2.5 rounded-2xl bg-cream border border-gold/60 text-sm font-bold focus:outline-none"></textarea>
+        <div class="grid grid-cols-2 gap-2">
+          <button type="submit" class="h-11 rounded-2xl bg-navy text-white border border-gold font-black text-xs">حفظ ومتابعة</button>
+          <button type="button" onclick="skipRecallNote()" class="h-11 rounded-2xl bg-cream text-navy border border-gold/60 font-extrabold text-xs">تخطي</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <!-- وضع الهدوء (Zen Focus Mode) -->
   <div id="zenFocusModal" class="hidden fixed inset-0 z-50 overflow-y-auto" style="background: radial-gradient(circle at top, #14294A 0%, #0B1A30 58%, #060F1D 100%);">
@@ -918,6 +975,7 @@
     const STORE_KEY = 'marsa_alsadis_radar_v11_1pt_system';
     const SESSION_KEEP_KEY = 'marsa_session_keepalive_v1';
     const USER_CACHE_KEY = 'marsa_user_cache_v1';
+    const LAST_VISIT_KEY = 'marsa_last_visit_ts_v1';
     const ADMIN_UIDS = ["6YfSco5cbJNYMlNtDVTnEGT2WC32"];
     let tempAvatarDataUrl = '';
     let suppressQuizResetOnPersist = false;
@@ -925,6 +983,9 @@
     let cheerTimeoutId = null;
     let radarFilterMode = 'all';
     let radarSortMode = 'active';
+    let longSessionAlertShown = false;
+    let pendingRecallAction = null;
+    let mascotAnimTimerId = null;
 
     function showCheerMessage(msg) {
       const banner = document.getElementById('cheerToastBanner');
@@ -936,6 +997,114 @@
       cheerTimeoutId = setTimeout(() => {
         banner.classList.add('hidden');
       }, 4200);
+    }
+
+    /* رفيق اللوغو التفاعلي (يرقص، يحفّز، ويعصب إذا سخّت أو غاب) */
+    function setMascotState(mode, speechText) {
+      const face = document.getElementById('mascotEmojiFace');
+      const tag = document.getElementById('mascotMoodTag');
+      const pill = document.getElementById('mascotStatePill');
+      const speech = document.getElementById('mascotSpeechText');
+      const btn = document.getElementById('mascotAvatarBtn');
+      if (!face || !speech || !btn) return;
+
+      btn.classList.remove('mascot-dance', 'mascot-angry');
+      if (mascotAnimTimerId) clearTimeout(mascotAnimTimerId);
+
+      if (mode === 'dance') {
+        face.textContent = '🥳';
+        if (tag) tag.textContent = 'يرقص فرحاً';
+        if (pill) pill.textContent = '💃 رقص تحفيز';
+        btn.classList.add('mascot-dance');
+        mascotAnimTimerId = setTimeout(() => {
+          btn.classList.remove('mascot-dance');
+          face.textContent = '🎓';
+          if (tag) tag.textContent = 'قبطان السادس';
+          if (pill) pill.textContent = 'جاهز';
+        }, 3200);
+      } else if (mode === 'angry') {
+        face.textContent = '😠';
+        if (tag) tag.textContent = 'معصّب عليك';
+        if (pill) pill.textContent = '😤 رزلة السادس';
+        btn.classList.add('mascot-angry');
+        mascotAnimTimerId = setTimeout(() => {
+          btn.classList.remove('mascot-angry');
+          face.textContent = '🎓';
+          if (tag) tag.textContent = 'قبطان السادس';
+          if (pill) pill.textContent = 'متابعك';
+        }, 4500);
+      } else {
+        face.textContent = '🎓';
+        if (tag) tag.textContent = 'قبطان السادس';
+        if (pill) pill.textContent = 'محفّز';
+      }
+
+      if (speechText) {
+        speech.textContent = speechText;
+      }
+    }
+
+    function triggerMascotDance() {
+      const cheers = [
+        'عاش! هيج الأبطال، نرقص للـ 100 ولا نوقف! 💃🔥',
+        'كفو منك! كل دقيقة تدرسها هسه تبني معدلك باجر 🎉',
+        'رقصة السادس لأصحاب الهمة العالية — كمل ولا تلتفت! 🕺⭐'
+      ];
+      const msg = cheers[Math.floor(Math.random() * cheers.length)];
+      setMascotState('dance', msg);
+    }
+
+    function triggerMascotRoast(customMsg) {
+      const roasts = [
+        'ليش صار هواي ما فاتح المنصة وتدرس؟ السادس ما يرحم، افتح كتابك هسه! 😤',
+        'هاي وين رايح؟ شفتك سخّتت شوية، ترى الأسئلة الوزارية ما تنتظرك! 😠',
+        'شكو متأخر؟ ابدأ جلسة هسه وخلّ نشوف همتك الحقيقية! 💢'
+      ];
+      const msg = customMsg || roasts[Math.floor(Math.random() * roasts.length)];
+      setMascotState('angry', msg);
+      showCheerMessage(msg);
+    }
+
+    function checkAbsenceRoastOnLoad() {
+      try {
+        const lastVisit = Number(localStorage.getItem(LAST_VISIT_KEY) || 0);
+        const now = Date.now();
+        localStorage.setItem(LAST_VISIT_KEY, String(now));
+        const hoursAway = lastVisit ? (now - lastVisit) / (1000 * 3600) : 0;
+        if (lastVisit && hoursAway >= 12) {
+          triggerMascotRoast(`ليش صار هواي ما فاتح المنصة وتدرس؟ مرّت ${Math.floor(hoursAway)} ساعة وأنت غايب عن السادس! 😤`);
+        }
+      } catch (e) {}
+    }
+
+    /* تذكير حفظ المعلومة قبل قفل الجلسة */
+    function openRecallReminder(actionFn) {
+      pendingRecallAction = typeof actionFn === 'function' ? actionFn : null;
+      const inp = document.getElementById('recallNoteInput');
+      if (inp) inp.value = '';
+      document.getElementById('recallReminderModal').classList.remove('hidden');
+    }
+
+    function finishRecallModal() {
+      document.getElementById('recallReminderModal').classList.add('hidden');
+      const fn = pendingRecallAction;
+      pendingRecallAction = null;
+      if (fn) fn();
+    }
+
+    function submitRecallNote(e) {
+      e.preventDefault();
+      const note = (document.getElementById('recallNoteInput')?.value || '').trim();
+      if (note) {
+        state.tasks.unshift({ id: Date.now(), text: `🧠 معلومة مثبّتة: ${note}`, done: true });
+        persist();
+        showCheerMessage('تم حفظ المعلومة المثبّتة ضمن إنجازاتك 🧠✅');
+      }
+      finishRecallModal();
+    }
+
+    function skipRecallNote() {
+      finishRecallModal();
     }
 
     /* صوت وإشعارات الجلسة والريست */
@@ -1032,7 +1201,9 @@
 
     function notifySessionEnded(earnedPts) {
       playAlertSound('session_end');
+      triggerMascotDance();
       showCheerMessage('كفو! أتممت الجلسة بنجاح — كل خطوة تقرّبك من الـ 100 🔥');
+      openRecallReminder(null);
       const ptsMsg = earnedPts > 0
         ? `حصلت في هذه الجلسة على +${earnedPts} نقطة (بمعدل نقطة لكل ساعة).`
         : 'أكمل ساعة دراسية كاملة للحصول على +1 نقطة (حتى 24 نقطة للجلسة).';
@@ -1045,6 +1216,7 @@
 
     function notifyRestEnded() {
       playAlertSound('rest_end');
+      setMascotState('cheer', 'خلصت الاستراحة! يلا نرجع للتركيز بكل حماس 🔥');
       dispatchStudentNotification(
         'خلصت الاستراحة! 🔥',
         'ارجع إلى مرسى السادس وأكمل جلستك الدراسية الآن.',
@@ -1342,6 +1514,7 @@
       minutes: 0,
       activeTaskId: null,
       sentSupportCount: 0,
+      supportedPeers: [],
       receivedSupport: [
         { id: 's1', from: 'زينب علي', msg: '🔥 كفو مستمر نحو الـ 100' },
         { id: 's2', from: 'مصطفى كريم', msg: '💪 عاشت إيدك على التركيز' }
@@ -1413,6 +1586,7 @@
     if (!Array.isArray(state.tasks)) state.tasks = [];
     if (!Array.isArray(state.peers)) state.peers = [];
     if (!Array.isArray(state.receivedSupport)) state.receivedSupport = [];
+    if (!Array.isArray(state.supportedPeers)) state.supportedPeers = [];
     if (typeof state.sentSupportCount !== 'number') state.sentSupportCount = 0;
     if (!Array.isArray(state.questions) || state.questions.length < 200) {
       state.questions = buildChapterOne40Questions();
@@ -1437,7 +1611,7 @@
       renderUI();
     }
 
-    /* رسائل الدعم، الفلاتر، والترتيب في الرادار */
+    /* رسائل الدعم مرة واحدة فقط لكل شخص معين */
     function setRadarFilter(mode) {
       radarFilterMode = mode;
       renderUI();
@@ -1448,27 +1622,31 @@
       renderUI();
     }
 
-    function sendPeerSupport(peerName, messageText) {
-      state.sentSupportCount = (state.sentSupportCount || 0) + 1;
-      persist();
-      showCheerMessage(`أرسلت دعم إلى ${peerName}: ${messageText}`);
+    function hasAlreadySupportedPeer(peerKey) {
+      return Array.isArray(state.supportedPeers) && state.supportedPeers.includes(peerKey);
     }
 
-    function supportAllActivePeers() {
-      const activePeers = state.peers.filter(p => p.status === 'active');
-      if (!activePeers.length) {
-        showCheerMessage('لا يوجد متفاعلون حالياً — شغّل جلستك وكن أول شعلة 🔥');
+    function sendPeerSupport(peerKey, peerName, messageText) {
+      if (!peerKey || hasAlreadySupportedPeer(peerKey)) {
+        showCheerMessage(`أرسلت دعم مسبقاً لـ ${peerName} — الدعم مرة واحدة لكل شخص ✓`);
         return;
       }
-      state.sentSupportCount = (state.sentSupportCount || 0) + activePeers.length;
-      persist();
-      showCheerMessage(`تم إرسال تحفيز جماعي إلى ${activePeers.length} من الأبطال المتفاعلين 🔥`);
-    }
-
-    function quickReplySupport(senderName, replyMsg) {
+      state.supportedPeers.push(peerKey);
       state.sentSupportCount = (state.sentSupportCount || 0) + 1;
       persist();
-      showCheerMessage(`رددت على ${senderName} بـ ${replyMsg}`);
+      setMascotState('dance', `أرسلت دعم مرة واحدة لـ ${peerName}: ${messageText} 🔥`);
+      showCheerMessage(`أرسلت دعم إلى ${peerName}: ${messageText} (مرة واحدة فقط ✓)`);
+    }
+
+    function quickReplySupport(senderKey, senderName, replyMsg) {
+      if (!senderKey || hasAlreadySupportedPeer(senderKey)) {
+        showCheerMessage(`أرسلت دعم مسبقاً لـ ${senderName} ✓`);
+        return;
+      }
+      state.supportedPeers.push(senderKey);
+      state.sentSupportCount = (state.sentSupportCount || 0) + 1;
+      persist();
+      showCheerMessage(`رددت على ${senderName} بـ ${replyMsg} (مرة واحدة فقط ✓)`);
     }
 
     function renderReceivedSupportBox() {
@@ -1479,17 +1657,24 @@
         box.innerHTML = '<p class="text-xs font-bold opacity-70">لا توجد رسائل دعم مستلمة بعد.</p>';
         return;
       }
-      box.innerHTML = items.map(item => `
-        <div class="flex flex-wrap items-center justify-between gap-2 p-3 rounded-2xl bg-cream text-navy border border-gold/45">
-          <div class="text-xs font-extrabold">
-            <span class="text-gold font-black">${esc(item.from)}:</span>
-            <span>${esc(item.msg)}</span>
+      box.innerHTML = items.map(item => {
+        const peerKey = String(item.from || '').trim();
+        const alreadySent = hasAlreadySupportedPeer(peerKey);
+        return `
+          <div class="flex flex-wrap items-center justify-between gap-2 p-3 rounded-2xl bg-cream text-navy border border-gold/45">
+            <div class="text-xs font-extrabold">
+              <span class="text-gold font-black">${esc(item.from)}:</span>
+              <span>${esc(item.msg)}</span>
+            </div>
+            ${alreadySent
+              ? `<span class="px-2.5 py-1 rounded-xl bg-emerald-100 text-emerald-900 border border-emerald-400 text-[11px] font-black">تم الرد ✓</span>`
+              : `<button type="button" onclick="quickReplySupport('${esc(peerKey)}', '${esc(item.from)}', '💪 عاشت إيدك')" class="px-2.5 py-1 rounded-xl bg-navy text-goldBright border border-gold text-[11px] font-black hover:bg-navyLight transition whitespace-nowrap">
+                  رد بـ 💪 عاشت إيدك
+                </button>`
+            }
           </div>
-          <button type="button" onclick="quickReplySupport('${esc(item.from)}', '💪 عاشت إيدك')" class="px-2.5 py-1 rounded-xl bg-navy text-goldBright border border-gold text-[11px] font-black hover:bg-navyLight transition whitespace-nowrap">
-            رد بـ 💪 عاشت إيدك
-          </button>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     function hydrateBrandLogos() {
@@ -1598,6 +1783,7 @@
       }
       task.done = true;
       persist();
+      triggerMascotDance();
       showCheerMessage(`عاش! أتممت مهمة "${task.text}" بنجاح ✅`);
     }
 
@@ -1965,6 +2151,7 @@
       studyTicks = 0;
       sessionStudySec = 0;
       sessionPointsAwarded = 0;
+      longSessionAlertShown = false;
       customActive = false;
       document.getElementById('customRow').classList.add('hidden');
       if (mins === 0) {
@@ -2007,6 +2194,7 @@
       studyTicks = 0;
       sessionStudySec = 0;
       sessionPointsAwarded = 0;
+      longSessionAlertShown = false;
       document.getElementById('cHours').value = h;
       document.getElementById('cMins').value = m;
       document.getElementById('customRow').classList.add('hidden');
@@ -2048,6 +2236,13 @@
 
       studyTicks += activeStudyDelta;
       sessionStudySec += activeStudyDelta;
+
+      /* تنبيه لطيف عند الجلسة الطويلة المتواصلة (60 دقيقة فأكثر) */
+      if (!longSessionAlertShown && sessionStudySec >= 3600) {
+        longSessionAlertShown = true;
+        showCheerMessage('تنبيه لطيف: صارلك ساعة متواصلة تدرس — اشرب مي وخذ ريست قصير إذا تحتاج 💧☕');
+      }
+
       let changed = false;
       while (studyTicks >= 60) {
         studyTicks -= 60;
@@ -2081,9 +2276,11 @@
         remSec = totalSec;
         sessionStudySec = 0;
         sessionPointsAwarded = 0;
+        longSessionAlertShown = false;
       }
       document.getElementById('studyStartBtn').textContent = '⏸ إيقاف';
       document.getElementById('studyStatusText').textContent = studyMode === 'open' ? 'تركيز مفتوح... 🔥' : 'جاري التركيز...';
+      setMascotState('cheer', 'بدأنا الجلسة! ركز وياي ولا تضيع ولا ثانية 🔥');
       if (state.user && state.user.status !== 'active') {
         state.user.status = 'active';
         writeKeepaliveSession(state.user, false);
@@ -2107,17 +2304,29 @@
     }
 
     function resetStudyClock() {
-      stopStudyClock();
-      remSec = totalSec;
-      openSec = 0;
-      studyTicks = 0;
-      sessionStudySec = 0;
-      sessionPointsAwarded = 0;
-      restUsedSec = 0;
-      clearSavedTimer();
-      document.getElementById('studyStatusText').textContent = studyMode === 'open' ? 'مؤقت مفتوح — ابدأ وقت ما تريد' : 'جاهز للبدء';
-      saveTimer();
-      refreshStudyClock();
+      const hadProgress = sessionStudySec > 0 || openSec > 0 || (remSec !== totalSec);
+      const performReset = () => {
+        stopStudyClock();
+        remSec = totalSec;
+        openSec = 0;
+        studyTicks = 0;
+        sessionStudySec = 0;
+        sessionPointsAwarded = 0;
+        restUsedSec = 0;
+        longSessionAlertShown = false;
+        clearSavedTimer();
+        document.getElementById('studyStatusText').textContent = studyMode === 'open' ? 'مؤقت مفتوح — ابدأ وقت ما تريد' : 'جاهز للبدء';
+        saveTimer();
+        refreshStudyClock();
+        if (hadProgress) {
+          triggerMascotRoast('ليش رجّعت الجلسة بدون ما تكملها؟ سخّتت لو تعبت؟ يلا نرجع نركّز! 😤');
+        }
+      };
+      if (hadProgress) {
+        openRecallReminder(performReset);
+      } else {
+        performReset();
+      }
     }
 
     function toggleRest() {
@@ -2236,6 +2445,7 @@
         const justCompleted = item.done;
         persist();
         if (justCompleted) {
+          triggerMascotDance();
           showCheerMessage(`كفو! أتممت "${item.text}" — خطوة أقرب للـ 100 🔥`);
         }
       }
@@ -2385,6 +2595,7 @@
         state.points += 1;
         msg.className = 'p-3.5 rounded-2xl bg-emerald-50 text-emerald-900 border border-emerald-300 text-xs font-extrabold';
         msg.textContent = 'إجابة صحيحة! +1 نقطة — جاري الانتقال للسؤال التالي...';
+        triggerMascotDance();
 
         suppressQuizResetOnPersist = true;
         persist();
@@ -2397,6 +2608,7 @@
         btn.className = 'text-right p-3.5 rounded-2xl bg-rose-100 border-2 border-rose-600 text-rose-950 text-sm font-black';
         msg.className = 'p-3.5 rounded-2xl bg-rose-50 text-rose-900 border border-rose-300 text-xs font-extrabold';
         msg.textContent = `الصحيح هو: ${q.options[q.correct]} — اضغط "التالي ←" للمتابعة.`;
+        triggerMascotRoast('غلطت بيها! ركّز وياي حتى تضمن درجتها بالوزاري 😠');
       }
     }
 
@@ -2580,8 +2792,8 @@
       }
 
       const fullRoster = [
-        { isMe: true, name: `${myName} (أنت)`, rawName: myName, title: myTitle, status: myStatus, points: state.points, avatar: state.user?.avatar || '' },
-        ...state.peers.map(p => ({ ...p, isMe: false, rawName: p.name }))
+        { isMe: true, peerKey: 'me', name: `${myName} (أنت)`, rawName: myName, title: myTitle, status: myStatus, points: state.points, avatar: state.user?.avatar || '' },
+        ...state.peers.map(p => ({ ...p, isMe: false, peerKey: String(p.id || p.name), rawName: p.name }))
       ];
 
       const maxPts = Math.max(...fullRoster.map(x => x.points || 0), 0);
@@ -2622,35 +2834,41 @@
 
       const filteredRoster = fullRoster.filter(m => radarFilterMode === 'all' || m.status === radarFilterMode);
 
-      document.getElementById('membersActivityList').innerHTML = filteredRoster.length ? filteredRoster.map(m => `
-        <div class="p-3.5 rounded-2xl bg-cream text-navy border ${m.status === 'active' ? 'border-2 border-emerald-500/70' : 'border-gold/45'} space-y-2.5">
-          <div class="flex items-center justify-between gap-3">
-            <div class="flex items-center gap-3 min-w-0">
-              <div class="w-10 h-10 rounded-full bg-navy text-goldBright border border-gold flex items-center justify-center font-black shrink-0 overflow-hidden">
-                ${m.avatar ? `<img src="${m.avatar}" class="w-full h-full object-cover" />` : '🎓'}
+      document.getElementById('membersActivityList').innerHTML = filteredRoster.length ? filteredRoster.map(m => {
+        const alreadySupported = hasAlreadySupportedPeer(m.peerKey);
+        return `
+          <div class="p-3.5 rounded-2xl bg-cream text-navy border ${m.status === 'active' ? 'border-2 border-emerald-500/70' : 'border-gold/45'} space-y-2.5">
+            <div class="flex items-center justify-between gap-3">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="w-10 h-10 rounded-full bg-navy text-goldBright border border-gold flex items-center justify-center font-black shrink-0 overflow-hidden">
+                  ${m.avatar ? `<img src="${m.avatar}" class="w-full h-full object-cover" />` : '🎓'}
+                </div>
+                <div class="truncate">
+                  <p class="text-sm font-black truncate">${m.name}</p>
+                  <span class="text-xs font-bold text-navy/70">${m.title} • ${m.points} نقطة</span>
+                </div>
               </div>
-              <div class="truncate">
-                <p class="text-sm font-black truncate">${m.name}</p>
-                <span class="text-xs font-bold text-navy/70">${m.title} • ${m.points} نقطة</span>
-              </div>
+              ${statusBadgeHtml(m.status)}
             </div>
-            ${statusBadgeHtml(m.status)}
+            ${m.isMe ? '' : (alreadySupported
+              ? `<div class="pt-1 border-t border-gold/25 flex items-center justify-between">
+                  <span class="text-[11px] font-black text-emerald-800">✓ تم إرسال رسالة الدعم لهذا الطالب (مرة واحدة فقط)</span>
+                </div>`
+              : `<div class="flex flex-wrap items-center gap-1.5 pt-1 border-t border-gold/25">
+                  <button type="button" onclick="sendPeerSupport('${esc(m.peerKey)}', '${esc(m.rawName)}', '🔥 كفو مستمر')" class="px-2.5 py-1 rounded-xl bg-white hover:bg-emerald-50 text-navy border border-gold/50 text-[11px] font-black transition">
+                    🔥 كفو مستمر
+                  </button>
+                  <button type="button" onclick="sendPeerSupport('${esc(m.peerKey)}', '${esc(m.rawName)}', '💪 عاشت إيدك')" class="px-2.5 py-1 rounded-xl bg-white hover:bg-amber-50 text-navy border border-gold/50 text-[11px] font-black transition">
+                    💪 عاشت إيدك
+                  </button>
+                  <button type="button" onclick="sendPeerSupport('${esc(m.peerKey)}', '${esc(m.rawName)}', '⭐ بطل الـ 100')" class="px-2.5 py-1 rounded-xl bg-white hover:bg-navy hover:text-goldBright text-navy border border-gold/50 text-[11px] font-black transition">
+                    ⭐ بطل الـ 100
+                  </button>
+                </div>`
+            )}
           </div>
-          ${m.isMe ? '' : `
-            <div class="flex flex-wrap items-center gap-1.5 pt-1 border-t border-gold/25">
-              <button type="button" onclick="sendPeerSupport('${esc(m.rawName)}', '🔥 كفو مستمر')" class="px-2.5 py-1 rounded-xl bg-white hover:bg-emerald-50 text-navy border border-gold/50 text-[11px] font-black transition">
-                🔥 كفو مستمر
-              </button>
-              <button type="button" onclick="sendPeerSupport('${esc(m.rawName)}', '💪 عاشت إيدك')" class="px-2.5 py-1 rounded-xl bg-white hover:bg-amber-50 text-navy border border-gold/50 text-[11px] font-black transition">
-                💪 عاشت إيدك
-              </button>
-              <button type="button" onclick="sendPeerSupport('${esc(m.rawName)}', '⭐ بطل الـ 100')" class="px-2.5 py-1 rounded-xl bg-white hover:bg-navy hover:text-goldBright text-navy border border-gold/50 text-[11px] font-black transition">
-                ⭐ بطل الـ 100
-              </button>
-            </div>
-          `}
-        </div>
-      `).join('') : '<p class="text-xs font-bold opacity-70 py-2">لا يوجد طلاب ضمن هذا الفلتر حالياً.</p>';
+        `;
+      }).join('') : '<p class="text-xs font-bold opacity-70 py-2">لا يوجد طلاب ضمن هذا الفلتر حالياً.</p>';
 
       renderReceivedSupportBox();
 
@@ -2703,6 +2921,7 @@
     renderUI();
     restoreTimer();
     refreshStudyClock();
+    checkAbsenceRoastOnLoad();
   </script>
 
   <script>
