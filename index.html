@@ -252,7 +252,7 @@
           <div class="w-11 h-11 rounded-2xl bg-[#E09F24] text-white flex items-center justify-center text-xl shadow-xs">⚡</div>
           <div class="mt-3">
             <h4 class="font-black text-sm sm:text-base">رادار المتفاعلين</h4>
-            <p class="text-xs text-navy/70 font-bold">شوف أبطال الجلسات النشطين</p>
+            <p class="text-xs text-navy/70 font-bold">دعم، فلاتر، وأبطال الجلسات</p>
           </div>
         </div>
 
@@ -563,8 +563,14 @@
             <img id="myAvatarImg" src="" alt="صورتي" class="w-14 h-14 rounded-full border-2 border-gold object-cover bg-cream" onerror="this.style.display='none'; document.getElementById('myAvatarFallback').classList.remove('hidden');" />
             <div id="myAvatarFallback" class="w-14 h-14 rounded-full border-2 border-gold bg-navy text-goldBright flex items-center justify-center text-xl font-black">🎓</div>
             <div>
-              <h3 id="myProfileNameDisplay" class="text-base font-black">بطل مرسى السادس</h3>
+              <div class="flex flex-wrap items-center gap-1.5">
+                <h3 id="myProfileNameDisplay" class="text-base font-black">بطل مرسى السادس</h3>
+                <span id="supporterBadgeLabel" class="hidden px-2 py-0.5 rounded-full bg-amber-100 text-amber-950 border border-amber-400 text-[10px] font-black">🤝 داعم نشط</span>
+              </div>
               <p id="myProfileTitleDisplay" class="text-xs font-bold text-gold">لقب: طالب السادس الطموح</p>
+              <p class="text-[11px] font-extrabold text-navy/70 mt-0.5">
+                💌 رسائل الدعم المرسلة: <span id="sentSupportCountLabel">0</span> • <span id="leaderGapLabel">أنت بالصدارة ⭐</span>
+              </p>
             </div>
           </div>
           <button onclick="openProfileEditor()" class="h-10 px-3.5 rounded-xl bg-navy text-white border border-gold text-xs font-extrabold whitespace-nowrap">
@@ -588,11 +594,38 @@
         </div>
       </div>
 
+      <!-- صندوق التحفيز المستلم والرد السريع -->
       <div class="app-card p-5 space-y-3">
-        <div class="flex items-center justify-between">
-          <h3 class="text-base sm:text-lg font-black">📡 رادار أبطال السادس — المتفاعلون الآن</h3>
-          <span class="text-xs font-extrabold px-3 py-1 rounded-full bg-cream text-navy border border-gold/50">مباشر</span>
+        <div class="flex items-center justify-between gap-2">
+          <h3 class="text-base font-black">💌 صندوق التحفيز المستلم (آخر 3 رسائل)</h3>
+          <button type="button" onclick="supportAllActivePeers()" class="h-9 px-3 rounded-xl bg-gold text-navyDeep font-black text-xs hover:brightness-105 transition whitespace-nowrap">
+            🔥 ادعم كل المتفاعلين هسه
+          </button>
         </div>
+        <div id="receivedSupportBox" class="space-y-2"></div>
+      </div>
+
+      <!-- رادار المتفاعلين مع الفلاتر والترتيب -->
+      <div class="app-card p-5 space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <h3 class="text-base sm:text-lg font-black">📡 رادار أبطال السادس</h3>
+          <div class="flex items-center gap-1.5">
+            <button type="button" id="sortActiveBtn" onclick="setRadarSort('active')" class="px-2.5 py-1 rounded-xl text-[11px] font-black bg-navy text-goldBright border border-gold">
+              🔥 الأكثر تفاعلاً
+            </button>
+            <button type="button" id="sortPointsBtn" onclick="setRadarSort('points')" class="px-2.5 py-1 rounded-xl text-[11px] font-black bg-cream text-navy border border-gold/50">
+              ⭐ الأعلى نقاطاً
+            </button>
+          </div>
+        </div>
+
+        <div class="flex gap-1.5 overflow-x-auto pb-1">
+          <button type="button" id="rfAll" onclick="setRadarFilter('all')" class="px-3 py-1.5 rounded-xl text-xs font-extrabold whitespace-nowrap bg-navy text-white border border-gold">الكل</button>
+          <button type="button" id="rfActive" onclick="setRadarFilter('active')" class="px-3 py-1.5 rounded-xl text-xs font-extrabold whitespace-nowrap bg-cream text-navy border border-gold/50">🔥 متفاعلون الآن</button>
+          <button type="button" id="rfIdle" onclick="setRadarFilter('idle')" class="px-3 py-1.5 rounded-xl text-xs font-extrabold whitespace-nowrap bg-cream text-navy border border-gold/50">☕ استراحة</button>
+          <button type="button" id="rfSleeping" onclick="setRadarFilter('sleeping')" class="px-3 py-1.5 rounded-xl text-xs font-extrabold whitespace-nowrap bg-cream text-navy border border-gold/50">🌙 خارج الجلسة</button>
+        </div>
+
         <div id="membersActivityList" class="space-y-2.5"></div>
       </div>
     </section>
@@ -890,6 +923,8 @@
     let suppressQuizResetOnPersist = false;
     let autoAdvanceTimerId = null;
     let cheerTimeoutId = null;
+    let radarFilterMode = 'all';
+    let radarSortMode = 'active';
 
     function showCheerMessage(msg) {
       const banner = document.getElementById('cheerToastBanner');
@@ -1306,6 +1341,11 @@
       points: 0,
       minutes: 0,
       activeTaskId: null,
+      sentSupportCount: 0,
+      receivedSupport: [
+        { id: 's1', from: 'زينب علي', msg: '🔥 كفو مستمر نحو الـ 100' },
+        { id: 's2', from: 'مصطفى كريم', msg: '💪 عاشت إيدك على التركيز' }
+      ],
       peers: [
         { id: 'p1', name: 'زينب علي', title: 'بطلة الفيزياء', status: 'active', points: 18, avatar: '' },
         { id: 'p2', name: 'مصطفى كريم', title: 'قناص الوزاريات', status: 'idle', points: 14, avatar: '' },
@@ -1372,6 +1412,8 @@
     if (!Array.isArray(state.goals)) state.goals = [];
     if (!Array.isArray(state.tasks)) state.tasks = [];
     if (!Array.isArray(state.peers)) state.peers = [];
+    if (!Array.isArray(state.receivedSupport)) state.receivedSupport = [];
+    if (typeof state.sentSupportCount !== 'number') state.sentSupportCount = 0;
     if (!Array.isArray(state.questions) || state.questions.length < 200) {
       state.questions = buildChapterOne40Questions();
     }
@@ -1393,6 +1435,61 @@
         localStorage.setItem(STORE_KEY, JSON.stringify(state));
       } catch (e) {}
       renderUI();
+    }
+
+    /* رسائل الدعم، الفلاتر، والترتيب في الرادار */
+    function setRadarFilter(mode) {
+      radarFilterMode = mode;
+      renderUI();
+    }
+
+    function setRadarSort(mode) {
+      radarSortMode = mode;
+      renderUI();
+    }
+
+    function sendPeerSupport(peerName, messageText) {
+      state.sentSupportCount = (state.sentSupportCount || 0) + 1;
+      persist();
+      showCheerMessage(`أرسلت دعم إلى ${peerName}: ${messageText}`);
+    }
+
+    function supportAllActivePeers() {
+      const activePeers = state.peers.filter(p => p.status === 'active');
+      if (!activePeers.length) {
+        showCheerMessage('لا يوجد متفاعلون حالياً — شغّل جلستك وكن أول شعلة 🔥');
+        return;
+      }
+      state.sentSupportCount = (state.sentSupportCount || 0) + activePeers.length;
+      persist();
+      showCheerMessage(`تم إرسال تحفيز جماعي إلى ${activePeers.length} من الأبطال المتفاعلين 🔥`);
+    }
+
+    function quickReplySupport(senderName, replyMsg) {
+      state.sentSupportCount = (state.sentSupportCount || 0) + 1;
+      persist();
+      showCheerMessage(`رددت على ${senderName} بـ ${replyMsg}`);
+    }
+
+    function renderReceivedSupportBox() {
+      const box = document.getElementById('receivedSupportBox');
+      if (!box) return;
+      const items = (state.receivedSupport || []).slice(0, 3);
+      if (!items.length) {
+        box.innerHTML = '<p class="text-xs font-bold opacity-70">لا توجد رسائل دعم مستلمة بعد.</p>';
+        return;
+      }
+      box.innerHTML = items.map(item => `
+        <div class="flex flex-wrap items-center justify-between gap-2 p-3 rounded-2xl bg-cream text-navy border border-gold/45">
+          <div class="text-xs font-extrabold">
+            <span class="text-gold font-black">${esc(item.from)}:</span>
+            <span>${esc(item.msg)}</span>
+          </div>
+          <button type="button" onclick="quickReplySupport('${esc(item.from)}', '💪 عاشت إيدك')" class="px-2.5 py-1 rounded-xl bg-navy text-goldBright border border-gold text-[11px] font-black hover:bg-navyLight transition whitespace-nowrap">
+            رد بـ 💪 عاشت إيدك
+          </button>
+        </div>
+      `).join('');
     }
 
     function hydrateBrandLogos() {
@@ -1561,6 +1658,7 @@
         `📅 التاريخ: ${dateStr}`,
         `⏳ مجموع الدراسة: ${state.minutes} دقيقة`,
         `⭐ مجموع النقاط: ${state.points} نقطة`,
+        `💌 رسائل الدعم المرسلة: ${state.sentSupportCount || 0}`,
         `✅ المهام المنجزة: ${doneCount} من ${state.tasks.length}`,
         activeTask ? `🎯 مهمة الجلسة: ${activeTask.text}` : '',
         `#مرسى_السادس #السادس_الإعدادي`
@@ -2458,6 +2556,12 @@
       document.getElementById('myProfileNameDisplay').textContent = myName;
       document.getElementById('myProfileTitleDisplay').textContent = `لقب: ${myTitle}`;
 
+      const sentCount = state.sentSupportCount || 0;
+      const sentEl = document.getElementById('sentSupportCountLabel');
+      if (sentEl) sentEl.textContent = sentCount;
+      const badgeEl = document.getElementById('supporterBadgeLabel');
+      if (badgeEl) badgeEl.classList.toggle('hidden', sentCount < 5);
+
       if (state.user) logoutBtn.classList.remove('hidden');
       else logoutBtn.classList.add('hidden');
 
@@ -2475,30 +2579,80 @@
         avatarFb.classList.remove('hidden');
       }
 
-      const roster = [
-        { name: `${myName} (أنت)`, title: myTitle, status: myStatus, points: state.points, avatar: state.user?.avatar || '' },
-        ...state.peers
-      ].sort((a, b) => {
+      const fullRoster = [
+        { isMe: true, name: `${myName} (أنت)`, rawName: myName, title: myTitle, status: myStatus, points: state.points, avatar: state.user?.avatar || '' },
+        ...state.peers.map(p => ({ ...p, isMe: false, rawName: p.name }))
+      ];
+
+      const maxPts = Math.max(...fullRoster.map(x => x.points || 0), 0);
+      const gapEl = document.getElementById('leaderGapLabel');
+      if (gapEl) {
+        const diffPts = Math.max(0, maxPts - (state.points || 0));
+        gapEl.textContent = diffPts === 0 ? 'أنت بالصدارة ⭐' : `يبعدك ${diffPts} نقطة عن الصدارة`;
+      }
+
+      fullRoster.sort((a, b) => {
+        if (radarSortMode === 'points') {
+          return (b.points || 0) - (a.points || 0);
+        }
         const aAct = a.status === 'active' ? 1 : 0;
         const bAct = b.status === 'active' ? 1 : 0;
         if (bAct !== aAct) return bAct - aAct;
-        return b.points - a.points;
+        return (b.points || 0) - (a.points || 0);
       });
 
-      document.getElementById('membersActivityList').innerHTML = roster.map(m => `
-        <div class="flex items-center justify-between gap-3 p-3.5 rounded-2xl bg-cream text-navy border ${m.status === 'active' ? 'border-2 border-emerald-500/70' : 'border-gold/45'}">
-          <div class="flex items-center gap-3 min-w-0">
-            <div class="w-10 h-10 rounded-full bg-navy text-goldBright border border-gold flex items-center justify-center font-black shrink-0 overflow-hidden">
-              ${m.avatar ? `<img src="${m.avatar}" class="w-full h-full object-cover" />` : '🎓'}
+      ['all', 'active', 'idle', 'sleeping'].forEach(mode => {
+        const btn = document.getElementById('rf' + mode.charAt(0).toUpperCase() + mode.slice(1));
+        if (!btn) return;
+        btn.className = radarFilterMode === mode
+          ? 'px-3 py-1.5 rounded-xl text-xs font-extrabold whitespace-nowrap bg-navy text-white border border-gold'
+          : 'px-3 py-1.5 rounded-xl text-xs font-extrabold whitespace-nowrap bg-cream text-navy border border-gold/50';
+      });
+
+      const sActBtn = document.getElementById('sortActiveBtn');
+      const sPtsBtn = document.getElementById('sortPointsBtn');
+      if (sActBtn && sPtsBtn) {
+        sActBtn.className = radarSortMode === 'active'
+          ? 'px-2.5 py-1 rounded-xl text-[11px] font-black bg-navy text-goldBright border border-gold'
+          : 'px-2.5 py-1 rounded-xl text-[11px] font-black bg-cream text-navy border border-gold/50';
+        sPtsBtn.className = radarSortMode === 'points'
+          ? 'px-2.5 py-1 rounded-xl text-[11px] font-black bg-navy text-goldBright border border-gold'
+          : 'px-2.5 py-1 rounded-xl text-[11px] font-black bg-cream text-navy border border-gold/50';
+      }
+
+      const filteredRoster = fullRoster.filter(m => radarFilterMode === 'all' || m.status === radarFilterMode);
+
+      document.getElementById('membersActivityList').innerHTML = filteredRoster.length ? filteredRoster.map(m => `
+        <div class="p-3.5 rounded-2xl bg-cream text-navy border ${m.status === 'active' ? 'border-2 border-emerald-500/70' : 'border-gold/45'} space-y-2.5">
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="w-10 h-10 rounded-full bg-navy text-goldBright border border-gold flex items-center justify-center font-black shrink-0 overflow-hidden">
+                ${m.avatar ? `<img src="${m.avatar}" class="w-full h-full object-cover" />` : '🎓'}
+              </div>
+              <div class="truncate">
+                <p class="text-sm font-black truncate">${m.name}</p>
+                <span class="text-xs font-bold text-navy/70">${m.title} • ${m.points} نقطة</span>
+              </div>
             </div>
-            <div class="truncate">
-              <p class="text-sm font-black truncate">${m.name}</p>
-              <span class="text-xs font-bold text-navy/70">${m.title} • ${m.points} نقطة</span>
-            </div>
+            ${statusBadgeHtml(m.status)}
           </div>
-          ${statusBadgeHtml(m.status)}
+          ${m.isMe ? '' : `
+            <div class="flex flex-wrap items-center gap-1.5 pt-1 border-t border-gold/25">
+              <button type="button" onclick="sendPeerSupport('${esc(m.rawName)}', '🔥 كفو مستمر')" class="px-2.5 py-1 rounded-xl bg-white hover:bg-emerald-50 text-navy border border-gold/50 text-[11px] font-black transition">
+                🔥 كفو مستمر
+              </button>
+              <button type="button" onclick="sendPeerSupport('${esc(m.rawName)}', '💪 عاشت إيدك')" class="px-2.5 py-1 rounded-xl bg-white hover:bg-amber-50 text-navy border border-gold/50 text-[11px] font-black transition">
+                💪 عاشت إيدك
+              </button>
+              <button type="button" onclick="sendPeerSupport('${esc(m.rawName)}', '⭐ بطل الـ 100')" class="px-2.5 py-1 rounded-xl bg-white hover:bg-navy hover:text-goldBright text-navy border border-gold/50 text-[11px] font-black transition">
+                ⭐ بطل الـ 100
+              </button>
+            </div>
+          `}
         </div>
-      `).join('');
+      `).join('') : '<p class="text-xs font-bold opacity-70 py-2">لا يوجد طلاب ضمن هذا الفلتر حالياً.</p>';
+
+      renderReceivedSupportBox();
 
       const taskMarkup = state.tasks.map(t => {
         const isSelected = String(state.activeTaskId) === String(t.id);
@@ -2692,7 +2846,8 @@
       try {
         await setDoc(doc(db, 'users', myUid), {
           name: state.user.name, title: state.user.title, avatar: state.user.avatar || '',
-          status: state.user.status || 'active', points: state.points, minutes: state.minutes, lastSeen: Date.now()
+          status: state.user.status || 'active', points: state.points, minutes: state.minutes,
+          sentSupportCount: state.sentSupportCount || 0, lastSeen: Date.now()
         }, { merge: true });
       } catch (e) { console.warn('sync', e); }
       try {
@@ -2763,6 +2918,7 @@
       writeKeepaliveSession(state.user, false);
       if (typeof p.points === 'number') state.points = Math.max(state.points || 0, p.points);
       if (typeof p.minutes === 'number') state.minutes = Math.max(state.minutes || 0, p.minutes);
+      if (typeof p.sentSupportCount === 'number') state.sentSupportCount = Math.max(state.sentSupportCount || 0, p.sentSupportCount);
       try {
         const sd = await getDoc(doc(db, 'userData', u.uid));
         if (sd.exists()) {
@@ -2815,7 +2971,7 @@
             return;
           }
           await updateProfile(c.user, { displayName: name });
-          await setDoc(doc(db, 'users', c.user.uid), { name, title: 'بطل السادس الإعدادي', avatar: '', status: 'active', points: 0, minutes: 0, lastSeen: Date.now() });
+          await setDoc(doc(db, 'users', c.user.uid), { name, title: 'بطل السادس الإعدادي', avatar: '', status: 'active', points: 0, minutes: 0, sentSupportCount: 0, lastSeen: Date.now() });
         } else {
           const cred = await signInWithEmailAndPassword(auth, email, pass);
           if (await isUserBanned(cred.user.uid)) {
