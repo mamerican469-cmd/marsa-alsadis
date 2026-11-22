@@ -1015,24 +1015,26 @@
       }, 4200);
     }
 
-    /* مجسم SIMSIM الحر (بدون مربع): صورة المجسم المرفق + طيران وترحيب 10 ثواني + سحب ورزلة */
+    /* مجسم SIMSIM الحر (بدون مربع): عرض نظيف بدون أي نص مكسور + طيران وترحيب 10 ثواني + سحب ورزلة */
     function renderSimsimLogoAvatar() {
       const target = document.getElementById('simsimLogoAvatar');
       if (!target) return;
-      const svgTpl = document.getElementById('brandSvgTemplate');
-      const fallbackSvg = svgTpl
-        ? `<svg viewBox="0 0 120 120" class="w-full h-full">${svgTpl.innerHTML}</svg>`
-        : '<span class="text-2xl font-black text-navy">⚓</span>';
+      target.innerHTML = '';
 
-      target.innerHTML = `
-        <img
-          src="169101_3.png"
-          alt="SIMSIM"
-          class="w-full h-full object-contain"
-          onload="this.dataset.loaded='1';"
-          onerror="if(!this.dataset.loaded){ this.parentElement.innerHTML = ${JSON.stringify(fallbackSvg)}; }"
-        />
-      `;
+      const img = document.createElement('img');
+      img.src = '169101_3.png';
+      img.alt = 'SIMSIM';
+      img.className = 'w-full h-full object-contain';
+      img.onerror = function () {
+        this.remove();
+        const svgTpl = document.getElementById('brandSvgTemplate');
+        if (svgTpl) {
+          target.innerHTML = `<svg viewBox="0 0 120 120" class="w-full h-full">${svgTpl.innerHTML}</svg>`;
+        } else {
+          target.innerHTML = '<span class="text-2xl font-black text-navy">⚓</span>';
+        }
+      };
+      target.appendChild(img);
     }
 
     function showSimsimBubble(text, durationMs = 4200) {
@@ -1197,7 +1199,6 @@
       handle.addEventListener('pointerup', finishPointer);
       handle.addEventListener('pointercancel', finishPointer);
 
-      /* انتقال هادئ وبشويش على الصفحة بدون نط مبالغ */
       setInterval(() => {
         if (dragging) return;
         const rect = root.getBoundingClientRect();
@@ -1830,15 +1831,19 @@
 
     function hydrateBrandLogos() {
       document.querySelectorAll('.brand-logo-slot').forEach(slot => {
-        slot.innerHTML = `
-          <img
-            src="IMG_20261121_195951_804.jpg"
-            alt="شعار مرسى السادس"
-            class="w-full h-full object-contain"
-            onload="this.dataset.loaded='1';"
-            onerror="if(!this.dataset.loaded){ this.parentElement.innerHTML = '<svg viewBox=\\'0 0 120 120\\' class=\\'w-full h-full\\'>' + document.getElementById('brandSvgTemplate').innerHTML + '</svg>'; }"
-          />
-        `;
+        slot.innerHTML = '';
+        const img = document.createElement('img');
+        img.src = 'IMG_20261121_195951_804.jpg';
+        img.alt = 'شعار مرسى السادس';
+        img.className = 'w-full h-full object-contain';
+        img.onerror = function () {
+          this.remove();
+          const svgTpl = document.getElementById('brandSvgTemplate');
+          if (svgTpl) {
+            slot.innerHTML = `<svg viewBox="0 0 120 120" class="w-full h-full">${svgTpl.innerHTML}</svg>`;
+          }
+        };
+        slot.appendChild(img);
       });
     }
 
