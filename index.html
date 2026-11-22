@@ -182,6 +182,9 @@
               <button onclick="goToPage('study')" class="px-4 py-2.5 rounded-2xl bg-gold text-navyDeep font-black text-xs sm:text-sm shadow hover:brightness-105 transition whitespace-nowrap">
                 ابدأ جلسة الآن ←
               </button>
+              <button onclick="openSummaryCardModal()" class="px-3.5 py-2.5 rounded-2xl bg-white/15 hover:bg-white/25 text-xs font-black text-white border border-gold/60 transition whitespace-nowrap">
+                🏆 بطاقة ملخصي اليومي
+              </button>
               <button onclick="openLoginScreen()" class="px-3.5 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 text-xs font-extrabold text-goldBright border border-gold/40 transition whitespace-nowrap">
                 <span id="homeProfileLabel">تسجيل الدخول / الملف الشخصي</span>
               </button>
@@ -256,11 +259,11 @@
           </div>
         </div>
 
-        <div onclick="openProfileEditor()" class="cursor-pointer rounded-[26px] p-4 bg-[#E4F4F5] text-navy border border-teal-300/70 flex flex-col justify-between min-h-[125px] hover:shadow-md transition">
-          <div class="w-11 h-11 rounded-2xl bg-[#1D8A99] text-white flex items-center justify-center text-xl shadow-xs">🪪</div>
+        <div onclick="openSummaryCardModal()" class="cursor-pointer rounded-[26px] p-4 bg-[#E4F4F5] text-navy border border-teal-300/70 flex flex-col justify-between min-h-[125px] hover:shadow-md transition">
+          <div class="w-11 h-11 rounded-2xl bg-[#1D8A99] text-white flex items-center justify-center text-xl shadow-xs">📤</div>
           <div class="mt-3">
-            <h4 class="font-black text-sm sm:text-base">ملفي واللقب</h4>
-            <p class="text-xs text-navy/70 font-bold">صورة، لقب، وحالتك</p>
+            <h4 class="font-black text-sm sm:text-base">بطاقة ملخصي</h4>
+            <p class="text-xs text-navy/70 font-bold">تصميم ومشاركة إنجازك</p>
           </div>
         </div>
       </div>
@@ -273,11 +276,26 @@
     <section id="page-study" class="page-view hidden space-y-5">
       <div class="app-card p-5 sm:p-6 text-center space-y-4">
         <div class="space-y-3">
-          <div class="flex items-center justify-between">
+          <div class="flex flex-wrap items-center justify-between gap-2">
             <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-cream text-navy border border-gold/60 text-xs font-black">
               <span>⏳</span><span>غرفة التركيز</span>
             </span>
-            <span class="text-[11px] font-bold text-gold">1 ساعة = 1 نقطة (الحد الأقصى 24 نقطة/جلسة)</span>
+            <button type="button" onclick="openZenFocusMode()" class="h-9 px-3.5 rounded-xl bg-navy text-goldBright border border-gold text-xs font-black hover:bg-navyLight transition whitespace-nowrap">
+              🧘 وضع الهدوء
+            </button>
+          </div>
+
+          <div class="rounded-2xl bg-cream text-navy border border-gold/50 p-3 text-right space-y-2">
+            <div class="flex items-center justify-between gap-2">
+              <label for="sessionTaskSelect" class="text-xs font-extrabold">🎯 مهمة هذه الجلسة:</label>
+              <button type="button" onclick="completeActiveSessionTask()" class="px-2.5 py-1 rounded-lg bg-emerald-600 text-white text-[11px] font-black hover:bg-emerald-700 transition whitespace-nowrap">
+                ✓ إتمام المهمة
+              </button>
+            </div>
+            <select id="sessionTaskSelect" onchange="setSessionTask(this.value)" class="w-full h-10 px-3 rounded-xl bg-white border border-gold/60 text-xs sm:text-sm font-extrabold text-navy focus:outline-none">
+              <option value="">— اختر مهمة من مهام اليوم (اختياري) —</option>
+            </select>
+            <p id="activeSessionTaskBanner" class="text-[11px] font-bold text-navy/70">لم يتم اختيار مهمة محددة لهذه الجلسة بعد.</p>
           </div>
 
           <div class="grid grid-cols-3 sm:grid-cols-5 gap-2">
@@ -406,6 +424,10 @@
             ↺ إعادة
           </button>
         </div>
+
+        <button type="button" onclick="openSummaryCardModal()" class="w-full max-w-sm mx-auto h-10 px-4 rounded-2xl bg-gold/20 hover:bg-gold/30 text-navy border border-gold font-black text-xs transition flex items-center justify-center gap-1.5">
+          <span>🏆</span><span>بطاقة ملخصي اليومي ومشاركة الإنجاز</span>
+        </button>
 
         <div class="rounded-2xl bg-cream text-navy border border-gold/50 p-3.5 space-y-3 text-right">
           <div class="flex items-center justify-between gap-2">
@@ -579,6 +601,12 @@
           <button onclick="openProfileEditor()" class="h-11 px-4 rounded-2xl bg-cream text-navy border border-gold/60 text-xs font-extrabold whitespace-nowrap">
             🪪 تعديل الاسم واللقب والصورة
           </button>
+          <button onclick="openSummaryCardModal()" class="h-11 px-4 rounded-2xl bg-cream text-navy border border-gold/60 text-xs font-extrabold whitespace-nowrap">
+            🏆 بطاقة ملخصي اليومي ومشاركتها
+          </button>
+          <button onclick="openZenFocusMode()" class="h-11 px-4 rounded-2xl bg-cream text-navy border border-gold/60 text-xs font-extrabold whitespace-nowrap">
+            🧘 دخول وضع الهدوء
+          </button>
           <button onclick="requestAlertPermission(true)" class="h-11 px-4 rounded-2xl bg-cream text-navy border border-gold/60 text-xs font-extrabold whitespace-nowrap sm:col-span-2">
             🔔 تفعيل / اختبار صوت وإشعارات الجلسة والريست
           </button>
@@ -668,6 +696,125 @@
     </div>
   </nav>
 
+  <!-- وضع الهدوء (Zen Focus Mode) -->
+  <div id="zenFocusModal" class="hidden fixed inset-0 z-50 overflow-y-auto" style="background: radial-gradient(circle at top, #14294A 0%, #0B1A30 58%, #060F1D 100%);">
+    <div class="min-h-full flex items-center justify-center p-4">
+      <div class="w-full max-w-md rounded-[32px] p-6 bg-white/95 text-navy border-2 border-gold shadow-2xl space-y-5 text-center">
+        <div class="flex items-center justify-between gap-2">
+          <span class="px-3.5 py-1 rounded-full bg-cream text-navy border border-gold/60 text-xs font-black">🧘 وضع الهدوء — بلا مشتتات</span>
+          <button type="button" onclick="closeZenFocusMode()" class="h-9 px-3 rounded-xl bg-navy text-white border border-gold text-xs font-black">خروج من الهدوء</button>
+        </div>
+
+        <div class="rounded-2xl bg-cream border border-gold/50 p-3.5 text-right space-y-2">
+          <div class="flex items-center justify-between gap-2">
+            <label for="zenTaskSelect" class="text-xs font-black text-navy">🎯 مهمة الجلسة:</label>
+            <button type="button" onclick="completeActiveSessionTask()" class="px-2.5 py-1 rounded-lg bg-emerald-600 text-white text-[11px] font-black hover:bg-emerald-700 transition">
+              ✓ إتمام المهمة
+            </button>
+          </div>
+          <select id="zenTaskSelect" onchange="setSessionTask(this.value)" class="w-full h-10 px-3 rounded-xl bg-white border border-gold/60 text-xs font-extrabold text-navy focus:outline-none">
+            <option value="">— اختر مهمة من مهام اليوم —</option>
+          </select>
+          <p id="zenTaskCurrentLabel" class="text-xs font-black text-navy/80 truncate">لا توجد مهمة محددة حالياً</p>
+        </div>
+
+        <div class="py-2 space-y-1">
+          <span id="zenClockText" class="block text-5xl font-black tracking-wider text-navy">25:00</span>
+          <span id="zenStatusText" class="block text-xs font-extrabold text-gold">جاهز للبدء</span>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2">
+          <button type="button" id="zenStartBtn" onclick="toggleStudyClock(); syncZenView();" class="h-11 px-3 rounded-2xl bg-navy text-white border-2 border-gold font-black text-xs">
+            ▶ ابدأ الجلسة
+          </button>
+          <button type="button" id="zenRestBtn" onclick="toggleRest(); syncZenView();" class="h-11 px-3 rounded-2xl bg-cream text-navy border border-gold font-black text-xs">
+            ☕ استراحة
+          </button>
+          <button type="button" onclick="resetStudyClock(); syncZenView();" class="h-11 px-3 rounded-2xl bg-cream text-navy border border-gold/60 font-black text-xs">
+            ↺ إعادة
+          </button>
+        </div>
+
+        <button type="button" onclick="closeZenFocusMode(); openSummaryCardModal();" class="w-full h-10 rounded-2xl bg-gold text-navyDeep font-black text-xs shadow">
+          🏆 عرض بطاقة ملخصي اليومي
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- بطاقة الملخص اليومي المصممة ومشاركة الإنجاز -->
+  <div id="summaryCardModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-xs overflow-y-auto p-4">
+    <div class="min-h-full flex items-center justify-center py-4">
+      <div class="bg-ivory text-navy w-full max-w-lg rounded-[32px] p-5 sm:p-6 border-2 border-gold relative space-y-4 shadow-2xl">
+        <button type="button" onclick="closeSummaryCardModal()" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-cream border border-gold/60 font-black text-navy">✕</button>
+
+        <div class="text-right space-y-0.5">
+          <h3 class="text-lg font-black text-navy">🏆 بطاقة ملخصي اليومي</h3>
+          <p class="text-xs font-bold text-navy/70">بطاقة إنجاز مرتبة وجاهزة للمشاركة أو التنزيل كصورة</p>
+        </div>
+
+        <!-- البطاقة المرئية المصممة -->
+        <div id="designedSummaryCard" class="rounded-[28px] p-5 sm:p-6 bg-gradient-to-br from-navy via-navyLight to-navyDeep text-white border-2 border-gold shadow-xl space-y-4">
+          <div class="flex items-center justify-between gap-3 border-b border-gold/35 pb-3.5">
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="w-12 h-12 rounded-2xl bg-white border-2 border-gold overflow-hidden flex items-center justify-center shrink-0">
+                <img id="sumCardAvatarImg" src="" alt="" class="w-full h-full object-cover hidden" />
+                <span id="sumCardAvatarFb" class="text-navy font-black text-lg">⚓</span>
+              </div>
+              <div class="truncate">
+                <span class="block text-[10px] font-extrabold text-goldBright">مرسى السادس • طريق الـ 100</span>
+                <h4 id="sumCardStudentName" class="text-base sm:text-lg font-black text-white truncate">بطل مرسى السادس</h4>
+                <p id="sumCardStudentTitle" class="text-[11px] font-bold text-goldBright truncate">طالب السادس الطموح</p>
+              </div>
+            </div>
+            <div class="text-left shrink-0">
+              <span class="block text-[10px] font-bold text-white/70">التاريخ</span>
+              <span id="sumCardDateText" class="text-xs font-black text-goldBright"></span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-2.5 text-center">
+            <div class="rounded-2xl p-3 bg-white/10 border border-gold/35">
+              <span class="block text-[10px] font-bold text-goldBright">دقائق الدراسة</span>
+              <span id="sumCardMinutes" class="text-xl font-black text-white">0</span>
+            </div>
+            <div class="rounded-2xl p-3 bg-white/10 border border-gold/35">
+              <span class="block text-[10px] font-bold text-goldBright">مجموع النقاط</span>
+              <span id="sumCardPoints" class="text-xl font-black text-goldBright">0</span>
+            </div>
+            <div class="rounded-2xl p-3 bg-white/10 border border-gold/35">
+              <span class="block text-[10px] font-bold text-goldBright">المهام المنجزة</span>
+              <span id="sumCardTasks" class="text-xl font-black text-emerald-300">0/0</span>
+            </div>
+          </div>
+
+          <div class="rounded-2xl p-3.5 bg-cream text-navy border border-gold/60 space-y-1 text-right">
+            <span class="block text-[11px] font-black text-gold">🎯 مهمة الجلسة الحالية</span>
+            <p id="sumCardActiveTask" class="text-xs sm:text-sm font-black text-navy">لم يتم تحديد مهمة</p>
+          </div>
+
+          <div class="flex items-center justify-between text-[11px] font-bold text-goldBright/90 pt-1">
+            <span>✦ تركيز • استمرارية • تفوق</span>
+            <span>مرسى السادس</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <button type="button" onclick="downloadSummaryCardPng()" class="h-11 px-3 rounded-2xl bg-navy text-white border-2 border-gold font-black text-xs hover:bg-navyLight transition">
+            📥 تنزيل البطاقة صورة
+          </button>
+          <button type="button" onclick="copySummaryShareText()" class="h-11 px-3 rounded-2xl bg-cream text-navy border border-gold font-black text-xs hover:bg-white transition">
+            📋 نسخ نص المشاركة
+          </button>
+          <button type="button" onclick="shareSummaryNative()" class="h-11 px-3 rounded-2xl bg-gold text-navyDeep font-black text-xs hover:brightness-105 transition">
+            🚀 مشاركة سريعة
+          </button>
+        </div>
+        <p id="summaryActionFeedback" class="hidden text-center text-xs font-extrabold text-emerald-800 bg-emerald-50 border border-emerald-300 rounded-xl py-2 px-3"></p>
+      </div>
+    </div>
+  </div>
+
   <div id="profileEditModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
     <div class="bg-white text-navy w-full max-w-md rounded-[28px] p-6 border-2 border-gold relative space-y-4">
       <button onclick="document.getElementById('profileEditModal').classList.add('hidden')" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-cream font-black">✕</button>
@@ -731,6 +878,8 @@
 
   <script>
     const STORE_KEY = 'marsa_alsadis_radar_v11_1pt_system';
+    const SESSION_KEEP_KEY = 'marsa_session_keepalive_v1';
+    const USER_CACHE_KEY = 'marsa_user_cache_v1';
     const ADMIN_UIDS = ["6YfSco5cbJNYMlNtDVTnEGT2WC32"];
     let tempAvatarDataUrl = '';
     let suppressQuizResetOnPersist = false;
@@ -1137,6 +1286,7 @@
       user: null,
       points: 0,
       minutes: 0,
+      activeTaskId: null,
       peers: [
         { id: 'p1', name: 'زينب علي', title: 'بطلة الفيزياء', status: 'active', points: 18, avatar: '' },
         { id: 'p2', name: 'مصطفى كريم', title: 'قناص الوزاريات', status: 'idle', points: 14, avatar: '' },
@@ -1150,8 +1300,59 @@
       goals: []
     };
 
-    const state = JSON.parse(localStorage.getItem(STORE_KEY) || 'null') || defaultState;
+    function readKeepaliveSession() {
+      try {
+        const raw = localStorage.getItem(SESSION_KEEP_KEY) || sessionStorage.getItem(SESSION_KEEP_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (parsed && parsed.explicitLogout === true) return null;
+        return parsed.user || null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function writeKeepaliveSession(userObj, explicitLogout = false) {
+      try {
+        if (explicitLogout) {
+          localStorage.setItem(SESSION_KEEP_KEY, JSON.stringify({ explicitLogout: true, user: null, updatedAt: Date.now() }));
+          sessionStorage.removeItem(SESSION_KEEP_KEY);
+          return;
+        }
+        if (userObj) {
+          const payload = JSON.stringify({ explicitLogout: false, user: userObj, updatedAt: Date.now() });
+          localStorage.setItem(SESSION_KEEP_KEY, payload);
+          sessionStorage.setItem(SESSION_KEEP_KEY, payload);
+          localStorage.setItem(USER_CACHE_KEY, JSON.stringify({
+            uid: userObj.uid || '',
+            name: userObj.name || '',
+            title: userObj.title || '',
+            avatar: userObj.avatar || '',
+            status: userObj.status || 'active'
+          }));
+        }
+      } catch (e) {}
+    }
+
+    const savedRaw = localStorage.getItem(STORE_KEY);
+    const state = (() => {
+      try {
+        return savedRaw ? Object.assign({}, defaultState, JSON.parse(savedRaw)) : Object.assign({}, defaultState);
+      } catch (e) {
+        return Object.assign({}, defaultState);
+      }
+    })();
+
+    if (!state.user) {
+      const keptUser = readKeepaliveSession();
+      if (keptUser) {
+        state.user = keptUser;
+      }
+    }
+
     if (!Array.isArray(state.goals)) state.goals = [];
+    if (!Array.isArray(state.tasks)) state.tasks = [];
+    if (!Array.isArray(state.peers)) state.peers = [];
     if (!Array.isArray(state.questions) || state.questions.length < 200) {
       state.questions = buildChapterOne40Questions();
     }
@@ -1166,7 +1367,12 @@
     }
 
     function persist() {
-      localStorage.setItem(STORE_KEY, JSON.stringify(state));
+      if (state.user) {
+        writeKeepaliveSession(state.user, false);
+      }
+      try {
+        localStorage.setItem(STORE_KEY, JSON.stringify(state));
+      } catch (e) {}
       renderUI();
     }
 
@@ -1207,6 +1413,7 @@
     }
 
     function logoutAccount() {
+      writeKeepaliveSession(null, true);
       state.user = null;
       persist();
     }
@@ -1241,6 +1448,7 @@
         state.user.title = title;
         if (tempAvatarDataUrl) state.user.avatar = tempAvatarDataUrl;
       }
+      writeKeepaliveSession(state.user, false);
       document.getElementById('profileEditModal').classList.add('hidden');
       persist();
     }
@@ -1251,7 +1459,270 @@
       } else {
         state.user.status = newStatus;
       }
+      writeKeepaliveSession(state.user, false);
       persist();
+    }
+
+    /* اختيار مهمة الجلسة ووضع الهدوء وبطاقة الملخص اليومي */
+    function getActiveSessionTask() {
+      if (!state.activeTaskId) return null;
+      return state.tasks.find(t => String(t.id) === String(state.activeTaskId)) || null;
+    }
+
+    function setSessionTask(taskIdVal) {
+      state.activeTaskId = taskIdVal ? Number(taskIdVal) : null;
+      persist();
+    }
+
+    function completeActiveSessionTask() {
+      const task = getActiveSessionTask();
+      if (!task) {
+        alert('اختر مهمة أولاً من قائمة مهام الجلسة.');
+        return;
+      }
+      task.done = true;
+      persist();
+      alert(`تم إتمام المهمة: "${task.text}" ✅`);
+    }
+
+    function renderSessionTaskSelectors() {
+      const selects = [document.getElementById('sessionTaskSelect'), document.getElementById('zenTaskSelect')];
+      const optionsHtml = '<option value="">— اختر مهمة من مهام اليوم (اختياري) —</option>' +
+        state.tasks.map(t => `<option value="${t.id}" ${String(state.activeTaskId) === String(t.id) ? 'selected' : ''}>${t.done ? '✓ ' : '• '}${esc(t.text)}</option>`).join('');
+
+      selects.forEach(sel => {
+        if (sel) sel.innerHTML = optionsHtml;
+      });
+
+      const activeTask = getActiveSessionTask();
+      const banner = document.getElementById('activeSessionTaskBanner');
+      const zenLabel = document.getElementById('zenTaskCurrentLabel');
+      if (banner) {
+        banner.textContent = activeTask
+          ? `المهمة النشطة الآن: ${activeTask.text} ${activeTask.done ? '(مكتملة ✓)' : '(قيد التنفيذ)'}`
+          : 'لم يتم اختيار مهمة محددة لهذه الجلسة بعد.';
+      }
+      if (zenLabel) {
+        zenLabel.textContent = activeTask
+          ? `${activeTask.text} ${activeTask.done ? '✓ مكتملة' : ''}`
+          : 'لا توجد مهمة محددة حالياً';
+      }
+    }
+
+    function syncZenView() {
+      const modal = document.getElementById('zenFocusModal');
+      if (!modal || modal.classList.contains('hidden')) return;
+      const clockText = document.getElementById('studyClockText')?.textContent || '25:00';
+      const statusText = document.getElementById('studyStatusText')?.textContent || 'جاهز للبدء';
+      document.getElementById('zenClockText').textContent = clockText;
+      document.getElementById('zenStatusText').textContent = statusText;
+      document.getElementById('zenStartBtn').textContent = timerId ? '⏸ إيقاف' : '▶ ابدأ الجلسة';
+      document.getElementById('zenRestBtn').textContent = onBreak ? '▶ إنهاء الريست' : '☕ استراحة';
+      renderSessionTaskSelectors();
+    }
+
+    function openZenFocusMode() {
+      document.getElementById('zenFocusModal').classList.remove('hidden');
+      syncZenView();
+    }
+
+    function closeZenFocusMode() {
+      document.getElementById('zenFocusModal').classList.add('hidden');
+    }
+
+    function getSummaryShareText() {
+      const name = state.user ? state.user.name : 'بطل مرسى السادس';
+      const title = state.user ? state.user.title : 'طالب السادس الطموح';
+      const doneCount = state.tasks.filter(t => t.done).length;
+      const activeTask = getActiveSessionTask();
+      const dateStr = new Date().toLocaleDateString('ar-IQ', { year: 'numeric', month: 'short', day: 'numeric' });
+      return [
+        `⚓ ملخص إنجازي اليومي — مرسى السادس`,
+        `👤 الطالب: ${name} (${title})`,
+        `📅 التاريخ: ${dateStr}`,
+        `⏳ مجموع الدراسة: ${state.minutes} دقيقة`,
+        `⭐ مجموع النقاط: ${state.points} نقطة`,
+        `✅ المهام المنجزة: ${doneCount} من ${state.tasks.length}`,
+        activeTask ? `🎯 مهمة الجلسة: ${activeTask.text}` : '',
+        `#مرسى_السادس #السادس_الإعدادي`
+      ].filter(Boolean).join('\n');
+    }
+
+    function showSummaryFeedback(msg) {
+      const el = document.getElementById('summaryActionFeedback');
+      if (!el) return;
+      el.textContent = msg;
+      el.classList.remove('hidden');
+    }
+
+    function openSummaryCardModal() {
+      const name = state.user ? state.user.name : 'بطل مرسى السادس';
+      const title = state.user ? state.user.title : 'طالب السادس الطموح';
+      const doneCount = state.tasks.filter(t => t.done).length;
+      const activeTask = getActiveSessionTask();
+      const dateStr = new Date().toLocaleDateString('ar-IQ', { year: 'numeric', month: 'short', day: 'numeric' });
+
+      document.getElementById('sumCardStudentName').textContent = name;
+      document.getElementById('sumCardStudentTitle').textContent = title;
+      document.getElementById('sumCardDateText').textContent = dateStr;
+      document.getElementById('sumCardMinutes').textContent = state.minutes;
+      document.getElementById('sumCardPoints').textContent = state.points;
+      document.getElementById('sumCardTasks').textContent = `${doneCount}/${state.tasks.length}`;
+      document.getElementById('sumCardActiveTask').textContent = activeTask
+        ? `${activeTask.text} ${activeTask.done ? '(مكتملة ✓)' : ''}`
+        : 'لم يتم تحديد مهمة';
+
+      const avImg = document.getElementById('sumCardAvatarImg');
+      const avFb = document.getElementById('sumCardAvatarFb');
+      if (state.user && state.user.avatar) {
+        avImg.src = state.user.avatar;
+        avImg.classList.remove('hidden');
+        avFb.classList.add('hidden');
+      } else {
+        avImg.classList.add('hidden');
+        avFb.classList.remove('hidden');
+      }
+
+      const fb = document.getElementById('summaryActionFeedback');
+      if (fb) fb.classList.add('hidden');
+      document.getElementById('summaryCardModal').classList.remove('hidden');
+    }
+
+    function closeSummaryCardModal() {
+      document.getElementById('summaryCardModal').classList.add('hidden');
+    }
+
+    async function copySummaryShareText() {
+      const txt = getSummaryShareText();
+      try {
+        await navigator.clipboard?.writeText(txt);
+        showSummaryFeedback('تم نسخ نص ملخص إنجازك بنجاح! 📋');
+      } catch (e) {
+        showSummaryFeedback('انسخ النص يدوياً: ' + txt);
+      }
+    }
+
+    async function shareSummaryNative() {
+      const txt = getSummaryShareText();
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: 'ملخص إنجازي — مرسى السادس', text: txt });
+          showSummaryFeedback('تمت مشاركة الإنجاز بنجاح! 🚀');
+          return;
+        } catch (e) {}
+      }
+      await copySummaryShareText();
+    }
+
+    function drawRoundRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + w, y, x + w, y + h, r);
+      ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r);
+      ctx.arcTo(x, y, x + w, y, r);
+      ctx.closePath();
+    }
+
+    async function downloadSummaryCardPng() {
+      const name = state.user ? state.user.name : 'بطل مرسى السادس';
+      const title = state.user ? state.user.title : 'طالب السادس الطموح';
+      const doneCount = state.tasks.filter(t => t.done).length;
+      const activeTask = getActiveSessionTask();
+      const dateStr = new Date().toLocaleDateString('ar-IQ', { year: 'numeric', month: 'short', day: 'numeric' });
+
+      const canvas = document.createElement('canvas');
+      canvas.width = 1080;
+      canvas.height = 1080;
+      const ctx = canvas.getContext('2d');
+      ctx.direction = 'rtl';
+
+      const bgGrad = ctx.createLinearGradient(0, 0, 1080, 1080);
+      bgGrad.addColorStop(0, '#0B1A30');
+      bgGrad.addColorStop(0.55, '#14294A');
+      bgGrad.addColorStop(1, '#060F1D');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, 1080, 1080);
+
+      drawRoundRect(ctx, 44, 44, 992, 992, 52);
+      ctx.strokeStyle = '#C69C4E';
+      ctx.lineWidth = 6;
+      ctx.stroke();
+
+      drawRoundRect(ctx, 64, 64, 952, 952, 42);
+      ctx.strokeStyle = 'rgba(229, 195, 122, 0.35)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.fillStyle = '#E5C37A';
+      ctx.font = '800 30px Cairo, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText('✦ مرسى السادس — بطاقة الإنجاز اليومي', 110, 138);
+
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = '900 54px Cairo, sans-serif';
+      ctx.fillText(name, 110, 212);
+
+      ctx.fillStyle = '#E5C37A';
+      ctx.font = '700 28px Cairo, sans-serif';
+      ctx.fillText(`اللقب: ${title}  •  التاريخ: ${dateStr}`, 110, 265);
+
+      const stats = [
+        { label: 'دقائق الدراسة', val: String(state.minutes), accent: '#FFFFFF' },
+        { label: 'مجموع النقاط', val: String(state.points), accent: '#E5C37A' },
+        { label: 'المهام المنجزة', val: `${doneCount}/${state.tasks.length}`, accent: '#6EE7B7' }
+      ];
+
+      const cardW = 290;
+      const gap = 28;
+      const startX = 110;
+      stats.forEach((st, idx) => {
+        const x = startX + idx * (cardW + gap);
+        drawRoundRect(ctx, x, 325, cardW, 235, 30);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(198, 156, 78, 0.55)';
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+
+        ctx.fillStyle = '#E5C37A';
+        ctx.font = '700 24px Cairo, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(st.label, x + cardW / 2, 392);
+
+        ctx.fillStyle = st.accent;
+        ctx.font = '900 62px Cairo, sans-serif';
+        ctx.fillText(st.val, x + cardW / 2, 488);
+      });
+
+      drawRoundRect(ctx, 110, 610, 860, 210, 32);
+      ctx.fillStyle = '#F7F3EA';
+      ctx.fill();
+      ctx.strokeStyle = '#C69C4E';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      ctx.fillStyle = '#C69C4E';
+      ctx.font = '800 26px Cairo, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText('🎯 مهمة الجلسة المختارة', 150, 670);
+
+      ctx.fillStyle = '#0B1A30';
+      ctx.font = '900 34px Cairo, sans-serif';
+      const taskText = activeTask ? `${activeTask.text} ${activeTask.done ? '(مكتملة ✓)' : ''}` : 'التركيز المستمر نحو الـ 100';
+      ctx.fillText(taskText.slice(0, 46), 150, 740);
+
+      ctx.fillStyle = '#E5C37A';
+      ctx.font = '800 26px Cairo, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('إعداد: مساعدين مرسى السادس ⚓ — حلم الـ 100 يبدأ بجلسة تركيز', 540, 915);
+
+      const url = canvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `marsa-summary-${Date.now()}.png`;
+      a.click();
+      showSummaryFeedback('تم تنزيل بطاقة الملخص اليومي كصورة PNG! 📥');
     }
 
     const TIMER_KEY = 'marsa_timer_v2_1pt_hr';
@@ -1361,8 +1832,13 @@
       }
       const rb = document.getElementById('restBtn');
       rb.textContent = onBreak ? '▶ إنهاء الاستراحة والرجوع للتركيز' : '☕ ابدأ استراحة';
+      const sb = document.getElementById('studyStartBtn');
+      if (sb) {
+        sb.textContent = timerId ? '⏸ إيقاف' : '▶ ابدأ الجلسة';
+      }
       drawHourglass(p);
       paintModeButtons();
+      syncZenView();
     }
 
     function setSessionLabel(text) { document.getElementById('homeSessionName').textContent = text; }
@@ -1629,6 +2105,9 @@
       if (!lines.length) return;
       const base = Date.now();
       lines.reverse().forEach((text, i) => state.tasks.unshift({ id: base + i, text, done: false }));
+      if (!state.activeTaskId && state.tasks.length) {
+        state.activeTaskId = state.tasks[0].id;
+      }
       inp.value = '';
       persist();
     }
@@ -1643,6 +2122,7 @@
 
     function deleteTaskItem(id) {
       state.tasks = state.tasks.filter(x => x.id !== id);
+      if (String(state.activeTaskId) === String(id)) state.activeTaskId = null;
       persist();
     }
 
@@ -1992,15 +2472,23 @@
         </div>
       `).join('');
 
-      const taskMarkup = state.tasks.map(t => `
-        <div class="flex items-center justify-between gap-2 p-3 rounded-2xl bg-cream text-navy border border-gold/45">
-          <label class="flex items-center gap-2.5 cursor-pointer text-sm font-extrabold">
-            <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTaskItem(${t.id})" class="w-4 h-4 accent-navy" />
-            <span class="${t.done ? 'line-through opacity-50' : ''}">${esc(t.text)}</span>
-          </label>
-          <button onclick="deleteTaskItem(${t.id})" class="text-xs font-bold text-rose-700 px-2 py-1">حذف</button>
-        </div>
-      `).join('');
+      const taskMarkup = state.tasks.map(t => {
+        const isSelected = String(state.activeTaskId) === String(t.id);
+        return `
+          <div class="flex items-center justify-between gap-2 p-3 rounded-2xl bg-cream text-navy border ${isSelected ? 'border-2 border-navy' : 'border-gold/45'}">
+            <label class="flex items-center gap-2.5 cursor-pointer text-sm font-extrabold min-w-0">
+              <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTaskItem(${t.id})" class="w-4 h-4 accent-navy shrink-0" />
+              <span class="${t.done ? 'line-through opacity-50' : ''} truncate">${esc(t.text)}</span>
+            </label>
+            <div class="flex items-center gap-1.5 shrink-0">
+              <button type="button" onclick="setSessionTask('${t.id}')" class="text-[11px] font-black px-2.5 py-1 rounded-lg ${isSelected ? 'bg-navy text-goldBright' : 'bg-white text-navy border border-gold/50'}">
+                ${isSelected ? '🎯 مهمة الجلسة' : 'اختيار للجلسة'}
+              </button>
+              <button onclick="deleteTaskItem(${t.id})" class="text-xs font-bold text-rose-700 px-2 py-1">حذف</button>
+            </div>
+          </div>
+        `;
+      }).join('');
       document.getElementById('studyTaskList').innerHTML = taskMarkup;
       document.getElementById('tasksTabList').innerHTML = taskMarkup;
 
@@ -2024,6 +2512,8 @@
       renderFcSection();
       renderGoals();
       renderAdminStudents();
+      renderSessionTaskSelectors();
+      syncZenView();
     }
 
     hydrateBrandLogos();
@@ -2097,7 +2587,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signInWithPopup, signInWithRedirect, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getAuth, onAuthStateChanged, signInWithPopup, signInWithRedirect, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const app = initializeApp({
@@ -2110,6 +2600,7 @@
     });
     const auth = getAuth(app);
     auth.languageCode = 'ar';
+    setPersistence(auth, browserLocalPersistence).catch(() => {});
     const db = getFirestore(app);
 
     let myUid = null, unsub = null, unsubAdmin = null, unsubBan = null, cache = [], hb = null, justLogged = false, pendingName = '';
@@ -2142,6 +2633,7 @@
     async function forceKickCurrentUser() {
       alert('تمت إزالتك من المنصة من قِبل الإدارة.');
       try { await signOut(auth); } catch (e) {}
+      writeKeepaliveSession(null, true);
       state.user = null;
       persist();
       gateFail('تمت إزالة حسابك من المنصة من قِبل الأدمن.');
@@ -2168,7 +2660,7 @@
     };
 
     async function fbSyncNow() {
-      if (!myUid || !state.user || state.user.uid !== myUid) return;
+      if (!myUid || !state.user) return;
       try {
         await setDoc(doc(db, 'users', myUid), {
           name: state.user.name, title: state.user.title, avatar: state.user.avatar || '',
@@ -2197,6 +2689,13 @@
 
     onAuthStateChanged(auth, async u => {
       if (!u) {
+        const kept = readKeepaliveSession();
+        if (kept && kept.uid) {
+          myUid = kept.uid;
+          state.user = Object.assign({}, kept, { role: ADMIN_UIDS.includes(kept.uid) ? 'admin' : 'student' });
+          renderUI();
+          return;
+        }
         myUid = null; clearInterval(hb);
         if (unsub) { unsub(); unsub = null; }
         if (unsubAdmin) { unsubAdmin(); unsubAdmin = null; }
@@ -2223,16 +2722,25 @@
 
       let p = {};
       try { const s = await getDoc(doc(db, 'users', u.uid)); if (s.exists()) p = s.data(); } catch (e) {}
+      const prevUser = state.user && state.user.uid === u.uid ? state.user : {};
       state.user = {
-        role: ADMIN_UIDS.includes(u.uid) ? 'admin' : 'student', uid: u.uid, email: u.email || '',
-        name: p.name || pendingName || u.displayName || (u.email || 'طالب').split('@')[0],
-        title: p.title || 'بطل السادس الإعدادي', avatar: p.avatar || '', status: p.status || 'active'
+        role: ADMIN_UIDS.includes(u.uid) ? 'admin' : 'student',
+        uid: u.uid,
+        email: u.email || prevUser.email || '',
+        name: p.name || pendingName || u.displayName || prevUser.name || (u.email || 'طالب').split('@')[0],
+        title: p.title || prevUser.title || 'بطل السادس الإعدادي',
+        avatar: p.avatar || prevUser.avatar || '',
+        status: p.status || prevUser.status || 'active'
       };
-      state.points = p.points ?? 0;
-      state.minutes = p.minutes ?? 0;
+      writeKeepaliveSession(state.user, false);
+      if (typeof p.points === 'number') state.points = Math.max(state.points || 0, p.points);
+      if (typeof p.minutes === 'number') state.minutes = Math.max(state.minutes || 0, p.minutes);
       try {
         const sd = await getDoc(doc(db, 'userData', u.uid));
-        if (sd.exists()) { state.tasks = sd.data().tasks || []; state.goals = sd.data().goals || []; }
+        if (sd.exists()) {
+          if (Array.isArray(sd.data().tasks) && sd.data().tasks.length) state.tasks = sd.data().tasks;
+          if (Array.isArray(sd.data().goals) && sd.data().goals.length) state.goals = sd.data().goals;
+        }
       } catch (e) {}
       pendingName = '';
       persist();
@@ -2292,6 +2800,7 @@
     };
 
     window.logoutAccount = async function () {
+      writeKeepaliveSession(null, true);
       if (myUid) { try { await signOut(auth); } catch (e) {} }
       state.user = null;
       persist();
