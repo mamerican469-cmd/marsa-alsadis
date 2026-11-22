@@ -176,7 +176,7 @@
               حلم الـ 100 يبدأ بجلسة تركيز واحدة!
             </h2>
             <p class="text-xs sm:text-sm text-white/80 font-semibold">
-              سجّل دخولك، خصّص ملفك ولقبك، ونافس زملاءك في التركيز والتحديات.
+              كل ساعة دراسة = 1 نقطة (بحد أقصى 24 نقطة للجلسة)، وكل سؤال صحيح = 1 نقطة.
             </p>
             <div class="pt-1 flex flex-wrap items-center gap-2">
               <button onclick="goToPage('study')" class="px-4 py-2.5 rounded-2xl bg-gold text-navyDeep font-black text-xs sm:text-sm shadow hover:brightness-105 transition whitespace-nowrap">
@@ -213,7 +213,7 @@
             <div class="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center text-2xl shrink-0">📝</div>
             <div>
               <h3 class="text-base sm:text-lg font-black">تحدي الأسئلة الوزارية</h3>
-              <p class="text-xs text-white/80 font-semibold">اختبر معلوماتك واجمع النقاط مع كل إجابة</p>
+              <p class="text-xs text-white/80 font-semibold">كل إجابة صحيحة تمنحك +1 نقطة</p>
             </div>
           </div>
           <span class="text-xl font-black text-goldBright">‹</span>
@@ -236,7 +236,7 @@
           <div class="w-11 h-11 rounded-2xl bg-[#6C4CE6] text-white flex items-center justify-center text-xl shadow-xs">⏳</div>
           <div class="mt-3">
             <h4 class="font-black text-sm sm:text-base">مجموع دراستي</h4>
-            <p class="text-xs text-navy/70 font-bold"><span id="homeMinutesVal">0</span> دقيقة تركيز</p>
+            <p class="text-xs text-navy/70 font-bold"><span id="homeMinutesVal">0</span> دقيقة • <span id="homePointsVal">0</span> نقطة</p>
           </div>
         </div>
 
@@ -277,7 +277,7 @@
             <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-cream text-navy border border-gold/60 text-xs font-black">
               <span>⏳</span><span>غرفة التركيز</span>
             </span>
-            <span class="text-[11px] font-bold opacity-70">اختر نمط الجلسة</span>
+            <span class="text-[11px] font-bold text-gold">1 ساعة = 1 نقطة (الحد الأقصى 24 نقطة/جلسة)</span>
           </div>
 
           <div class="grid grid-cols-3 sm:grid-cols-5 gap-2">
@@ -290,7 +290,7 @@
         </div>
 
         <div id="customRow" class="hidden rounded-2xl bg-cream text-navy border border-gold/55 p-3.5 space-y-3 text-right">
-          <span class="block text-xs font-extrabold">حدد مدة التايمر (حد أقصى 24 ساعة):</span>
+          <span class="block text-xs font-extrabold">حدد مدة التايمر (حد أقصى 24 ساعة = 24 نقطة):</span>
           <div class="grid grid-cols-3 gap-2 items-end">
             <div>
               <label class="block text-[11px] font-bold mb-1">ساعات</label>
@@ -395,6 +395,7 @@
         <div>
           <span id="studyClockText" class="block text-4xl font-black tracking-wider">25:00</span>
           <span id="studyStatusText" class="block text-xs font-bold text-gold mt-1">جاهز للبدء</span>
+          <span id="sessionPointsBadge" class="inline-block mt-1.5 px-3 py-0.5 rounded-full bg-cream text-navy border border-gold/50 text-[11px] font-extrabold">نقاط هذه الجلسة: 0 / 24</span>
         </div>
 
         <div class="grid grid-cols-2 gap-2.5 max-w-sm mx-auto">
@@ -443,7 +444,7 @@
     <section id="page-quiz" class="page-view hidden space-y-5">
       <div class="app-card p-6 space-y-4">
         <div class="flex flex-wrap items-center justify-between gap-2 pb-2">
-          <span class="text-xs font-black text-gold">اختر المادة أو اختبر الكل (40 سؤال لكل مادة — الفصل الأول):</span>
+          <span class="text-xs font-black text-gold">اختر المادة أو اختبر الكل (كل سؤال صحيح = +1 نقطة):</span>
           <span id="quizTotalBadge" class="text-xs font-black px-2.5 py-0.5 rounded-full bg-cream text-navy border border-gold/50">0 سؤال</span>
         </div>
         <div id="quizSubjectFilterBar" class="flex gap-1.5 overflow-x-auto pb-1"></div>
@@ -729,7 +730,7 @@
   </div>
 
   <script>
-    const STORE_KEY = 'marsa_alsadis_radar_v10_100cards_kick';
+    const STORE_KEY = 'marsa_alsadis_radar_v11_1pt_system';
     const ADMIN_UIDS = ["6YfSco5cbJNYMlNtDVTnEGT2WC32"];
     let tempAvatarDataUrl = '';
     let suppressQuizResetOnPersist = false;
@@ -827,11 +828,14 @@
       } catch (e) {}
     }
 
-    function notifySessionEnded() {
+    function notifySessionEnded(earnedPts) {
       playAlertSound('session_end');
+      const ptsMsg = earnedPts > 0
+        ? `حصلت في هذه الجلسة على +${earnedPts} نقطة (بمعدل نقطة لكل ساعة).`
+        : 'أكمل ساعة دراسية كاملة للحصول على +1 نقطة (حتى 24 نقطة للجلسة).';
       dispatchStudentNotification(
         'انتهت جلسة التركيز! 🎉',
-        'أحسنت! اكتملت الجلسة وحصلت على +25 نقطة — ادخل لإكمال مهامك أو أخذ استراحة.',
+        `أحسنت! اكتملت الجلسة. ${ptsMsg}`,
         'marsa-session-end'
       );
     }
@@ -991,7 +995,6 @@
         }
       }
 
-      // إكمال العدد بدقة إلى 100 بطاقة
       while (cards.length < 100) {
         const ref = cards[cards.length % groups[0].items.length];
         const idx = cards.length + 1;
@@ -1132,12 +1135,12 @@
       theme: 'light',
       headline: 'حلم الـ 100 يبدأ بجلسة تركيز واحدة!',
       user: null,
-      points: 45,
-      minutes: 30,
+      points: 0,
+      minutes: 0,
       peers: [
-        { id: 'p1', name: 'زينب علي', title: 'بطلة الفيزياء', status: 'active', points: 145, avatar: '' },
-        { id: 'p2', name: 'مصطفى كريم', title: 'قناص الوزاريات', status: 'idle', points: 110, avatar: '' },
-        { id: 'p3', name: 'نور الهدى', title: 'طالبة النخبة', status: 'sleeping', points: 95, avatar: '' }
+        { id: 'p1', name: 'زينب علي', title: 'بطلة الفيزياء', status: 'active', points: 18, avatar: '' },
+        { id: 'p2', name: 'مصطفى كريم', title: 'قناص الوزاريات', status: 'idle', points: 14, avatar: '' },
+        { id: 'p3', name: 'نور الهدى', title: 'طالبة النخبة', status: 'sleeping', points: 9, avatar: '' }
       ],
       questions: buildChapterOne40Questions(),
       flashcards: buildScientific100Flashcards(),
@@ -1251,19 +1254,33 @@
       persist();
     }
 
-    const TIMER_KEY = 'marsa_timer_v1';
+    const TIMER_KEY = 'marsa_timer_v2_1pt_hr';
     const MAX_SEC = 24 * 3600;
+    const MAX_SESSION_POINTS = 24;
     let studyMode = 'timer';
     let totalSec = 25 * 60;
     let remSec = totalSec;
     let openSec = 0;
     let timerId = null;
     let studyTicks = 0;
+    let sessionStudySec = 0;
+    let sessionPointsAwarded = 0;
     let lastTs = 0;
     let saveCtr = 0;
     let customActive = false;
     let onBreak = false;
     let breakRem = 0, breakTotal = 0, restUsedSec = 0;
+
+    function awardSessionHourPoints() {
+      const completedHours = Math.min(MAX_SESSION_POINTS, Math.floor(sessionStudySec / 3600));
+      if (completedHours > sessionPointsAwarded) {
+        const diff = completedHours - sessionPointsAwarded;
+        sessionPointsAwarded = completedHours;
+        state.points += diff;
+        return true;
+      }
+      return false;
+    }
 
     function fmtTime(sec) {
       sec = Math.max(0, Math.floor(sec));
@@ -1313,7 +1330,7 @@
         localStorage.setItem(TIMER_KEY, JSON.stringify({
           studyMode, totalSec, remSec, openSec, customActive,
           running: !!timerId && !onBreak, onBreak, breakRem, breakTotal,
-          savedAt: Date.now(), studyTicks,
+          savedAt: Date.now(), studyTicks, sessionStudySec, sessionPointsAwarded,
           restMins: document.getElementById('restMins').value, restUsedSec
         }));
       } catch (e) {}
@@ -1338,6 +1355,10 @@
       document.getElementById('studyClockText').textContent = formatted;
       document.getElementById('homeClockPill').textContent = formatted;
       document.getElementById('restTotalLabel').textContent = Math.floor(restUsedSec / 60);
+      const spBadge = document.getElementById('sessionPointsBadge');
+      if (spBadge) {
+        spBadge.textContent = `نقاط هذه الجلسة: ${sessionPointsAwarded} / ${MAX_SESSION_POINTS} (${Math.floor(sessionStudySec / 60)} د دراسة)`;
+      }
       const rb = document.getElementById('restBtn');
       rb.textContent = onBreak ? '▶ إنهاء الاستراحة والرجوع للتركيز' : '☕ ابدأ استراحة';
       drawHourglass(p);
@@ -1349,12 +1370,14 @@
     function setStudyDuration(mins) {
       stopStudyClock();
       studyTicks = 0;
+      sessionStudySec = 0;
+      sessionPointsAwarded = 0;
       customActive = false;
       document.getElementById('customRow').classList.add('hidden');
       if (mins === 0) {
         studyMode = 'open';
         openSec = 0;
-        setSessionLabel('جلسة تركيز مفتوحة (بدون حد)');
+        setSessionLabel('جلسة تركيز مفتوحة (1 نقطة / ساعة)');
         document.getElementById('studyStatusText').textContent = 'مؤقت مفتوح — ابدأ وقت ما تريد';
       } else {
         studyMode = 'timer';
@@ -1389,6 +1412,8 @@
       totalSec = sec;
       remSec = sec;
       studyTicks = 0;
+      sessionStudySec = 0;
+      sessionPointsAwarded = 0;
       document.getElementById('cHours').value = h;
       document.getElementById('cMins').value = m;
       document.getElementById('customRow').classList.add('hidden');
@@ -1414,6 +1439,7 @@
         return;
       }
 
+      let activeStudyDelta = d;
       if (studyMode === 'open') {
         const before = openSec;
         openSec += d;
@@ -1422,23 +1448,36 @@
           svg.classList.remove('hg-flip'); void svg.getBoundingClientRect(); svg.classList.add('hg-flip');
         }
       } else {
+        activeStudyDelta = Math.min(d, Math.max(0, remSec));
         remSec -= d;
       }
 
-      studyTicks += d;
+      studyTicks += activeStudyDelta;
+      sessionStudySec += activeStudyDelta;
       let changed = false;
-      while (studyTicks >= 60) { studyTicks -= 60; state.minutes += 1; state.points += 5; changed = true; }
+      while (studyTicks >= 60) {
+        studyTicks -= 60;
+        state.minutes += 1;
+        changed = true;
+      }
+      if (awardSessionHourPoints()) {
+        changed = true;
+      }
 
       if (studyMode === 'timer' && remSec <= 0) {
         remSec = 0;
         stopStudyClock();
-        state.points += 25;
+        const earned = sessionPointsAwarded;
         clearSavedTimer();
         persist();
         refreshStudyClock();
         document.getElementById('studyStatusText').textContent = '✅ اكتملت الجلسة';
-        notifySessionEnded();
-        alert('أحسنت! اكتملت الجلسة وحصلت على +25 نقطة.');
+        notifySessionEnded(earned);
+        alert(
+          earned > 0
+            ? `أحسنت! اكتملت الجلسة وحصلت على +${earned} نقطة (1 نقطة لكل ساعة دراسة).`
+            : 'أحسنت! اكتملت الجلسة. (تُمنح +1 نقطة لكل ساعة دراسية كاملة حتى 24 نقطة).'
+        );
         return;
       }
       if (changed) persist();
@@ -1449,7 +1488,11 @@
     function toggleStudyClock() {
       requestAlertPermission(false);
       if (timerId) { stopStudyClock(); saveTimer(); return; }
-      if (studyMode === 'timer' && remSec <= 0) remSec = totalSec;
+      if (studyMode === 'timer' && remSec <= 0) {
+        remSec = totalSec;
+        sessionStudySec = 0;
+        sessionPointsAwarded = 0;
+      }
       document.getElementById('studyStartBtn').textContent = '⏸ إيقاف';
       document.getElementById('studyStatusText').textContent = studyMode === 'open' ? 'تركيز مفتوح... 🔥' : 'جاري التركيز...';
       lastTs = Date.now();
@@ -1474,6 +1517,8 @@
       remSec = totalSec;
       openSec = 0;
       studyTicks = 0;
+      sessionStudySec = 0;
+      sessionPointsAwarded = 0;
       restUsedSec = 0;
       clearSavedTimer();
       document.getElementById('studyStatusText').textContent = studyMode === 'open' ? 'مؤقت مفتوح — ابدأ وقت ما تريد' : 'جاهز للبدء';
@@ -1520,9 +1565,11 @@
       openSec = Math.max(0, t.openSec || 0);
       customActive = !!t.customActive;
       studyTicks = t.studyTicks || 0;
+      sessionStudySec = t.sessionStudySec || 0;
+      sessionPointsAwarded = t.sessionPointsAwarded || 0;
       restUsedSec = t.restUsedSec || 0;
       if (t.restMins) document.getElementById('restMins').value = t.restMins;
-      if (studyMode === 'open') setSessionLabel('جلسة تركيز مفتوحة (بدون حد)');
+      if (studyMode === 'open') setSessionLabel('جلسة تركيز مفتوحة (1 نقطة / ساعة)');
       else if (customActive) setSessionLabel(`جلسة مخصصة (${Math.floor(totalSec / 3600)} س ${Math.floor((totalSec % 3600) / 60)} د)`);
       else setSessionLabel(`جلسة التركيز (${Math.round(totalSec / 60)} دقيقة)`);
 
@@ -1552,16 +1599,23 @@
       }
 
       if (t.running) {
+        const effectiveGone = studyMode === 'open' ? gone : Math.min(gone, remSec);
         if (studyMode === 'open') openSec += gone; else remSec = Math.max(0, remSec - gone);
+        studyTicks += effectiveGone;
+        sessionStudySec += effectiveGone;
+        while (studyTicks >= 60) { studyTicks -= 60; state.minutes += 1; }
+        awardSessionHourPoints();
+
         if (studyMode === 'timer' && remSec <= 0) {
           remSec = 0;
-          state.points += 25;
+          const earned = sessionPointsAwarded;
           clearSavedTimer();
           persist();
           document.getElementById('studyStatusText').textContent = '✅ اكتملت الجلسة';
-          notifySessionEnded();
+          notifySessionEnded(earned);
           return;
         }
+        persist();
         toggleStudyClock();
       } else {
         document.getElementById('studyStatusText').textContent = (studyMode === 'open' ? openSec : remSec !== totalSec) ? 'الجلسة متوقفة — اضغط ابدأ للمتابعة' : 'جاهز للبدء';
@@ -1583,7 +1637,6 @@
       const item = state.tasks.find(x => x.id === id);
       if (item) {
         item.done = !item.done;
-        if (item.done) state.points += 10;
         persist();
       }
     }
@@ -1728,9 +1781,9 @@
 
       if (idx === q.correct) {
         btn.className = 'text-right p-3.5 rounded-2xl bg-emerald-100 border-2 border-emerald-600 text-emerald-950 text-sm font-black';
-        state.points += 15;
+        state.points += 1;
         msg.className = 'p-3.5 rounded-2xl bg-emerald-50 text-emerald-900 border border-emerald-300 text-xs font-extrabold';
-        msg.textContent = 'إجابة صحيحة! +15 نقطة — جاري الانتقال للسؤال التالي...';
+        msg.textContent = 'إجابة صحيحة! +1 نقطة — جاري الانتقال للسؤال التالي...';
 
         suppressQuizResetOnPersist = true;
         persist();
@@ -1888,6 +1941,8 @@
       document.getElementById('heroTitleDisplay').textContent = state.headline;
       document.getElementById('admHeroField').value = state.headline;
       document.getElementById('homeMinutesVal').textContent = state.minutes;
+      const ptsEl = document.getElementById('homePointsVal');
+      if (ptsEl) ptsEl.textContent = state.points;
       document.getElementById('homeTasksVal').textContent = state.tasks.length;
 
       const logoutBtn = document.getElementById('logoutBtn');
