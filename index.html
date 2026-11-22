@@ -1015,55 +1015,108 @@
       }, 4200);
     }
 
-    /* مجسم SIMSIM الحر (بدون مربع): شخصية المجسم المرفقة مباشرة بدون اعتماد على ملف خارجي مفقود */
+    /* مجسم SIMSIM الحر (بدون مربع): مجسم ثلاثي الأبعاد مطوّر بإضاءة ولمعة وعمق */
     function renderSimsimLogoAvatar() {
       const target = document.getElementById('simsimLogoAvatar');
       if (!target) return;
 
       target.innerHTML = `
         <svg viewBox="0 0 180 180" class="w-full h-full overflow-visible">
-          <!-- الحقيبة الحمراء خلف المجسم -->
-          <path d="M114 96 C142 92, 152 122, 134 140 C124 150, 108 148, 102 138 Z" fill="#D9232E" stroke="#111827" stroke-width="4" stroke-linejoin="round" />
-          <path d="M124 102 C136 105, 140 120, 130 130" fill="none" stroke="#FF6B74" stroke-width="3" stroke-linecap="round" />
+          <defs>
+            <radialGradient id="simBodyGrad3D" cx="35%" cy="25%" r="72%">
+              <stop offset="0%" stop-color="#FFFFFF" />
+              <stop offset="58%" stop-color="#F6F2E9" />
+              <stop offset="88%" stop-color="#E2DACB" />
+              <stop offset="100%" stop-color="#C8BEA9" />
+            </radialGradient>
 
-          <!-- جسم المجسم الأبيض -->
-          <path d="M52 146 C44 105, 48 56, 86 52 C122 48, 130 98, 124 146 Z" fill="#FFFFFF" stroke="#111827" stroke-width="4.2" stroke-linejoin="round" />
+            <linearGradient id="simBagGrad3D" x1="15%" y1="10%" x2="85%" y2="90%">
+              <stop offset="0%" stop-color="#FF4B55" />
+              <stop offset="55%" stop-color="#D9232E" />
+              <stop offset="100%" stop-color="#8A1119" />
+            </linearGradient>
 
-          <!-- العيون الكبيرة التعبيرية -->
-          <ellipse cx="66" cy="78" rx="18" ry="12" transform="rotate(-10 66 78)" fill="#FFFFFF" stroke="#111827" stroke-width="3.6" />
-          <circle cx="71" cy="79" r="7.5" fill="#111827" />
-          <circle cx="73.5" cy="76.5" r="2.3" fill="#FFFFFF" />
+            <linearGradient id="simCapTopGrad3D" x1="10%" y1="0%" x2="90%" y2="100%">
+              <stop offset="0%" stop-color="#224B96" />
+              <stop offset="55%" stop-color="#0F2A5F" />
+              <stop offset="100%" stop-color="#071636" />
+            </linearGradient>
 
-          <ellipse cx="106" cy="75" rx="18" ry="12" transform="rotate(8 106 75)" fill="#FFFFFF" stroke="#111827" stroke-width="3.6" />
-          <circle cx="101" cy="76" r="7.5" fill="#111827" />
-          <circle cx="103.5" cy="73.5" r="2.3" fill="#FFFFFF" />
+            <linearGradient id="simGoldGrad3D" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#FFE184" />
+              <stop offset="50%" stop-color="#E5A910" />
+              <stop offset="100%" stop-color="#9A6B00" />
+            </linearGradient>
 
-          <!-- قبعة التخرج الكحلية والذهبية -->
-          <polygon points="34,42 94,18 154,42 94,62" fill="#0F2A5F" stroke="#111827" stroke-width="4" stroke-linejoin="round" />
-          <path d="M62 49 L62 63 C62 70, 126 70, 126 63 L126 49" fill="#0F2A5F" stroke="#111827" stroke-width="4" stroke-linejoin="round" />
-          <path d="M144 45 L147 84" stroke="#F4B400" stroke-width="4.5" stroke-linecap="round" />
-          <circle cx="147" cy="87" r="6" fill="#F4B400" stroke="#111827" stroke-width="2.5" />
-          <path d="M142 92 L147 112 L152 92 Z" fill="#F4B400" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" />
+            <linearGradient id="simBookLeft3D" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#1D479B" />
+              <stop offset="100%" stop-color="#0B204C" />
+            </linearGradient>
 
-          <!-- الكتاب الأزرق بالمرساة -->
-          <g transform="translate(46, 94)">
-            <path d="M6 12 L44 4 L44 52 L6 60 Z" fill="#123273" stroke="#111827" stroke-width="3.8" stroke-linejoin="round" />
-            <path d="M44 4 L84 12 L84 60 L44 52 Z" fill="#183F8E" stroke="#111827" stroke-width="3.8" stroke-linejoin="round" />
-            <rect x="41" y="4" width="6" height="48" fill="#F4B400" stroke="#111827" stroke-width="2.2" />
-            <!-- علامة المرساة البيضاء على الكتاب -->
-            <circle cx="65" cy="24" r="3.5" fill="none" stroke="#FFFFFF" stroke-width="2.6" />
-            <line x1="65" y1="27.5" x2="65" y2="43" stroke="#FFFFFF" stroke-width="2.8" stroke-linecap="round" />
-            <line x1="59" y1="32" x2="71" y2="32" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" />
-            <path d="M56 37 C56 44, 74 44, 74 37" fill="none" stroke="#FFFFFF" stroke-width="2.8" stroke-linecap="round" />
+            <linearGradient id="simBookRight3D" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#2758B8" />
+              <stop offset="100%" stop-color="#102B63" />
+            </linearGradient>
+
+            <radialGradient id="simEyeBallGrad" cx="35%" cy="30%" r="70%">
+              <stop offset="0%" stop-color="#FFFFFF" />
+              <stop offset="78%" stop-color="#F7F5F0" />
+              <stop offset="100%" stop-color="#D4CEC2" />
+            </radialGradient>
+
+            <filter id="simSoftShadow3D" x="-20%" y="-20%" width="140%" height="145%">
+              <feDropShadow dx="0" dy="6" stdDeviation="5" flood-color="#060F1D" flood-opacity="0.28" />
+            </filter>
+          </defs>
+
+          <g filter="url(#simSoftShadow3D)">
+            <path d="M114 95 C144 90, 155 123, 135 142 C124 152, 108 150, 102 139 Z" fill="url(#simBagGrad3D)" stroke="#111827" stroke-width="4" stroke-linejoin="round" />
+            <path d="M123 101 C136 105, 141 119, 131 131" fill="none" stroke="#FF9AA0" stroke-width="3.2" stroke-linecap="round" opacity="0.85" />
+            <path d="M112 108 C126 110, 134 122, 127 137" fill="none" stroke="#6E0B12" stroke-width="2.5" stroke-linecap="round" opacity="0.55" />
+
+            <path d="M52 146 C43 104, 48 54, 86 51 C123 48, 131 98, 124 146 Z" fill="url(#simBodyGrad3D)" stroke="#111827" stroke-width="4.2" stroke-linejoin="round" />
+            <path d="M58 64 C54 88, 54 114, 58 136" fill="none" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" opacity="0.8" />
+
+            <g>
+              <ellipse cx="66" cy="78" rx="18.5" ry="12.5" transform="rotate(-10 66 78)" fill="url(#simEyeBallGrad)" stroke="#111827" stroke-width="3.6" />
+              <circle cx="71.5" cy="79" r="7.8" fill="#0B1A30" />
+              <circle cx="74" cy="76.2" r="2.7" fill="#FFFFFF" />
+              <circle cx="69" cy="81.5" r="1.2" fill="#FFFFFF" opacity="0.7" />
+            </g>
+
+            <g>
+              <ellipse cx="106" cy="75" rx="18.5" ry="12.5" transform="rotate(8 106 75)" fill="url(#simEyeBallGrad)" stroke="#111827" stroke-width="3.6" />
+              <circle cx="100.5" cy="76" r="7.8" fill="#0B1A30" />
+              <circle cx="103" cy="73.2" r="2.7" fill="#FFFFFF" />
+              <circle cx="98" cy="78.5" r="1.2" fill="#FFFFFF" opacity="0.7" />
+            </g>
+
+            <g>
+              <polygon points="32,42 94,16 156,42 94,63" fill="url(#simCapTopGrad3D)" stroke="#111827" stroke-width="4" stroke-linejoin="round" />
+              <line x1="94" y1="18" x2="94" y2="61" stroke="#4D79CC" stroke-width="1.6" opacity="0.55" />
+              <path d="M62 49 L62 64 C62 71, 126 71, 126 64 L126 49" fill="url(#simCapTopGrad3D)" stroke="#111827" stroke-width="4" stroke-linejoin="round" />
+              <path d="M68 54 C84 58, 106 58, 120 54" fill="none" stroke="#537FD1" stroke-width="2" stroke-linecap="round" opacity="0.65" />
+              <path d="M144 45 L147 84" stroke="url(#simGoldGrad3D)" stroke-width="4.8" stroke-linecap="round" />
+              <circle cx="147" cy="87" r="6.2" fill="url(#simGoldGrad3D)" stroke="#111827" stroke-width="2.5" />
+              <path d="M141.5 92 L147 113 L152.5 92 Z" fill="url(#simGoldGrad3D)" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" />
+            </g>
+
+            <g transform="translate(46, 94)">
+              <path d="M5 12 L44 4 L44 52 L5 60 Z" fill="url(#simBookLeft3D)" stroke="#111827" stroke-width="3.8" stroke-linejoin="round" />
+              <path d="M44 4 L85 12 L85 60 L44 52 Z" fill="url(#simBookRight3D)" stroke="#111827" stroke-width="3.8" stroke-linejoin="round" />
+              <rect x="40.5" y="4" width="7" height="48" fill="url(#simGoldGrad3D)" stroke="#111827" stroke-width="2.2" />
+              <circle cx="65" cy="24" r="3.6" fill="none" stroke="#FFFFFF" stroke-width="2.8" />
+              <line x1="65" y1="27.6" x2="65" y2="43.5" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" />
+              <line x1="58.5" y1="32" x2="71.5" y2="32" stroke="#FFFFFF" stroke-width="2.8" stroke-linecap="round" />
+              <path d="M55.5 37.5 C55.5 44.5, 74.5 44.5, 74.5 37.5" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" />
+            </g>
+
+            <path d="M44 102 C36 104, 34 114, 42 117 C36 121, 39 129, 46 129 C42 134, 48 139, 55 135" fill="url(#simBodyGrad3D)" stroke="#111827" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M132 104 C140 106, 142 116, 134 119 C140 123, 137 131, 130 131 C134 136, 128 141, 121 137" fill="url(#simBodyGrad3D)" stroke="#111827" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+
+            <ellipse cx="64" cy="154" rx="16.5" ry="10.5" fill="url(#simBodyGrad3D)" stroke="#111827" stroke-width="3.8" />
+            <ellipse cx="112" cy="154" rx="16.5" ry="10.5" fill="url(#simBodyGrad3D)" stroke="#111827" stroke-width="3.8" />
           </g>
-
-          <!-- اليدان الممسكتان بالكتاب -->
-          <path d="M44 102 C36 104, 34 114, 42 117 C36 121, 39 129, 46 129 C42 134, 48 139, 55 135" fill="#FFFFFF" stroke="#111827" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
-          <path d="M132 104 C140 106, 142 116, 134 119 C140 123, 137 131, 130 131 C134 136, 128 141, 121 137" fill="#FFFFFF" stroke="#111827" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
-
-          <!-- القدمان -->
-          <ellipse cx="64" cy="154" rx="16" ry="10" fill="#FFFFFF" stroke="#111827" stroke-width="3.8" />
-          <ellipse cx="112" cy="154" rx="16" ry="10" fill="#FFFFFF" stroke="#111827" stroke-width="3.8" />
         </svg>
       `;
     }
