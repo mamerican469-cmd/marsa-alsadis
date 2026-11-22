@@ -75,10 +75,17 @@
     .hg-flip { animation: hgturn .75s cubic-bezier(0.22, 1, 0.36, 1); transform-origin: 50% 50%; }
     @keyframes hgturn { from { transform: rotate(180deg); } to { transform: rotate(360deg); } }
 
-    /* مجسم SIMSIM العائم الحر (بدون مربع) مع حركة هادئة «بشويش» ورزلة عند الكبس */
+    /* مجسم SIMSIM الحر (بدون مربع): طيران وترحيب 10 ثواني، حركة هادئة، ورزلة عند الكبس */
     @keyframes simsimGentleBreath {
       0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
       50% { transform: translateY(-4px) rotate(1.5deg) scale(1.015); }
+    }
+    @keyframes simsimWaveFly {
+      0% { transform: translateY(0px) rotate(-6deg) scale(1.05); }
+      25% { transform: translateY(-11px) rotate(8deg) scale(1.08); }
+      50% { transform: translateY(-3px) rotate(-7deg) scale(1.06); }
+      75% { transform: translateY(-11px) rotate(7deg) scale(1.08); }
+      100% { transform: translateY(0px) rotate(-6deg) scale(1.05); }
     }
     @keyframes simsimRoastShake {
       0%, 100% { transform: translateX(0) rotate(0deg) scale(1.04); }
@@ -89,7 +96,7 @@
     }
     .simsim-floating-widget {
       position: fixed;
-      z-index: 48;
+      z-index: 52;
       touch-action: none;
       user-select: none;
       -webkit-user-select: none;
@@ -99,6 +106,9 @@
     }
     .simsim-gentle-motion {
       animation: simsimGentleBreath 3.2s ease-in-out infinite;
+    }
+    .simsim-welcome-wave {
+      animation: simsimWaveFly 1.15s ease-in-out infinite;
     }
     .simsim-roast-anim {
       animation: simsimRoastShake 0.45s ease-in-out 2;
@@ -193,9 +203,9 @@
 
   <!-- مجسم SIMSIM العائم الحر (بدون مربع) مع بالون كلام -->
   <div id="simsimFloatingRoot" class="simsim-floating-widget" style="left: 18px; bottom: 102px;">
-    <div class="flex flex-col items-end gap-1.5 max-w-[240px]">
+    <div class="flex flex-col items-end gap-1.5 max-w-[255px]">
       <div id="simsimSpeechBubble" class="hidden rounded-2xl px-3.5 py-2.5 bg-navy/95 text-white border border-gold/70 shadow-xl text-xs font-extrabold leading-snug text-right">
-        <span id="simsimSpeechMsg">ليش صار هواي ما فاتح المنصة وتدرس؟ السادس ما يرحم! 😤</span>
+        <span id="simsimSpeechMsg">أهلاً بأبطال السادس! طريق الـ 100 يبدأ من هسه، شدّوا حيلكم! 👋🔥</span>
       </div>
 
       <div id="simsimBodyMotion" class="simsim-gentle-motion flex flex-col items-center">
@@ -989,6 +999,9 @@
     let longSessionAlertShown = false;
     let pendingRecallAction = null;
     let simsimBubbleTimerId = null;
+    let simsimWelcomeTimerId = null;
+    let simsimWelcomeFlyInterval = null;
+    let simsimWelcomePlayed = false;
 
     function showCheerMessage(msg) {
       const banner = document.getElementById('cheerToastBanner');
@@ -1002,63 +1015,23 @@
       }, 4200);
     }
 
-    /* مجسم SIMSIM العائم الحر (بدون مربع) مع حركة هادئة «بشويش» ورزلة عند الكبس */
+    /* مجسم SIMSIM الحر (بدون مربع): صورة المجسم المرفق + طيران وترحيب 10 ثواني + سحب ورزلة */
     function renderSimsimLogoAvatar() {
       const target = document.getElementById('simsimLogoAvatar');
       if (!target) return;
+      const svgTpl = document.getElementById('brandSvgTemplate');
+      const fallbackSvg = svgTpl
+        ? `<svg viewBox="0 0 120 120" class="w-full h-full">${svgTpl.innerHTML}</svg>`
+        : '<span class="text-2xl font-black text-navy">⚓</span>';
 
       target.innerHTML = `
-        <svg viewBox="0 0 160 160" class="w-full h-full overflow-visible">
-          <defs>
-            <linearGradient id="simNavy3d" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#1E3A66" />
-              <stop offset="65%" stop-color="#0B1A30" />
-              <stop offset="100%" stop-color="#060F1D" />
-            </linearGradient>
-            <linearGradient id="simGold3d" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#F3D68A" />
-              <stop offset="60%" stop-color="#C69C4E" />
-              <stop offset="100%" stop-color="#8F6A28" />
-            </linearGradient>
-            <linearGradient id="simFace3d" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#FFFDF9" />
-              <stop offset="100%" stop-color="#EFE5D0" />
-            </linearGradient>
-          </defs>
-
-          <ellipse cx="80" cy="146" rx="40" ry="7" fill="#0B1A30" fill-opacity="0.18" />
-
-          <!-- جسم المجسم الكحلي والذهبي -->
-          <path d="M46 102 C46 78, 114 78, 114 102 L118 134 C118 139, 112 142, 106 142 L54 142 C48 142, 42 139, 42 134 Z" fill="url(#simNavy3d)" stroke="#060F1D" stroke-width="3" />
-          <!-- وشاح التخرج الذهبي -->
-          <path d="M58 84 L80 112 L102 84 L94 84 L80 102 L66 84 Z" fill="url(#simGold3d)" />
-
-          <!-- اليدان -->
-          <path d="M46 96 C28 92, 22 76, 30 70 C36 66, 42 74, 48 86" fill="url(#simNavy3d)" stroke="#060F1D" stroke-width="2.5" stroke-linecap="round" />
-          <circle cx="29" cy="71" r="7" fill="url(#simFace3d)" stroke="#0B1A30" stroke-width="2" />
-
-          <path d="M114 96 C130 102, 134 116, 124 122 C118 125, 112 118, 110 108" fill="url(#simNavy3d)" stroke="#060F1D" stroke-width="2.5" stroke-linecap="round" />
-          <circle cx="125" cy="118" r="7" fill="url(#simFace3d)" stroke="#0B1A30" stroke-width="2" />
-
-          <!-- الرأس والوجه -->
-          <circle cx="80" cy="68" r="30" fill="url(#simFace3d)" stroke="#0B1A30" stroke-width="3" />
-          <!-- العيون والحواجب -->
-          <ellipse cx="69" cy="66" rx="5.2" ry="6.8" fill="#0B1A30" />
-          <circle cx="67.2" cy="63.5" r="2" fill="#FFFFFF" />
-          <ellipse cx="91" cy="66" rx="5.2" ry="6.8" fill="#0B1A30" />
-          <circle cx="89.2" cy="63.5" r="2" fill="#FFFFFF" />
-          <path d="M62 56 Q69 52 75 56" fill="none" stroke="#0B1A30" stroke-width="2.5" stroke-linecap="round" />
-          <path d="M85 56 Q91 52 98 56" fill="none" stroke="#0B1A30" stroke-width="2.5" stroke-linecap="round" />
-          <!-- ابتسامة / تعبير لطيف -->
-          <path d="M71 78 Q80 86 89 78" fill="none" stroke="#0B1A30" stroke-width="2.8" stroke-linecap="round" />
-
-          <!-- قبعة التخرج الكحلية والذهبية -->
-          <polygon points="34,42 80,22 126,42 80,58" fill="url(#simNavy3d)" stroke="#C69C4E" stroke-width="2.2" />
-          <path d="M56 46 L56 56 C56 61, 104 61, 104 56 L104 46" fill="url(#simNavy3d)" stroke="#060F1D" stroke-width="2.5" />
-          <!-- الشرابة الذهبية -->
-          <path d="M116 44 L118 72" stroke="url(#simGold3d)" stroke-width="3.2" stroke-linecap="round" />
-          <circle cx="118" cy="75" r="5" fill="url(#simGold3d)" />
-        </svg>
+        <img
+          src="169101_3.png"
+          alt="SIMSIM"
+          class="w-full h-full object-contain"
+          onload="this.dataset.loaded='1';"
+          onerror="if(!this.dataset.loaded){ this.parentElement.innerHTML = ${JSON.stringify(fallbackSvg)}; }"
+        />
       `;
     }
 
@@ -1088,6 +1061,80 @@
         motionEl.classList.add('simsim-roast-anim');
       }
       showSimsimBubble(msg, 4600);
+    }
+
+    function runSimsim10SecWelcomeFlight(force = false) {
+      if (simsimWelcomePlayed && !force) return;
+      simsimWelcomePlayed = true;
+      const root = document.getElementById('simsimFloatingRoot');
+      const motionEl = document.getElementById('simsimBodyMotion');
+      if (!root) return;
+
+      if (simsimWelcomeTimerId) clearTimeout(simsimWelcomeTimerId);
+      if (simsimWelcomeFlyInterval) clearInterval(simsimWelcomeFlyInterval);
+
+      const welcomeLines = [
+        'أهلاً بأبطال السادس! نورت المنصة، طريق الـ 100 يبدأ من هسه 👋🔥',
+        'كل ساعة دراسة وياي تقرّبك لحلمك — شدّ حيلك ولا تتراجع 💪⭐',
+        'سوي جلسة، حل أسئلة، وخلّي اسمك يلمع بين المتفاعلين ⚓🎯',
+        'يلا نبلش! كبسة وحدة عليّ أرزلك إذا سخّتت 😄'
+      ];
+
+      root.classList.remove('hidden');
+      root.style.display = '';
+      showSimsimBubble(welcomeLines[0], 10000);
+
+      if (motionEl) {
+        motionEl.classList.remove('simsim-gentle-motion');
+        motionEl.classList.add('simsim-welcome-wave');
+      }
+
+      const w = root.offsetWidth || 112;
+      const h = root.offsetHeight || 130;
+      const maxX = Math.max(12, window.innerWidth - w - 12);
+      const maxY = Math.max(84, window.innerHeight - h - 104);
+
+      const waypoints = [
+        { left: Math.min(maxX, Math.max(12, window.innerWidth * 0.42)), top: Math.min(maxY, 115), msg: welcomeLines[0] },
+        { left: Math.max(12, window.innerWidth * 0.12), top: Math.min(maxY, window.innerHeight * 0.35), msg: welcomeLines[1] },
+        { left: Math.min(maxX, Math.max(12, window.innerWidth * 0.48)), top: Math.min(maxY, window.innerHeight * 0.52), msg: welcomeLines[2] },
+        { left: 18, top: Math.max(84, window.innerHeight - h - 102), msg: welcomeLines[3] }
+      ];
+
+      let idx = 0;
+      root.style.bottom = 'auto';
+
+      const stepFlight = () => {
+        if (idx >= waypoints.length) return;
+        const wp = waypoints[idx++];
+        root.style.transition = 'left 2.1s ease-in-out, top 2.1s ease-in-out';
+        root.style.left = `${wp.left}px`;
+        root.style.top = `${wp.top}px`;
+        showSimsimBubble(wp.msg, 3200);
+      };
+
+      stepFlight();
+      simsimWelcomeFlyInterval = setInterval(() => {
+        if (idx < waypoints.length) {
+          stepFlight();
+        } else {
+          clearInterval(simsimWelcomeFlyInterval);
+        }
+      }, 2400);
+
+      simsimWelcomeTimerId = setTimeout(() => {
+        clearInterval(simsimWelcomeFlyInterval);
+        root.style.transition = 'left 0.9s ease-in-out, top 0.9s ease-in-out';
+        root.style.left = '18px';
+        root.style.top = `${Math.max(84, window.innerHeight - h - 102)}px`;
+        if (motionEl) {
+          motionEl.classList.remove('simsim-welcome-wave');
+          motionEl.classList.add('simsim-gentle-motion');
+        }
+        setTimeout(() => {
+          root.style.transition = '';
+        }, 950);
+      }, 10000);
     }
 
     function initSimsimRoamAndDrag() {
@@ -1166,7 +1213,7 @@
         setTimeout(() => {
           root.style.transition = '';
         }, 1900);
-      }, 9000);
+      }, 9500);
     }
 
     function checkAbsenceRoastOnLoad() {
@@ -3025,6 +3072,7 @@
     renderUI();
     restoreTimer();
     refreshStudyClock();
+    runSimsim10SecWelcomeFlight(false);
     checkAbsenceRoastOnLoad();
   </script>
 
@@ -3252,6 +3300,7 @@
       pendingName = '';
       persist();
       fbSyncNow();
+      runSimsim10SecWelcomeFlight(true);
       if (!unsub) unsub = onSnapshot(collection(db, 'users'), s => {
         cache = s.docs.map(d => ({ id: d.id, ...d.data() }));
         applyPeers();
