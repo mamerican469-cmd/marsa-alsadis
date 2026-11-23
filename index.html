@@ -1081,6 +1081,9 @@
           <a id="previewBookletExternalLink" href="#" target="_blank" rel="noopener noreferrer" class="flex-1 h-11 rounded-2xl bg-navy text-goldBright border border-gold font-black text-xs flex items-center justify-center gap-1.5 hover:bg-navyLight transition">
             <span>✈️ فتح في تليجرام</span>
           </a>
+          <a id="previewBookletAppLink" href="#" class="hidden flex-1 h-11 rounded-2xl bg-white text-navy border border-gold font-black text-xs flex items-center justify-center gap-1.5">
+            <span>📲 فتح بالتطبيق</span>
+          </a>
           <button type="button" onclick="closeBookletPreview()" class="h-11 px-4 rounded-2xl bg-cream text-navy border border-gold/60 font-extrabold text-xs">إغلاق</button>
         </div>
       </div>
@@ -2131,6 +2134,17 @@
       document.getElementById('previewBookletNote').textContent = b.note || 'منشور ملزمة من تليجرام';
       const extLink = document.getElementById('previewBookletExternalLink');
       extLink.href = b.url || '#';
+      const appLink = document.getElementById('previewBookletAppLink');
+      if (appLink) {
+        const tgp = parseTelegramPostPath(b.url);
+        if (tgp) {
+          const [dom, post] = tgp.split('/');
+          appLink.href = `tg://resolve?domain=${encodeURIComponent(dom)}&post=${encodeURIComponent(post)}`;
+          appLink.classList.remove('hidden');
+        } else {
+          appLink.classList.add('hidden');
+        }
+      }
 
       const container = document.getElementById('previewBookletEmbedContainer');
       const tgPost = parseTelegramPostPath(b.url);
