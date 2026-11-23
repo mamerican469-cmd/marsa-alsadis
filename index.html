@@ -217,7 +217,7 @@
     }
     .simsim-tiny-btn:active { transform: scale(0.95); }
 
-    /* تصميم بطاقات القوانين والملاحظات الشبيه بالملخصات[span_5](start_span)[span_5](end_span)[span_6](start_span)[span_6](end_span)[span_7](start_span)[span_7](end_span)[span_8](start_span)[span_8](end_span)[span_9](start_span)[span_9](end_span) */
+    /* تصميم بطاقات القوانين والملاحظات */
     .formula-sheet-card {
       border-radius: 20px;
       border: 1.5px solid rgba(198, 156, 78, 0.55);
@@ -228,7 +228,7 @@
     .formula-sheet-head {
       background: #0B1A30;
       color: #FBF9F4;
-      padding: 8px 14px;
+      padding: 9px 14px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -238,25 +238,24 @@
     .formula-sheet-body {
       padding: 12px 14px;
       background: #FBF9F4;
-      space-y: 8px;
     }
     .formula-note-strip {
       margin-top: 8px;
-      padding: 8px 12px;
+      padding: 9px 12px;
       border-radius: 12px;
       background: #F7F3EA;
       border-right: 3.5px solid #C69C4E;
-      font-size: 11px;
+      font-size: 11.5px;
       font-weight: 800;
       color: #0B1A30;
-      line-height: 1.65;
+      line-height: 1.75;
     }
 
     .math-eq-box {
       direction: ltr;
       text-align: left;
       font-family: 'Times New Roman', Georgia, serif;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
       color: #0B1A30;
       display: inline-flex;
@@ -275,11 +274,11 @@
     .math-num {
       padding: 0 4px 2px;
       border-bottom: 1.8px solid #0B1A30;
-      font-size: 14px;
+      font-size: 13.5px;
     }
     .math-den {
       padding: 2px 4px 0;
-      font-size: 14px;
+      font-size: 13.5px;
     }
     .math-sqrt {
       display: inline-flex;
@@ -291,7 +290,7 @@
     }
     .math-sqrt::before {
       content: "√";
-      font-size: 18px;
+      font-size: 17px;
       line-height: 1;
       margin-right: 1px;
       margin-left: -6px;
@@ -1241,10 +1240,10 @@
     let simsimWelcomePlayed = false;
     let simsimSleepingOnBed = false;
 
-    /* قوانين وتفاصيل وملاحظات الفصل الأول من الصور المرفقة + الفصول[span_10](start_span)[span_10](end_span)[span_11](start_span)[span_11](end_span)[span_12](start_span)[span_12](end_span)[span_13](start_span)[span_13](end_span)[span_14](start_span)[span_14](end_span) */
     const F = (num, den) => `<span class="math-frac"><span class="math-num">${num}</span><span class="math-den">${den}</span></span>`;
     const SQRT = (inner) => `<span class="math-sqrt">${inner}</span>`;
 
+    /* جميع القوانين والملاحظات الجديدة بعد إزالة الشعارات وأسماء القنوات */
     const SCIENTIFIC_CHAPTER_FORMULAS = {
       physics: {
         name: 'الفيزياء',
@@ -1255,7 +1254,7 @@
             sections: [
               {
                 badge: 'المجموعة الأولى — متسعة واحدة (قبل العازل)',
-                note: 'نستعمل قانون C = Q / ΔV عند وجود شحنة وفرق جهد، وقانون C = ε₀ · (A / d) عند وجود مساحة وبعد[span_15](start_span)[span_15](end_span).',
+                note: 'نستخدم قانون C = Q / ΔV عند وجود شحنة وفرق جهد، وقانون C = ε₀ · (A / d) عند وجود مساحة وبعد.',
                 rows: [
                   { name: 'سعة المتسعة', html: `C = ${F('Q', 'ΔV')}` },
                   { name: 'السعة بالبعد والمساحة', html: `C = ε<sub>0</sub> · ${F('A', 'd')}` },
@@ -1264,7 +1263,7 @@
               },
               {
                 badge: 'المجموعة الأولى — بعد إدخال العازل (متصلة / مفصولة)',
-                note: 'إذا كانت مفصولة: Q ثابتة (Q_k = Q) ويقل ΔV و E. إذا كانت متصلة: ΔV ثابت (ΔV_k = ΔV) وتزداد Q[span_16](start_span)[span_16](end_span).',
+                note: 'إذا كانت مفصولة: الشحنة ثابتة (Q_k = Q) ويقل فرق الجهد والمجال. إذا كانت متصلة: فرق الجهد ثابت (ΔV_k = ΔV) وتزداد الشحنة.',
                 rows: [
                   { name: 'السعة بوجود عازل', html: `C<sub>k</sub> = k · C` },
                   { name: 'فرق الجهد (مفصولة)', html: `ΔV<sub>k</sub> = ${F('ΔV', 'k')}` },
@@ -1274,7 +1273,7 @@
               },
               {
                 badge: 'الطاقة المختزنة والقدرة',
-                note: 'تحويلات مهمة: kW → W نضرب بـ 10³، mW → W نضرب بـ 10⁻³، min → s نضرب بـ 60، μF → F نضرب بـ 10⁻⁶[span_17](start_span)[span_17](end_span).',
+                note: 'بعد إدخال عازل تبقى قوانين الطاقة نفسها مع إضافة k للمقدار المتغير. تحويلات مهمة: kW إلى W (×10³)، mW إلى W (×10⁻³)، min إلى s (×60)، μF إلى F (×10⁻⁶).',
                 rows: [
                   { name: 'الطاقة (شحنة وفرق جهد)', html: `PE = ${F('1', '2')} Q · ΔV` },
                   { name: 'الطاقة (سعة وفرق جهد)', html: `PE = ${F('1', '2')} C (ΔV)<sup>2</sup>` },
@@ -1284,7 +1283,7 @@
               },
               {
                 badge: 'ربط التوالي والتوازي والربط المختلط',
-                note: 'بالتوالي الشحنة متساوية (Q_eq = Q₁ = Q₂)؛ بالتوازي فرق الجهد متساوٍ (ΔV_eq = ΔV₁ = ΔV₂). في متسعتين توالي: C_eq = (C₁·C₂)/(C₁+C₂)[span_18](start_span)[span_18](end_span)[span_19](start_span)[span_19](end_span).',
+                note: 'بالتوالي الشحنة متساوية (Q_T = Q₁ = Q₂)؛ بالتوازي فرق الجهد متساوٍ (ΔV_T = ΔV₁ = ΔV₂). في متسعتين توالي فقط: C_eq = (C₁·C₂)/(C₁+C₂). وفي الربط المختلط ندمج المتسعات المتوالية أو المتوازية بالتدريج ثم نحل على الشكل الجديد.',
                 rows: [
                   { name: 'توالي — السعة المكافئة', html: `${F('1', 'C<sub>eq</sub>')} = ${F('1', 'C<sub>1</sub>')} + ${F('1', 'C<sub>2</sub>')} + ...` },
                   { name: 'توازي — السعة المكافئة', html: `C<sub>eq</sub> = C<sub>1</sub> + C<sub>2</sub> + ...` },
@@ -1293,42 +1292,113 @@
               },
               {
                 badge: 'دوائر التيار المستمر (R — C)',
-                note: 'النوع الأول (توالي مع مصباح): عند اكتمال الشحن تصبح المتسعة مفتاحاً مفتوحاً فلا يمر تيار في فرعها (I = 0) و ΔV_c = ΔV_r[span_20](start_span)[span_20](end_span). النوع الثاني (توازي مع مصباح): ΔV_c = ΔV_r = I · r[span_21](start_span)[span_21](end_span).',
+                note: 'النوع الأول (توالي مع مصباح أو شحن): عند اكتمال الشحن لا يمر تيار في فرع المتسعة ويكون ΔV_c = ΔV_bat. النوع الثاني (توازي مع مصباح): نحسب تيار الدائرة I = ΔV_bat / (R + r) ثم فرق جهد المصباح ΔV_r = I · r ويكون ΔV_c = ΔV_r.',
                 rows: [
-                  { name: 'تيار الدائرة', html: `I = ${F('ΔV<sub>bat</sub>', 'R + r')}` },
-                  { name: 'فرق جهد المقاومة', html: `ΔV<sub>r</sub> = I · r` }
+                  { name: 'تيار الدائرة الكلي', html: `I<sub>T</sub> = ${F('ΔV<sub>T</sub>', 'R + r')}` },
+                  { name: 'فرق جهد المصباح', html: `ΔV<sub>r</sub> = I · r` }
                 ]
               }
             ]
           },
           2: {
-            label: 'فصل 2',
-            title: 'قوانين الفصل الثاني: الحث الكهرومغناطيسي',
+            label: 'فصل 2 (الحث)',
+            title: 'قوانين وتفاصيل الفصل الثاني: الحث الكهرومغناطيسي',
             sections: [
               {
-                badge: 'الفيض والحث الكهرومغناطيسي',
-                note: 'الإشارة السالبة في قانون فرداي تمثل قانون لنز وتدل على معاكسة التغير في الفيض المغناطيسي.',
+                badge: 'المجموعة الأولى — حالة الساق الموصلة',
+                note: 'تُطبق هذه القوانين عند حركة ساق موصلة عمودياً داخل مجال مغناطيسي منتظم.',
                 rows: [
-                  { name: 'الفيض المغناطيسي', html: `Φ<sub>B</sub> = B · A · cos θ` },
-                  { name: 'قوة دافعة حركية', html: `ε<sub>mot</sub> = v · B · L · sin θ` },
-                  { name: 'قانون فرداي', html: `ε<sub>ind</sub> = −N · ${F('ΔΦ<sub>B</sub>', 'Δt')}` },
-                  { name: 'الحث الذاتي', html: `ε<sub>self</sub> = −L · ${F('ΔI', 'Δt')}` }
+                  { name: 'ق.د.ك.م الحركية', html: `ε<sub>mot</sub> = v · B · l` },
+                  { name: 'التيار المحتث', html: `I<sub>ind</sub> = ${F('ε<sub>mot</sub>', 'R')} = ${F('v · B · l', 'R')}` },
+                  { name: 'القوة الساحبة', html: `F<sub>pull</sub> = I · B · l = ${F('v · B<sup>2</sup> · l<sup>2</sup>', 'R')}` },
+                  { name: 'القدرة المتبددة', html: `P<sub>diss</sub> = I<sub>ind</sub> · ε<sub>mot</sub> = I<sub>ind</sub><sup>2</sup> · R` }
+                ]
+              },
+              {
+                badge: 'المجموعة الثانية — الحلقة والملف والزاوية',
+                note: 'انتبه للزاوية: إذا ذكر (مستوية، متوازية، متماثلة) فإن θ = 0 و cos 0 = 1. إذا ذكر الزاوية بين A و B تُؤخذ كما هي. إذا ذكر (تصنع زاوية مع المستوي) نطرح من 90: θ = 90 − الزاوية. وللمساحة الدائرية A = π r² ونصف القطر r = D/2.',
+                rows: [
+                  { name: 'الفيض المغناطيسي', html: `Φ<sub>B</sub> = A · B · cos θ` },
+                  { name: 'قانون فرداي (حلقة)', html: `ε<sub>ind</sub> = − ${F('ΔΦ<sub>B</sub>', 'Δt')}` },
+                  { name: 'قانون فرداي (ملف)', html: `ε<sub>ind</sub> = −N · ${F('ΔΦ<sub>B</sub>', 'Δt')}` },
+                  { name: 'التيار المحتث', html: `I<sub>ind</sub> = ${F('ε<sub>ind</sub>', 'R')}` }
+                ]
+              },
+              {
+                badge: 'المجموعة الثالثة — المولد الكهربائي',
+                note: 'لحساب القوة العظمى أو التيار الأعظم أو القدرة العظمى نستخدم علاقات الذروة (max).',
+                rows: [
+                  { name: 'ق.د.ك الآنية', html: `ε<sub>ind</sub> = N · A · B · ω · sin ωt` },
+                  { name: 'ق.د.ك العظمى', html: `ε<sub>max</sub> = N · A · B · ω` },
+                  { name: 'التيار الأعظم', html: `I<sub>max</sub> = ${F('ε<sub>max</sub>', 'R')}` },
+                  { name: 'القدرة العظمى', html: `P<sub>max</sub> = I<sub>max</sub> · ε<sub>max</sub>` }
+                ]
+              },
+              {
+                badge: 'المجموعة الرابعة والخامسة — الحث الذاتي والمتبادل',
+                note: 'إذا ذكر انعكس اتجاه التيار فإن ΔI = −2I. في معادلة الدائرة الحثية: لحظة إغلاق الدائرة I_inst = 0 فتصبح V_app = L(ΔI/Δt). عند بلوغ التيار مقداره الثابت ΔI/Δt = 0 فتصبح V_app = I_inst · R. وعند ازدياد التيار بنسبة مئوية نجد أولاً I_inst = % · I_const حيث I_const = V_app / R.',
+                rows: [
+                  { name: 'ق.د.ك الذاتية', html: `ε<sub>ind</sub> = −L · ${F('ΔI', 'Δt')}` },
+                  { name: 'علاقة الفيض بالتيار', html: `N · Φ<sub>B</sub> = L · I` },
+                  { name: 'الطاقة في المحث', html: `PE = ${F('1', '2')} L · I<sup>2</sup>` },
+                  { name: 'معادلة الدائرة الحثية', html: `V<sub>app</sub> = I<sub>inst</sub> · R + L · ${F('ΔI', 'Δt')}` },
+                  { name: 'معامل الحث المتبادل', html: `M = ${SQRT('L<sub>1</sub> · L<sub>2</sub>')}` },
+                  { name: 'ق.د.ك الثانوية', html: `ε<sub>ind2</sub> = −M · ${F('ΔI<sub>1</sub>', 'Δt')}` }
                 ]
               }
             ]
           },
           3: {
-            label: 'فصل 3',
-            title: 'قوانين الفصل الثالث: التيار المتناوب',
+            label: 'فصل 3 (المتناوب)',
+            title: 'قوانين وتفاصيل الفصل الثالث: التيار المتناوب',
             sections: [
               {
-                badge: 'الرادات والممانعة والرنين',
-                note: 'في حالة الرنين يكون X_L = X_C وتكون الممانعة مساوية للمقاومة Z = R.',
+                badge: 'المجموعة الأولى — المقاومة الصرف',
+                note: 'إذا أعطى في السؤال علاقة جيبية نحذف المتشابهات مع العلاقة القياسية لاستخراج I_m أو V_m. وإذا طلب I_m نجدها من I_m = V_m / R ثم نعوضها بالعلاقة.',
                 rows: [
-                  { name: 'الرادة الحثية', html: `X<sub>L</sub> = 2π f L` },
-                  { name: 'الرادة السعوية', html: `X<sub>C</sub> = ${F('1', '2π f C')}` },
-                  { name: 'الممانعة الكلية', html: `Z = ${SQRT('R<sup>2</sup> + (X<sub>L</sub> − X<sub>C</sub>)<sup>2</sup>')}` },
-                  { name: 'تردد الرنين', html: `f<sub>r</sub> = ${F('1', `2π ${SQRT('L · C')}`)}` }
+                  { name: 'التيار الآني', html: `I<sub>R</sub> = I<sub>m</sub> · sin ωt` },
+                  { name: 'الفولتية الآنية', html: `V<sub>R</sub> = V<sub>m</sub> · sin ωt` },
+                  { name: 'التيار المؤثر', html: `I<sub>eff</sub> = ${F('I<sub>m</sub>', SQRT('2'))} = 0.707 · I<sub>m</sub>` },
+                  { name: 'الفولتية المؤثرة', html: `V<sub>eff</sub> = ${F('V<sub>m</sub>', SQRT('2'))} = 0.707 · V<sub>m</sub>` },
+                  { name: 'القدرة المتوسطة', html: `P<sub>avg</sub> = I<sub>eff</sub> · V<sub>eff</sub>` }
+                ]
+              },
+              {
+                badge: 'المجموعة الثانية — المحث الصرف والمتسعة الصرف',
+                note: 'التردد الزاوي ω = 2πf ويقاس بـ rad/s، بينما التردد f يقاس بـ Hz.',
+                rows: [
+                  { name: 'الرادة الحثية', html: `X<sub>L</sub> = 2π f L = ω L = ${F('V<sub>L</sub>', 'I<sub>L</sub>')}` },
+                  { name: 'الرادة السعوية', html: `X<sub>C</sub> = ${F('1', '2π f C')} = ${F('1', 'ω C')} = ${F('V<sub>C</sub>', 'I<sub>C</sub>')}` }
+                ]
+              },
+              {
+                badge: 'المجموعة الثالثة — ربط التوالي والقوانين المشتركة',
+                note: 'في التوالي التيار متساوٍ (I_T = I_R = I_L = I_C). إذا طلب مقاومة ملف: R = cos φ · Z. وإذا طلب f أو L أو C وكانت الرادة مجهولة نستخرج الرادة أولاً من قانون الممانعة.',
+                rows: [
+                  { name: 'الممانعة الكلية', html: `Z<sup>2</sup> = R<sup>2</sup> + (X<sub>L</sub> − X<sub>C</sub>)<sup>2</sup>` },
+                  { name: 'الفولتية الكلية', html: `V<sub>T</sub><sup>2</sup> = V<sub>R</sub><sup>2</sup> + (V<sub>L</sub> − V<sub>C</sub>)<sup>2</sup>` },
+                  { name: 'زاوية فرق الطور', html: `tan φ = ${F('X<sub>L</sub> − X<sub>C</sub>', 'R')} = ${F('V<sub>L</sub> − V<sub>C</sub>', 'V<sub>R</sub>')}` },
+                  { name: 'عامل القدرة', html: `Pf = cos φ = ${F('R', 'Z')}` },
+                  { name: 'القدرة الحقيقية', html: `P<sub>real</sub> = I<sub>R</sub> · V<sub>R</sub> = I<sub>R</sub><sup>2</sup> · R` },
+                  { name: 'القدرة الظاهرية', html: `P<sub>app</sub> = I<sub>T</sub> · V<sub>T</sub> = I<sub>T</sub><sup>2</sup> · Z` }
+                ]
+              },
+              {
+                badge: 'المجموعة الرابعة — الرنين الكهربائي',
+                note: 'عند ذكر كلمة رنين أو تحقق إحدى خواصه فإن: X_L = X_C ، Z = R ، V_L = V_C ، P_real = P_app ، Pf = 1 ، زاوية الطور φ = 0، والرادة المحصلة X = X_L − X_C = 0.',
+                rows: [
+                  { name: 'التردد الزاوي الرنيني', html: `ω<sub>r</sub> = ${F('1', SQRT('L · C'))}` },
+                  { name: 'التردد الطبيعي الرنيني', html: `f<sub>r</sub> = ${F('1', `2π ${SQRT('L · C')}`)}` },
+                  { name: 'عامل النوعية', html: `Q<sub>f</sub> = ${F('1', 'R')} ${SQRT(F('L', 'C'))}` }
+                ]
+              },
+              {
+                badge: 'المجموعة الخامسة — ربط التوازي',
+                note: 'في التوازي الفولتية متساوية (V_T = V_R = V_L = V_C). إذا أعطى P_real نستخرج I_R، وإذا أعطى Pf نستخرج I_T أو φ، وإذا طلب I_C أو I_L نرجع لقانون فيثاغورس في التيارات.',
+                rows: [
+                  { name: 'التيار الكلي', html: `I<sub>T</sub><sup>2</sup> = I<sub>R</sub><sup>2</sup> + (I<sub>C</sub> − I<sub>L</sub>)<sup>2</sup>` },
+                  { name: 'زاوية فرق الطور', html: `tan φ = ${F('I<sub>C</sub> − I<sub>L</sub>', 'I<sub>R</sub>')}` },
+                  { name: 'عامل القدرة', html: `Pf = cos φ = ${F('I<sub>R</sub>', 'I<sub>T</sub>')}` }
                 ]
               }
             ]
@@ -1339,32 +1409,107 @@
         name: 'الكيمياء',
         chapters: {
           1: {
-            label: 'فصل 1',
-            title: 'قوانين الفصل الأول: الثرموداينمك',
+            label: 'فصل 1 (الثرموداينمك)',
+            title: 'قوانين وتفاصيل الفصل الأول: الثرموداينمك',
             sections: [
               {
-                badge: 'الحرارة وقانون هس وعلاقة كبس',
-                note: 'تُحوّل درجة الحرارة السيليزية إلى كلفن بالجمع مع 273: T(K) = t(°C) + 273.',
+                badge: 'قوانين الحرارة والمسعر',
+                note: 'في ΔT = T_f − T_i: تأتي T_f بعد كلمة (إلى) وتأتي T_i بعد كلمة (من). في المسعر: نجد ΔT و q للماء، ثم q للمادة = −q للماء، وعدد المولات n = m / M، ثم ΔH = q_p = q_المادة / n.',
                 rows: [
                   { name: 'كمية الحرارة', html: `q = ζ · m · ΔT` },
                   { name: 'السعة الحرارية', html: `C = ζ · m = ${F('q', 'ΔT')}` },
-                  { name: 'حرارة التفاعل', html: `ΔH<sup>°</sup><sub>r</sub> = Σ n ΔH<sup>°</sup><sub>f</sub>(نواتج) − Σ n ΔH<sup>°</sup><sub>f</sub>(متفاعلات)` },
-                  { name: 'علاقة كبس', html: `ΔG = ΔH − T · ΔS` }
+                  { name: 'التغير بدرجة الحرارة', html: `ΔT = T<sub>f</sub> − T<sub>i</sub>` },
+                  { name: 'عدد المولات', html: `n = ${F('m', 'M')}` }
+                ]
+              },
+              {
+                badge: 'الإنثالبيات وقانون هس وقانون المجموع',
+                note: 'في هس: نكتب المعادلة الرئيسية المجهولة ثم نرتب المعادلات الفرعية (نضرب، نقسم، نقلب مع قلب إشارة ΔH) ونجمع. في قانون المجموع: يُعطى ΔH°_f لعدة مواد والعنصر الحر بأثبت صورة قيمته صفر.',
+                rows: [
+                  { name: 'إنثالبي الاحتراق', html: `ΔH<sup>°</sup><sub>c</sub> = ${F('ΔH<sup>°</sup><sub>r</sub>', 'n (متفاعلة)')}` },
+                  { name: 'إنثالبي التكوين', html: `ΔH<sup>°</sup><sub>f</sub> = ${F('ΔH<sup>°</sup><sub>r</sub>', 'n (ناتجة)')}` },
+                  { name: 'التغيرات الفيزيائية', html: `ΔH<sub>cond</sub> = −ΔH<sub>vap</sub>  ،  ΔH<sub>cryst</sub> = −ΔH<sub>fus</sub>` },
+                  { name: 'قانون المجموع للإنثالبي', html: `ΔH<sup>°</sup><sub>r</sub> = Σ n ΔH<sup>°</sup><sub>f</sub>(النواتج) − Σ n ΔH<sup>°</sup><sub>f</sub>(المتفاعلات)` }
+                ]
+              },
+              {
+                badge: 'الإنتروبي وعلاقة كبس والتغيرات الفيزيائية',
+                note: 'تحويلان أساسيان قبل تطبيق كبس: (1) تحويل الحرارة للكلفن T_K = t_°C + 273 (وإذا لم تُعطَ نعتبرها 25°C = 298 K). (2) تقسيم ΔS°_r على 1000 لتحويلها من J إلى kJ.',
+                rows: [
+                  { name: 'إنتروبي التفاعل', html: `ΔS<sup>°</sup><sub>r</sub> = Σ n S<sup>°</sup>(النواتج) − Σ n S<sup>°</sup>(المتفاعلات)` },
+                  { name: 'طاقة كبس القياسية', html: `ΔG<sup>°</sup><sub>r</sub> = Σ n ΔG<sup>°</sup><sub>f</sub>(النواتج) − Σ n ΔG<sup>°</sup><sub>f</sub>(المتفاعلات)` },
+                  { name: 'علاقة كبس العامة', html: `ΔG<sup>°</sup><sub>r</sub> = ΔH<sup>°</sup><sub>r</sub> − T · ΔS<sup>°</sup><sub>r</sub>` },
+                  { name: 'إنتروبي التبخر/الانصهار', html: `ΔS<sub>vap</sub> = ${F('ΔH<sub>vap</sub>', 'T<sub>b</sub>')}` }
                 ]
               }
             ]
           },
           2: {
-            label: 'فصل 2',
-            title: 'قوانين الفصل الثاني: الاتزان الكيميائي',
+            label: 'فصل 2 (الاتزان)',
+            title: 'قوانين وتفاصيل الفصل الثاني: الاتزان الكيميائي',
             sections: [
               {
-                badge: 'ثوابت الاتزان',
-                note: 'Δn_g يساوي مجموع مولات الغازات الناتجة ناقص مجموع مولات الغازات المتفاعلة.',
+                badge: 'مخطط الفرضية وثوابت الاتزان',
+                note: 'الكلمات (وضع، خلط، مزج، أدخل، سخّن) تخص الحقل الأول (الابتدائي). الكلمات (تفكك، استهلك، تحلل) تخص الحقل الثاني (التغير). الكلمات (تبقى، المتبقي، تكوّن) تخص الحقل الأخير (حالة الاتزان).',
                 rows: [
+                  { name: 'ثابت الاتزان العام', html: `K<sub>eq</sub> = ${F('K<sub>f</sub>', 'K<sub>b</sub>')}` },
                   { name: 'ثابت الاتزان التركيزي', html: `K<sub>c</sub> = ${F('[النواتج]<sup>n</sup>', '[المتفاعلات]<sup>m</sup>')}` },
-                  { name: 'ثابت الاتزان الجزئي', html: `K<sub>p</sub> = ${F('(P<sub>النواتج</sub>)<sup>n</sup>', '(P<sub>المتفاعلات</sub>)<sup>m</sup>')}` },
-                  { name: 'العلاقة بين Kp و Kc', html: `K<sub>p</sub> = K<sub>c</sub> · (R · T)<sup>Δn<sub>g</sub></sup>` }
+                  { name: 'ثابت الاتزان الجزئي', html: `K<sub>p</sub> = ${F('P<sup>n</sup><sub>النواتج</sub>', 'P<sup>m</sup><sub>المتفاعلات</sub>')}` },
+                  { name: 'العلاقة بين Kp و Kc', html: `K<sub>p</sub> = K<sub>c</sub> (R · T)<sup>+Δn<sub>g</sub></sup>` },
+                  { name: 'حساب Kc من Kp', html: `K<sub>c</sub> = K<sub>p</sub> (R · T)<sup>−Δn<sub>g</sub></sup>` }
+                ]
+              },
+              {
+                badge: 'قوانين مساعدة في الاتزان الكيميائي',
+                note: 'Δn_g = مولات الغازات الناتجة − مولات الغازات المتفاعلة. ثابت الغازات R = 0.082 في علاقة Kp/Kc، ويساوي 8.314 في علاقة الطاقة الحرة (مع تحويل ΔG°_r من kJ إلى J بالضرب في 1000).',
+                rows: [
+                  { name: 'الضغط الكلي والمولات الكلية', html: `P<sub>T</sub> = P<sub>1</sub> + P<sub>2</sub> + ...  ،  n<sub>T</sub> = n<sub>1</sub> + n<sub>2</sub> + ...` },
+                  { name: 'قانون الغاز المثالي', html: `P · V = n · R · T` },
+                  { name: 'النسبة المئوية للتفكك', html: `النسبة المئوية = ${F('[المتأين]', '[الابتدائي]')} × 100%` },
+                  { name: 'الطاقة الحرة والاتزان', html: `ΔG<sup>°</sup><sub>r</sub> = −R · T · ln K<sub>eq</sub>` }
+                ]
+              }
+            ]
+          },
+          3: {
+            label: 'فصل 3 (الأيوني)',
+            title: 'قوانين وتفاصيل الفصل الثالث: الاتزان الأيوني',
+            sections: [
+              {
+                badge: 'الإلكتروليتات الضعيفة وقانون التخفيف',
+                note: 'الحامض أو القاعدة القوية تتفكك بسهم واحد وصفر عند الاتزان، أما الضعيفة فتتفكك بسهمين متعاكسين. في التخفيف M₁V₁ = M₂V₂: تكون V₁ بالمليلتر و V₂ باللتر (1 L = 1000 mL).',
+                rows: [
+                  { name: 'ثابت تفكك الحامض', html: `K<sub>a</sub> = ${F('[تراكيز النواتج]<sup>n</sup>', '[تراكيز المتفاعلات]<sup>m</sup>')}` },
+                  { name: 'ثابت تفكك القاعدة', html: `K<sub>b</sub> = ${F('[تراكيز النواتج]<sup>n</sup>', '[تراكيز المتفاعلات]<sup>m</sup>')}` },
+                  { name: 'درجة التأين / التفكك', html: `درجة التأين = ${F('[المتأين]', '[الابتدائي]')}` },
+                  { name: 'النسبة المئوية للتأين', html: `النسبة المئوية = ${F('[المتأين]', '[الابتدائي]')} × 100%` },
+                  { name: 'قانون التخفيف', html: `M<sub>1</sub> · V<sub>1</sub> = M<sub>2</sub> · V<sub>2</sub>` }
+                ]
+              },
+              {
+                badge: 'الأس الهيدروجيني ومسائل الأملاح',
+                note: 'الأملاح القاعدية تنتهي غالباً بمقطع (يوم) مثل خلات الصوديوم وسيانيد البوتاسيوم، أما الأملاح الحامضية فتنتهي غالباً بمقطع (نيوم) مثل كلوريد الأمونيوم. وقيمة pK_w = 14 ثابتة.',
+                rows: [
+                  { name: 'علاقات اللوغاريتم', html: `pH = −log [H<sup>+</sup>]  ،  pOH = −log [OH<sup>−</sup>]` },
+                  { name: 'العلاقة بين pH و pOH', html: `pH + pOH = 14  ،  [H<sup>+</sup>] = 1 × 10<sup>−pH</sup>` },
+                  { name: 'الملح القاعدي', html: `pH = ${F('1', '2')} [pK<sub>w</sub> + pK<sub>a</sub> + log C]` },
+                  { name: 'الملح الحامضي', html: `pH = ${F('1', '2')} [pK<sub>w</sub> − pK<sub>b</sub> − log C]` }
+                ]
+              },
+              {
+                badge: 'الأيون المشترك ومحلول بفر',
+                note: 'في بفر بعد الإضافة: إذا أُضيفت مادة مولارية (M) تُعوض مباشرة؛ إذا أُضيفت مولية (mol) نطبق M = n/V؛ إذا أُضيفت حجمية (mL) نطبق M₁V₁ = M₂V₂؛ وإذا أُضيفت غرامية (g) نطبق m = M · M_wt · V.',
+                rows: [
+                  { name: 'بفر (حامض ضعيف + ملحه)', html: `pH = pK<sub>a</sub> + log ${F('[salt]', '[acid]')}` },
+                  { name: 'بفر (قاعدة ضعيفة + ملحها)', html: `pOH = pK<sub>b</sub> + log ${F('[salt]', '[base]')}` }
+                ]
+              },
+              {
+                badge: 'الذوبانية وحاصل الإذابة (Ksp)',
+                note: 'عند طلب الذوبانية: نكتب معادلة تفكك الملح شحيح الذوبان، نفرض الذوبانية s للنواتج، ثم نطبق قانون K_sp. للمعادلات الأحادية (مثل AgCl, BaSO₄) يكون K_sp = s²، وللثنائية (مثل CaF₂, Mg(OH)₂) يكون K_sp = 4s³.',
+                rows: [
+                  { name: 'الأملاح أحادية التكافؤ', html: `K<sub>sp</sub> = s<sup>2</sup>` },
+                  { name: 'الأملاح ثنائية التكافؤ', html: `K<sub>sp</sub> = 4 s<sup>3</sup>` }
                 ]
               }
             ]
@@ -1375,32 +1520,53 @@
         name: 'الرياضيات',
         chapters: {
           1: {
-            label: 'فصل 1',
-            title: 'قوانين الفصل الأول: الأعداد المركبة',
+            label: 'فصل 1 (المركبة)',
+            title: 'قوانين وتفاصيل الفصل الأول: الأعداد المركبة',
             sections: [
               {
-                badge: 'المقياس والسعة ودي موفر',
-                note: 'تُحدد السعة θ بالاعتماد على إشارتي cos θ و sin θ لتعيين الربع الصحيح.',
+                badge: 'المقياس والسعة وصيغة دي موفر',
+                note: 'تُحدد السعة θ بالاعتماد على إشارتي cos θ و sin θ لتعيين الربع الصحيح، حيث i² = −1.',
                 rows: [
                   { name: 'المقياس', html: `r = ${SQRT('x<sup>2</sup> + y<sup>2</sup>')}` },
                   { name: 'السعة (الظل)', html: `tan θ = ${F('y', 'x')}` },
                   { name: 'الصيغة القطبية', html: `z = r (cos θ + i sin θ)` },
-                  { name: 'صيغة دي موفر', html: `[r (cos θ + i sin θ)]<sup>n</sup> = r<sup>n</sup> (cos nθ + i sin nθ)` }
+                  { name: 'صيغة دي موفر', html: `[r (cos θ + i sin θ)]<sup>n</sup> = r<sup>n</sup> (cos nθ + i sin nθ)` },
+                  { name: 'الجذور التربيعية', html: `z = ± ${SQRT('w')}` }
                 ]
               }
             ]
           },
           2: {
-            label: 'فصل 2',
-            title: 'قوانين الفصل الثاني: القطوع المخروطية',
+            label: 'فصل 2 (القطوع)',
+            title: 'قوانين وتفاصيل الفصل الثاني: القطوع المخروطية',
             sections: [
               {
-                badge: 'القطوع الثلاثة',
-                note: 'في القطع الناقص a > b و c² = a² − b²؛ وفي القطع الزائد c² = a² + b².',
+                badge: 'القطع المكافئ — القوانين وحالات المرور',
+                note: 'مفتاح الحل: قيمة p تُستخرج موجبة دائماً؛ إشارة المعادلة تطابق إشارة البؤرة وتخالف الدليل. إذا مر بنقطة نعوض (x, y) لإيجاد p. وإذا مر بنقطتين متناظرتين فالمحور يتبع الإحداثي الثابت بالإشارة. وبالتعريف MF = MQ.',
                 rows: [
-                  { name: 'القطع المكافئ', html: `y<sup>2</sup> = ± 4px` },
-                  { name: 'القطع الناقص', html: `${F('x<sup>2</sup>', 'a<sup>2</sup>')} + ${F('y<sup>2</sup>', 'b<sup>2</sup>')} = 1` },
-                  { name: 'القطع الزائد', html: `${F('x<sup>2</sup>', 'a<sup>2</sup>')} − ${F('y<sup>2</sup>', 'b<sup>2</sup>')} = 1` }
+                  { name: 'على محور السينات', html: `y<sup>2</sup> = ± 4px  ،  F(±p, 0)  ،  x = ∓p` },
+                  { name: 'على محور الصادات', html: `x<sup>2</sup> = ± 4py  ،  F(0, ±p)  ،  y = ∓p` },
+                  { name: 'التعريف (المسافة)', html: `${SQRT('(x − x<sub>1</sub>)<sup>2</sup> + (y − y<sub>1</sub>)<sup>2</sup>')} = ${SQRT('(x − x<sub>2</sub>)<sup>2</sup> + (y − y<sub>2</sub>)<sup>2</sup>')}` }
+                ]
+              },
+              {
+                badge: 'القطع الناقص — القوانين وملاحظة التماس',
+                note: 'القاعدة الذهبية: a هو الأكبر دائماً (a > b و a > c). طول المحور الكبير 2a، الصغير 2b، البعد البؤري 2c. إذا مس دليلاً أو مستقيماً يقطع أحد المحورين فنقطة التماس تمثل إما الرأس a أو القطب b (الأكبر a والأصغر b).',
+                rows: [
+                  { name: 'على محور السينات', html: `${F('x<sup>2</sup>', 'a<sup>2</sup>')} + ${F('y<sup>2</sup>', 'b<sup>2</sup>')} = 1` },
+                  { name: 'على محور الصادات', html: `${F('x<sup>2</sup>', 'b<sup>2</sup>')} + ${F('y<sup>2</sup>', 'a<sup>2</sup>')} = 1` },
+                  { name: 'قانون الربط (المشاكل)', html: `c<sup>2</sup> = a<sup>2</sup> − b<sup>2</sup>` },
+                  { name: 'المساحة والمحيط', html: `A = a b π  ،  P = 2π ${SQRT(F('a<sup>2</sup> + b<sup>2</sup>', '2'))}` }
+                ]
+              },
+              {
+                badge: 'القطع الزائد — القوانين وحالات التقاطع والقائم',
+                note: 'في القطع الزائد c هو الأكبر دائماً (c > a و c > b) والاختلاف المركزي e = c/a > 1. الكسر الموجب يحدد المحور ومقامه دائماً a². إذا مس دليلاً أو تقاطع مع محور فالنقطة تمثل الرأس a دائماً. وفي القطع الزائد القائم a = b ويكون e = √2.',
+                rows: [
+                  { name: 'على محور السينات', html: `${F('x<sup>2</sup>', 'a<sup>2</sup>')} − ${F('y<sup>2</sup>', 'b<sup>2</sup>')} = 1  ،  V(±a, 0)` },
+                  { name: 'على محور الصادات', html: `${F('y<sup>2</sup>', 'a<sup>2</sup>')} − ${F('x<sup>2</sup>', 'b<sup>2</sup>')} = 1  ،  V(0, ±a)` },
+                  { name: 'التعريف والقانون العام', html: `|PF<sub>1</sub> − PF<sub>2</sub>| = 2a  ،  c<sup>2</sup> = a<sup>2</sup> + b<sup>2</sup>` },
+                  { name: 'القطع الزائد القائم', html: `a = b  ⇒  e = ${SQRT('2')}` }
                 ]
               }
             ]
@@ -1475,22 +1641,25 @@
       const currentCh = subjData.chapters[selectedFormulaChapter];
       if (titleEl) titleEl.textContent = currentCh.title;
 
-      listEl.innerHTML = currentCh.sections.map(sec => `
-        <div class="formula-sheet-card">
-          <div class="formula-sheet-head">
-            <span class="text-xs font-black text-goldBright">${esc(sec.badge)}</span>
+      listEl.innerHTML = currentCh.sections.map(sec => {
+        const cleanNote = String(sec.note || '').replace(/\[(?:start_span|end_span|span_\d+)\]/g, '').trim();
+        return `
+          <div class="formula-sheet-card">
+            <div class="formula-sheet-head">
+              <span class="text-xs font-black text-goldBright">${esc(sec.badge)}</span>
+            </div>
+            <div class="formula-sheet-body space-y-2">
+              ${sec.rows.map(r => `
+                <div class="rounded-xl bg-white border border-gold/40 px-3.5 py-2.5 flex items-center justify-between gap-3">
+                  <span class="text-xs sm:text-sm font-black text-navy shrink-0">${esc(r.name)}</span>
+                  <div class="math-eq-box">${r.html}</div>
+                </div>
+              `).join('')}
+              ${cleanNote ? `<div class="formula-note-strip">📌 ${esc(cleanNote)}</div>` : ''}
+            </div>
           </div>
-          <div class="formula-sheet-body space-y-2">
-            ${sec.rows.map(r => `
-              <div class="rounded-xl bg-white border border-gold/40 px-3.5 py-2.5 flex items-center justify-between gap-3">
-                <span class="text-xs sm:text-sm font-black text-navy shrink-0">${esc(r.name)}</span>
-                <div class="math-eq-box">${r.html}</div>
-              </div>
-            `).join('')}
-            ${sec.note ? `<div class="formula-note-strip">📌 ${esc(sec.note)}</div>` : ''}
-          </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     function showCheerMessage(msg) {
@@ -1690,7 +1859,7 @@
 
       const welcomeLines = [
         'أهلاً بأبطال السادس! طريق الـ 100 يبدأ من هسه 👋🔥',
-        'افتح القوانين وشوف تفاصيل وملاحظات الفصل الأول 📐',
+        'افتح القوانين وشوف ملخصات وملاحظات الفصول كاملة 📐',
         'وإذا ضجت اضغط نام وأطلع التخت 😴 zz'
       ];
 
