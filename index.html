@@ -75,7 +75,7 @@
     .hg-flip { animation: hgturn .75s cubic-bezier(0.22, 1, 0.36, 1); transform-origin: 50% 50%; }
     @keyframes hgturn { from { transform: rotate(180deg); } to { transform: rotate(360deg); } }
 
-    /* مجسم SIMSIM وتخت صغير مرتب */
+    /* مجسم SIMSIM وتخت يظهر فقط عند النوم */
     @keyframes simsimGentleBreath {
       0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
       50% { transform: translateY(-2px) rotate(1deg) scale(1.01); }
@@ -174,7 +174,6 @@
     #simsimBodyMotion {
       position: relative;
       z-index: 2;
-      margin-bottom: -14px;
       transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
@@ -191,9 +190,10 @@
       animation: zzFloat 2s ease-in-out infinite;
     }
 
-    /* من ينام: يستلقي أفقياً مباشرة فوق السرير */
+    /* من ينام: يظهر التخت ويستلقي سمسم عليه بالضبط */
     .simsim-floating-widget.is-sleeping #simsimBodyMotion {
       animation: none;
+      margin-bottom: -14px;
       transform: translate(4px, 12px) rotate(-76deg) scale(0.84);
     }
 
@@ -365,7 +365,7 @@
     </div>
   </header>
 
-  <!-- مجسم SIMSIM وتخت صغير مرتب وأزرار أوامر مصغّرة -->
+  <!-- مجسم SIMSIM وتخت يظهر فقط عند النوم -->
   <div id="simsimFloatingRoot" class="simsim-floating-widget" style="left: 12px; bottom: 84px;">
     <div class="flex flex-col items-start gap-1 max-w-[245px]">
       <div id="simsimSpeechBubble" class="hidden rounded-2xl px-3 py-2 bg-navy/95 text-white border border-gold/70 shadow-xl text-xs font-bold leading-relaxed text-right max-h-48 overflow-y-auto whitespace-pre-line">
@@ -388,7 +388,8 @@
           </span>
         </div>
 
-        <div id="simsimBed" class="simsim-bed-frame" aria-hidden="true">
+        <!-- التخت يظهر فقط من يروح ينام -->
+        <div id="simsimBed" class="simsim-bed-frame hidden" aria-hidden="true">
           <div class="simsim-bed-headboard"></div>
           <div class="simsim-bed-footboard"></div>
           <div class="simsim-bed-pillow"></div>
@@ -976,7 +977,7 @@
     </div>
   </nav>
 
-  <!-- نافذة قوانين السادس العلمي حسب المادة والفصل (فيزياء، كيمياء، رياضيات) -->
+  <!-- نافذة قوانين السادس العلمي حسب المادة والفصل -->
   <div id="formulasModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-xs overflow-y-auto p-4">
     <div class="min-h-full flex items-center justify-center py-4">
       <div class="bg-ivory text-navy w-full max-w-xl rounded-[30px] p-5 sm:p-6 border-2 border-gold relative space-y-4 shadow-2xl">
@@ -987,13 +988,8 @@
           <h3 id="formulasModalTitle" class="text-lg sm:text-xl font-black text-navy">قوانين الرياضيات — الفصل الأول</h3>
         </div>
 
-        <!-- أزرار اختيار المادة -->
         <div id="formulaSubjectTabs" class="flex flex-wrap gap-2"></div>
-
-        <!-- أزرار اختيار الفصل -->
         <div id="formulaChapterTabs" class="flex gap-1.5 overflow-x-auto pb-1"></div>
-
-        <!-- قائمة القوانين المنسقة: اسم القانون على اليمين والصيغة الرياضية المرتبة على اليسار -->
         <div id="formulasListContainer" class="space-y-2.5 max-h-[58vh] overflow-y-auto pr-0.5"></div>
       </div>
     </div>
@@ -1213,7 +1209,7 @@
     let simsimWelcomePlayed = false;
     let simsimSleepingOnBed = false;
 
-    /* قوانين السادس العلمي (فيزياء، كيمياء، رياضيات) بصيغة رياضية كتابية (كسور، جذور، أسس) */
+    /* قوانين السادس العلمي — يمكنك إرسال قوانينك الخاصة لأبدّلها هنا */
     const F = (num, den) => `<span class="math-frac"><span class="math-num">${num}</span><span class="math-den">${den}</span></span>`;
     const SQRT = (inner) => `<span class="math-sqrt">${inner}</span>`;
 
@@ -1229,29 +1225,24 @@
               { name: 'السعة (الظل)', html: `tan θ = ${F('y', 'x')}` },
               { name: 'الصيغة القطبية', html: `z = r (cos θ + i sin θ)` },
               { name: 'صيغة دي موفر', html: `[r (cos θ + i sin θ)]<sup>n</sup> = r<sup>n</sup> (cos nθ + i sin nθ)` },
-              { name: 'الجذور التربيعية', html: `z = ± ${SQRT('w')}` },
-              { name: 'الجذور النونية', html: `z<sub>k</sub> = r<sup>1/n</sup> [cos ${F('θ + 2kπ', 'n')} + i sin ${F('θ + 2kπ', 'n')}]` }
+              { name: 'الجذور التربيعية', html: `z = ± ${SQRT('w')}` }
             ]
           },
           2: {
             label: 'فصل 2',
             title: 'قوانين الرياضيات — الفصل الثاني: القطوع المخروطية',
             formulas: [
-              { name: 'القطع المكافئ (السينات)', html: `y<sup>2</sup> = ± 4px` },
-              { name: 'القطع المكافئ (الصادات)', html: `x<sup>2</sup> = ± 4py` },
-              { name: 'القطع الناقص (السينات)', html: `${F('x<sup>2</sup>', 'a<sup>2</sup>')} + ${F('y<sup>2</sup>', 'b<sup>2</sup>')} = 1` },
-              { name: 'علاقة القطع الناقص', html: `c<sup>2</sup> = a<sup>2</sup> − b<sup>2</sup>` },
-              { name: 'القطع الزائد (السينات)', html: `${F('x<sup>2</sup>', 'a<sup>2</sup>')} − ${F('y<sup>2</sup>', 'b<sup>2</sup>')} = 1` },
-              { name: 'علاقة القطع الزائد', html: `c<sup>2</sup> = a<sup>2</sup> + b<sup>2</sup>` }
+              { name: 'القطع المكافئ', html: `y<sup>2</sup> = ± 4px` },
+              { name: 'القطع الناقص', html: `${F('x<sup>2</sup>', 'a<sup>2</sup>')} + ${F('y<sup>2</sup>', 'b<sup>2</sup>')} = 1` },
+              { name: 'القطع الزائد', html: `${F('x<sup>2</sup>', 'a<sup>2</sup>')} − ${F('y<sup>2</sup>', 'b<sup>2</sup>')} = 1` }
             ]
           },
           3: {
             label: 'فصل 3',
             title: 'قوانين الرياضيات — الفصل الثالث: تطبيقات التفاضل',
             formulas: [
-              { name: 'متوسط التغير', html: `Δy ≈ f′(x) · Δx` },
               { name: 'القيمة التقريبية', html: `f(a + h) ≈ f(a) + h · f′(a)` },
-              { name: 'مبرهنة القيمة المتوسطة', html: `f′(c) = ${F('f(b) − f(a)', 'b − a')}` }
+              { name: 'القيمة المتوسطة', html: `f′(c) = ${F('f(b) − f(a)', 'b − a')}` }
             ]
           },
           4: {
@@ -1259,24 +1250,7 @@
             title: 'قوانين الرياضيات — الفصل الرابع: التكامل',
             formulas: [
               { name: 'تكامل القوة', html: `∫ x<sup>n</sup> dx = ${F('x<sup>n+1</sup>', 'n + 1')} + C` },
-              { name: 'التكامل المحدد', html: `∫<sub>a</sub><sup>b</sup> f(x) dx = F(b) − F(a)` },
-              { name: 'الحجم الدوراني', html: `V = π ∫<sub>a</sub><sup>b</sup> [f(x)]<sup>2</sup> dx` }
-            ]
-          },
-          5: {
-            label: 'فصل 5',
-            title: 'قوانين الرياضيات — الفصل الخامس: المعادلات التفاضلية',
-            formulas: [
-              { name: 'فصل المتغيرات', html: `∫ g(y) dy = ∫ f(x) dx` },
-              { name: 'عامل التكامل', html: `μ(x) = e<sup>∫ P(x) dx</sup>` }
-            ]
-          },
-          6: {
-            label: 'فصل 6',
-            title: 'قوانين الرياضيات — الفصل السادس: الهندسة الفضائية',
-            formulas: [
-              { name: 'مبرهنة التوازي', html: `مستقيم موازٍ لمستوٍ ⇒ يوازي مستقيم التقاطع` },
-              { name: 'الزاوية الزوجية', html: `قياس الزاوية الزوجية = قياس الزاوية العائدة` }
+              { name: 'التكامل المحدد', html: `∫<sub>a</sub><sup>b</sup> f(x) dx = F(b) − F(a)` }
             ]
           }
         }
@@ -1290,7 +1264,6 @@
             formulas: [
               { name: 'سعة المتسعة', html: `C = ${F('Q', 'ΔV')}` },
               { name: 'السعة بعازل', html: `C<sub>k</sub> = k · C` },
-              { name: 'سعة الصفيحتين', html: `C = ε<sub>0</sub> · ${F('A', 'd')}` },
               { name: 'الطاقة المختزنة', html: `PE = ${F('1', '2')} C (ΔV)<sup>2</sup>` },
               { name: 'ربط التوالي', html: `${F('1', 'C<sub>eq</sub>')} = ${F('1', 'C<sub>1</sub>')} + ${F('1', 'C<sub>2</sub>')} + ...` },
               { name: 'ربط التوازي', html: `C<sub>eq</sub> = C<sub>1</sub> + C<sub>2</sub> + ...` }
@@ -1301,83 +1274,15 @@
             title: 'قوانين الفيزياء — الفصل الثاني: الحث الكهرومغناطيسي',
             formulas: [
               { name: 'الفيض المغناطيسي', html: `Φ<sub>B</sub> = B · A · cos θ` },
-              { name: 'قوة دافعة حركية', html: `ε<sub>mot</sub> = v · B · L · sin θ` },
-              { name: 'قانون فرداي', html: `ε<sub>ind</sub> = −N · ${F('ΔΦ<sub>B</sub>', 'Δt')}` },
-              { name: 'الحث الذاتي', html: `ε<sub>self</sub> = −L · ${F('ΔI', 'Δt')}` },
-              { name: 'طاقة المجال المغناطيسي', html: `PE<sub>mag</sub> = ${F('1', '2')} L · I<sup>2</sup>` }
+              { name: 'قانون فرداي', html: `ε<sub>ind</sub> = −N · ${F('ΔΦ<sub>B</sub>', 'Δt')}` }
             ]
           },
           3: {
             label: 'فصل 3',
             title: 'قوانين الفيزياء — الفصل الثالث: التيار المتناوب',
             formulas: [
-              { name: 'الرادة الحثية', html: `X<sub>L</sub> = 2π f L` },
-              { name: 'الرادة السعوية', html: `X<sub>C</sub> = ${F('1', '2π f C')}` },
               { name: 'الممانعة الكلية', html: `Z = ${SQRT('R<sup>2</sup> + (X<sub>L</sub> − X<sub>C</sub>)<sup>2</sup>')}` },
-              { name: 'عامل القدرة', html: `PF = cos φ = ${F('R', 'Z')}` },
               { name: 'تردد الرنين', html: `f<sub>r</sub> = ${F('1', `2π ${SQRT('L · C')}`)}` }
-            ]
-          },
-          4: {
-            label: 'فصل 4',
-            title: 'قوانين الفيزياء — الفصل الرابع: الموجات الكهرومغناطيسية',
-            formulas: [
-              { name: 'سرعة الموجة', html: `c = λ · f` },
-              { name: 'طاقة الموجة', html: `E = h · f` }
-            ]
-          },
-          5: {
-            label: 'فصل 5',
-            title: 'قوانين الفيزياء — الفصل الخامس: البصريات الفيزيائية',
-            formulas: [
-              { name: 'فرق المسار (بناء)', html: `Δl = m · λ` },
-              { name: 'فرق المسار (إتلافي)', html: `Δl = (m + ${F('1', '2')}) · λ` },
-              { name: 'فاصلة الهدب', html: `Δy = ${F('λ · L', 'd')}` },
-              { name: 'محزز الحيود', html: `d · sin θ = m · λ` }
-            ]
-          },
-          6: {
-            label: 'فصل 6',
-            title: 'قوانين الفيزياء — الفصل السادس: الفيزياء الحديثة',
-            formulas: [
-              { name: 'طاقة الفوتون', html: `E = h · f = ${F('h · c', 'λ')}` },
-              { name: 'المعادلة الكهروضوئية', html: `KE<sub>max</sub> = h · f − w` },
-              { name: 'طول موجة دي برولي', html: `λ = ${F('h', 'm · v')}` }
-            ]
-          },
-          7: {
-            label: 'فصل 7',
-            title: 'قوانين الفيزياء — الفصل السابع: إلكترونيات الحالة الصلبة',
-            formulas: [
-              { name: 'فجوة الطاقة', html: `E<sub>g</sub> = E<sub>c</sub> − E<sub>v</sub>` },
-              { name: 'تيار الباعث', html: `I<sub>E</sub> = I<sub>C</sub> + I<sub>B</sub>` }
-            ]
-          },
-          8: {
-            label: 'فصل 8',
-            title: 'قوانين الفيزياء — الفصل الثامن: الأطياف الذرية والليزر',
-            formulas: [
-              { name: 'فرق الطاقة', html: `ΔE = E<sub>i</sub> − E<sub>f</sub> = h · f` },
-              { name: 'طول الموجة المنبعث', html: `λ = ${F('h · c', 'ΔE')}` }
-            ]
-          },
-          9: {
-            label: 'فصل 9',
-            title: 'قوانين الفيزياء — الفصل التاسع: النظرية النسبية',
-            formulas: [
-              { name: 'عامل لورنتز', html: `γ = ${F('1', SQRT('1 − v<sup>2</sup>/c<sup>2</sup>'))}` },
-              { name: 'تمدد الزمن', html: `Δt = γ · Δt<sub>0</sub>` },
-              { name: 'انكماش الطول', html: `L = ${F('L<sub>0</sub>', 'γ')}` },
-              { name: 'تكافؤ الكتلة والطاقة', html: `E = m · c<sup>2</sup>` }
-            ]
-          },
-          10: {
-            label: 'فصل 10',
-            title: 'قوانين الفيزياء — الفصل العاشر: الفيزياء النووية',
-            formulas: [
-              { name: 'نصف قطر النواة', html: `R = R<sub>0</sub> · A<sup>1/3</sup>` },
-              { name: 'طاقة الربط النووية', html: `E<sub>b</sub> = Δm · c<sup>2</sup>` },
-              { name: 'عمر النصف', html: `T<sub>1/2</sub> = ${F('0.693', 'λ')}` }
             ]
           }
         }
@@ -1390,71 +1295,22 @@
             title: 'قوانين الكيمياء — الفصل الأول: الثرموداينمك',
             formulas: [
               { name: 'كمية الحرارة', html: `q = ζ · m · ΔT` },
-              { name: 'السعة الحرارية', html: `C = ζ · m = ${F('q', 'ΔT')}` },
-              { name: 'حرارة التفاعل', html: `ΔH<sup>°</sup><sub>r</sub> = Σ n ΔH<sup>°</sup><sub>f</sub>(نواتج) − Σ n ΔH<sup>°</sup><sub>f</sub>(متفاعلات)` },
-              { name: 'علاقة كبس', html: `ΔG = ΔH − T · ΔS` },
-              { name: 'كبس والاتزان', html: `ΔG<sup>°</sup> = −R · T · ln K<sub>eq</sub>` }
+              { name: 'علاقة كبس', html: `ΔG = ΔH − T · ΔS` }
             ]
           },
           2: {
             label: 'فصل 2',
             title: 'قوانين الكيمياء — الفصل الثاني: الاتزان الكيميائي',
             formulas: [
-              { name: 'ثابت الاتزان التركيزي', html: `K<sub>c</sub> = ${F('[النواتج]<sup>n</sup>', '[المتفاعلات]<sup>m</sup>')}` },
-              { name: 'ثابت الاتزان الجزئي', html: `K<sub>p</sub> = ${F('(P<sub>النواتج</sub>)<sup>n</sup>', '(P<sub>المتفاعلات</sub>)<sup>m</sup>')}` },
-              { name: 'العلاقة بين Kp و Kc', html: `K<sub>p</sub> = K<sub>c</sub> · (R · T)<sup>Δn<sub>g</sub></sup>` }
+              { name: 'ثابت الاتزان', html: `K<sub>c</sub> = ${F('[النواتج]<sup>n</sup>', '[المتفاعلات]<sup>m</sup>')}` }
             ]
           },
           3: {
             label: 'فصل 3',
             title: 'قوانين الكيمياء — الفصل الثالث: الاتزان الأيوني',
             formulas: [
-              { name: 'التأين الذاتي للماء', html: `K<sub>w</sub> = [H<sup>+</sup>][OH<sup>−</sup>] = 1 × 10<sup>−14</sup>` },
               { name: 'الأس الهيدروجيني', html: `pH = −log [H<sup>+</sup>]` },
-              { name: 'مجموع pH و pOH', html: `pH + pOH = 14` },
-              { name: 'معادلة بفر', html: `pH = pK<sub>a</sub> + log ${F('[Salt]', '[Acid]')}` },
-              { name: 'حاصل الإذابة', html: `K<sub>sp</sub> = [A<sup>+</sup>]<sup>a</sup> [B<sup>−</sup>]<sup>b</sup>` }
-            ]
-          },
-          4: {
-            label: 'فصل 4',
-            title: 'قوانين الكيمياء — الفصل الرابع: الكيمياء الكهربائية',
-            formulas: [
-              { name: 'جهد الخلية القياسي', html: `E<sup>°</sup><sub>cell</sub> = E<sup>°</sup><sub>anode</sub> + E<sup>°</sup><sub>cathode</sub>` },
-              { name: 'الطاقة الحرة والجهد', html: `ΔG<sup>°</sup> = −n · F · E<sup>°</sup><sub>cell</sub>` },
-              { name: 'معادلة نيرنست', html: `E<sub>cell</sub> = E<sup>°</sup><sub>cell</sub> − ${F('0.026', 'n')} ln Q` },
-              { name: 'قانون فاراداي الأول', html: `Q = I × t` }
-            ]
-          },
-          5: {
-            label: 'فصل 5',
-            title: 'قوانين الكيمياء — الفصل الخامس: الكيمياء التناسقية',
-            formulas: [
-              { name: 'العدد الذري الفعال', html: `EAN = Z − تأكسد + (2 × العدد التناسقي)` }
-            ]
-          },
-          6: {
-            label: 'فصل 6',
-            title: 'قوانين الكيمياء — الفصل السادس: طرائق التحليل الكيميائي',
-            formulas: [
-              { name: 'الكتلة في التحليل الحجمي', html: `m = ${F('N · V(mL) · EqWt', '1000')}` },
-              { name: 'قانون التخفيف', html: `M<sub>1</sub> · V<sub>1</sub> = M<sub>2</sub> · V<sub>2</sub>` }
-            ]
-          },
-          7: {
-            label: 'فصل 7',
-            title: 'قوانين الكيمياء — الفصل السابع: الكيمياء العضوية',
-            formulas: [
-              { name: 'الألكانات', html: `C<sub>n</sub>H<sub>2n+2</sub>` },
-              { name: 'الألكينات', html: `C<sub>n</sub>H<sub>2n</sub>` },
-              { name: 'الألكاينات', html: `C<sub>n</sub>H<sub>2n−2</sub>` }
-            ]
-          },
-          8: {
-            label: 'فصل 8',
-            title: 'قوانين الكيمياء — الفصل الثامن: الكيمياء الحياتية',
-            formulas: [
-              { name: 'الكربوهيدرات', html: `C<sub>x</sub>(H<sub>2</sub>O)<sub>y</sub>` }
+              { name: 'معادلة بفر', html: `pH = pK<sub>a</sub> + log ${F('[Salt]', '[Acid]')}` }
             ]
           }
         }
@@ -1463,6 +1319,26 @@
 
     let selectedFormulaSubject = 'math';
     let selectedFormulaChapter = 1;
+
+    function syncSimsimVisibilityForFormulas(isOpen) {
+      const root = document.getElementById('simsimFloatingRoot');
+      if (!root) return;
+      if (isOpen) {
+        if (simsimWelcomeTimerId) clearTimeout(simsimWelcomeTimerId);
+        if (simsimWelcomeFlyInterval) clearInterval(simsimWelcomeFlyInterval);
+        root.style.transition = '';
+        root.style.bottom = 'auto';
+        root.style.left = '12px';
+        root.style.top = '78px';
+        root.classList.add('hidden');
+      } else {
+        root.classList.remove('hidden');
+        const h = root.offsetHeight || 90;
+        root.style.bottom = 'auto';
+        root.style.left = '12px';
+        root.style.top = `${Math.max(76, window.innerHeight - h - 84)}px`;
+      }
+    }
 
     function openFormulasModal(subjKey = null, chNum = null) {
       if (subjKey && SCIENTIFIC_CHAPTER_FORMULAS[subjKey]) selectedFormulaSubject = subjKey;
@@ -1474,10 +1350,12 @@
       }
       renderFormulasModal();
       document.getElementById('formulasModal').classList.remove('hidden');
+      syncSimsimVisibilityForFormulas(true);
     }
 
     function closeFormulasModal() {
       document.getElementById('formulasModal').classList.add('hidden');
+      syncSimsimVisibilityForFormulas(false);
     }
 
     function renderFormulasModal() {
@@ -1630,11 +1508,13 @@
 
     function applySimsimSleepVisuals() {
       const root = document.getElementById('simsimFloatingRoot');
+      const bed = document.getElementById('simsimBed');
       const zzz = document.getElementById('simsimSleepZZZ');
       const pupils = document.querySelectorAll('#simsimEyesGroup .simsim-pupil');
       const tag = document.getElementById('simsimNameTag');
       if (!root) return;
       root.classList.toggle('is-sleeping', simsimSleepingOnBed);
+      if (bed) bed.classList.toggle('hidden', !simsimSleepingOnBed);
       if (zzz) zzz.classList.toggle('hidden', !simsimSleepingOnBed);
       pupils.forEach(p => {
         p.style.display = simsimSleepingOnBed ? 'none' : '';
@@ -1710,7 +1590,7 @@
       const welcomeLines = [
         'أهلاً بأبطال السادس! طريق الـ 100 يبدأ من هسه 👋🔥',
         'افتح القوانين واختار المادة والفصل بضغطة وحدة 📐',
-        'وإذا ضجت اضغط نام وأروح على السرير 😴 zz'
+        'وإذا ضجت اضغط نام وأطلع التخت 😴 zz'
       ];
 
       root.classList.remove('hidden');
@@ -1723,7 +1603,7 @@
       }
 
       const w = root.offsetWidth || 98;
-      const h = root.offsetHeight || 105;
+      const h = root.offsetHeight || 95;
       const maxX = Math.max(10, window.innerWidth - w - 10);
       const maxY = Math.max(80, window.innerHeight - h - 92);
 
@@ -1783,7 +1663,7 @@
 
       function clampPosition(leftVal, topVal) {
         const w = root.offsetWidth || 98;
-        const h = root.offsetHeight || 105;
+        const h = root.offsetHeight || 95;
         const maxLeft = Math.max(8, window.innerWidth - w - 8);
         const maxTop = Math.max(68, window.innerHeight - h - 76);
         return {
@@ -1835,6 +1715,8 @@
 
       setInterval(() => {
         if (dragging || simsimSleepingOnBed) return;
+        const formulasOpen = !document.getElementById('formulasModal')?.classList.contains('hidden');
+        if (formulasOpen) return;
         const rect = root.getBoundingClientRect();
         const curLeft = rect.left;
         const curTop = rect.top;
