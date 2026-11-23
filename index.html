@@ -190,7 +190,6 @@
       animation: zzFloat 2s ease-in-out infinite;
     }
 
-    /* من ينام: يظهر التخت ويستلقي سمسم عليه بالضبط */
     .simsim-floating-widget.is-sleeping #simsimBodyMotion {
       animation: none;
       margin-bottom: -14px;
@@ -218,7 +217,41 @@
     }
     .simsim-tiny-btn:active { transform: scale(0.95); }
 
-    /* صياغة القوانين الرياضية بخط كتابي مرتب (كسور، جذور، أسس) */
+    /* تصميم بطاقات القوانين والملاحظات الشبيه بالملخصات[span_5](start_span)[span_5](end_span)[span_6](start_span)[span_6](end_span)[span_7](start_span)[span_7](end_span)[span_8](start_span)[span_8](end_span)[span_9](start_span)[span_9](end_span) */
+    .formula-sheet-card {
+      border-radius: 20px;
+      border: 1.5px solid rgba(198, 156, 78, 0.55);
+      background: #FFFFFF;
+      overflow: hidden;
+      box-shadow: 0 6px 16px -10px rgba(11, 26, 48, 0.18);
+    }
+    .formula-sheet-head {
+      background: #0B1A30;
+      color: #FBF9F4;
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      border-bottom: 2px solid #C69C4E;
+    }
+    .formula-sheet-body {
+      padding: 12px 14px;
+      background: #FBF9F4;
+      space-y: 8px;
+    }
+    .formula-note-strip {
+      margin-top: 8px;
+      padding: 8px 12px;
+      border-radius: 12px;
+      background: #F7F3EA;
+      border-right: 3.5px solid #C69C4E;
+      font-size: 11px;
+      font-weight: 800;
+      color: #0B1A30;
+      line-height: 1.65;
+    }
+
     .math-eq-box {
       direction: ltr;
       text-align: left;
@@ -388,7 +421,6 @@
           </span>
         </div>
 
-        <!-- التخت يظهر فقط من يروح ينام -->
         <div id="simsimBed" class="simsim-bed-frame hidden" aria-hidden="true">
           <div class="simsim-bed-headboard"></div>
           <div class="simsim-bed-footboard"></div>
@@ -400,7 +432,7 @@
       <div class="simsim-tiny-bar text-navy">
         <button type="button" onclick="putSimsimToSleep()" class="simsim-tiny-btn bg-navy text-goldBright">🛏️ نام</button>
         <button type="button" onclick="wakeSimsimUp()" class="simsim-tiny-btn bg-cream text-navy border border-gold/40">☀️ اصحى</button>
-        <button type="button" onclick="openFormulasModal()" class="simsim-tiny-btn bg-gold/25 text-navy border border-gold/40">📐 القوانين</button>
+        <button type="button" onclick="openFormulasModal('physics', 1)" class="simsim-tiny-btn bg-gold/25 text-navy border border-gold/40">📐 القوانين</button>
       </div>
     </div>
   </div>
@@ -430,7 +462,7 @@
               <button onclick="goToPage('study')" class="px-4 py-2.5 rounded-2xl bg-gold text-navyDeep font-black text-xs sm:text-sm shadow hover:brightness-105 transition whitespace-nowrap">
                 ابدأ جلسة الآن ←
               </button>
-              <button onclick="openFormulasModal()" class="px-3.5 py-2.5 rounded-2xl bg-white/15 hover:bg-white/25 text-xs font-black text-goldBright border border-gold/60 transition whitespace-nowrap">
+              <button onclick="openFormulasModal('physics', 1)" class="px-3.5 py-2.5 rounded-2xl bg-white/15 hover:bg-white/25 text-xs font-black text-goldBright border border-gold/60 transition whitespace-nowrap">
                 📐 قوانين السادس العلمي
               </button>
               <button onclick="openSummaryCardModal()" class="px-3.5 py-2.5 rounded-2xl bg-white/15 hover:bg-white/25 text-xs font-black text-white border border-gold/60 transition whitespace-nowrap">
@@ -977,20 +1009,20 @@
     </div>
   </nav>
 
-  <!-- نافذة قوانين السادس العلمي حسب المادة والفصل -->
+  <!-- نافذة قوانين وتفاصيل وملاحظات الفصول -->
   <div id="formulasModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-xs overflow-y-auto p-4">
     <div class="min-h-full flex items-center justify-center py-4">
       <div class="bg-ivory text-navy w-full max-w-xl rounded-[30px] p-5 sm:p-6 border-2 border-gold relative space-y-4 shadow-2xl">
         <button type="button" onclick="closeFormulasModal()" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-cream border border-gold/60 font-black text-navy">✕</button>
 
         <div class="text-right space-y-0.5">
-          <span class="inline-block text-[11px] font-black text-gold">✦ السادس العلمي حصراً</span>
-          <h3 id="formulasModalTitle" class="text-lg sm:text-xl font-black text-navy">قوانين الرياضيات — الفصل الأول</h3>
+          <span class="inline-block text-[11px] font-black text-gold">✦ السادس العلمي — قوانين وملاحظات وحالات الحل</span>
+          <h3 id="formulasModalTitle" class="text-lg sm:text-xl font-black text-navy">قوانين الفيزياء — الفصل الأول</h3>
         </div>
 
         <div id="formulaSubjectTabs" class="flex flex-wrap gap-2"></div>
         <div id="formulaChapterTabs" class="flex gap-1.5 overflow-x-auto pb-1"></div>
-        <div id="formulasListContainer" class="space-y-2.5 max-h-[58vh] overflow-y-auto pr-0.5"></div>
+        <div id="formulasListContainer" class="space-y-3 max-h-[60vh] overflow-y-auto pr-0.5"></div>
       </div>
     </div>
   </div>
@@ -1209,80 +1241,96 @@
     let simsimWelcomePlayed = false;
     let simsimSleepingOnBed = false;
 
-    /* قوانين السادس العلمي — يمكنك إرسال قوانينك الخاصة لأبدّلها هنا */
+    /* قوانين وتفاصيل وملاحظات الفصل الأول من الصور المرفقة + الفصول[span_10](start_span)[span_10](end_span)[span_11](start_span)[span_11](end_span)[span_12](start_span)[span_12](end_span)[span_13](start_span)[span_13](end_span)[span_14](start_span)[span_14](end_span) */
     const F = (num, den) => `<span class="math-frac"><span class="math-num">${num}</span><span class="math-den">${den}</span></span>`;
     const SQRT = (inner) => `<span class="math-sqrt">${inner}</span>`;
 
     const SCIENTIFIC_CHAPTER_FORMULAS = {
-      math: {
-        name: 'الرياضيات',
-        chapters: {
-          1: {
-            label: 'فصل 1',
-            title: 'قوانين الرياضيات — الفصل الأول: الأعداد المركبة',
-            formulas: [
-              { name: 'المقياس', html: `r = ${SQRT('x<sup>2</sup> + y<sup>2</sup>')}` },
-              { name: 'السعة (الظل)', html: `tan θ = ${F('y', 'x')}` },
-              { name: 'الصيغة القطبية', html: `z = r (cos θ + i sin θ)` },
-              { name: 'صيغة دي موفر', html: `[r (cos θ + i sin θ)]<sup>n</sup> = r<sup>n</sup> (cos nθ + i sin nθ)` },
-              { name: 'الجذور التربيعية', html: `z = ± ${SQRT('w')}` }
-            ]
-          },
-          2: {
-            label: 'فصل 2',
-            title: 'قوانين الرياضيات — الفصل الثاني: القطوع المخروطية',
-            formulas: [
-              { name: 'القطع المكافئ', html: `y<sup>2</sup> = ± 4px` },
-              { name: 'القطع الناقص', html: `${F('x<sup>2</sup>', 'a<sup>2</sup>')} + ${F('y<sup>2</sup>', 'b<sup>2</sup>')} = 1` },
-              { name: 'القطع الزائد', html: `${F('x<sup>2</sup>', 'a<sup>2</sup>')} − ${F('y<sup>2</sup>', 'b<sup>2</sup>')} = 1` }
-            ]
-          },
-          3: {
-            label: 'فصل 3',
-            title: 'قوانين الرياضيات — الفصل الثالث: تطبيقات التفاضل',
-            formulas: [
-              { name: 'القيمة التقريبية', html: `f(a + h) ≈ f(a) + h · f′(a)` },
-              { name: 'القيمة المتوسطة', html: `f′(c) = ${F('f(b) − f(a)', 'b − a')}` }
-            ]
-          },
-          4: {
-            label: 'فصل 4',
-            title: 'قوانين الرياضيات — الفصل الرابع: التكامل',
-            formulas: [
-              { name: 'تكامل القوة', html: `∫ x<sup>n</sup> dx = ${F('x<sup>n+1</sup>', 'n + 1')} + C` },
-              { name: 'التكامل المحدد', html: `∫<sub>a</sub><sup>b</sup> f(x) dx = F(b) − F(a)` }
-            ]
-          }
-        }
-      },
       physics: {
         name: 'الفيزياء',
         chapters: {
           1: {
-            label: 'فصل 1',
-            title: 'قوانين الفيزياء — الفصل الأول: المتسعات',
-            formulas: [
-              { name: 'سعة المتسعة', html: `C = ${F('Q', 'ΔV')}` },
-              { name: 'السعة بعازل', html: `C<sub>k</sub> = k · C` },
-              { name: 'الطاقة المختزنة', html: `PE = ${F('1', '2')} C (ΔV)<sup>2</sup>` },
-              { name: 'ربط التوالي', html: `${F('1', 'C<sub>eq</sub>')} = ${F('1', 'C<sub>1</sub>')} + ${F('1', 'C<sub>2</sub>')} + ...` },
-              { name: 'ربط التوازي', html: `C<sub>eq</sub> = C<sub>1</sub> + C<sub>2</sub> + ...` }
+            label: 'فصل 1 (المتسعات)',
+            title: 'قوانين وتفاصيل الفصل الأول: المتسعات',
+            sections: [
+              {
+                badge: 'المجموعة الأولى — متسعة واحدة (قبل العازل)',
+                note: 'نستعمل قانون C = Q / ΔV عند وجود شحنة وفرق جهد، وقانون C = ε₀ · (A / d) عند وجود مساحة وبعد[span_15](start_span)[span_15](end_span).',
+                rows: [
+                  { name: 'سعة المتسعة', html: `C = ${F('Q', 'ΔV')}` },
+                  { name: 'السعة بالبعد والمساحة', html: `C = ε<sub>0</sub> · ${F('A', 'd')}` },
+                  { name: 'المجال الكهربائي المنتظم', html: `E = ${F('ΔV', 'd')}` }
+                ]
+              },
+              {
+                badge: 'المجموعة الأولى — بعد إدخال العازل (متصلة / مفصولة)',
+                note: 'إذا كانت مفصولة: Q ثابتة (Q_k = Q) ويقل ΔV و E. إذا كانت متصلة: ΔV ثابت (ΔV_k = ΔV) وتزداد Q[span_16](start_span)[span_16](end_span).',
+                rows: [
+                  { name: 'السعة بوجود عازل', html: `C<sub>k</sub> = k · C` },
+                  { name: 'فرق الجهد (مفصولة)', html: `ΔV<sub>k</sub> = ${F('ΔV', 'k')}` },
+                  { name: 'المجال (مفصولة)', html: `E<sub>k</sub> = ${F('E', 'k')}` },
+                  { name: 'الشحنة (متصلة)', html: `Q<sub>k</sub> = k · Q` }
+                ]
+              },
+              {
+                badge: 'الطاقة المختزنة والقدرة',
+                note: 'تحويلات مهمة: kW → W نضرب بـ 10³، mW → W نضرب بـ 10⁻³، min → s نضرب بـ 60، μF → F نضرب بـ 10⁻⁶[span_17](start_span)[span_17](end_span).',
+                rows: [
+                  { name: 'الطاقة (شحنة وفرق جهد)', html: `PE = ${F('1', '2')} Q · ΔV` },
+                  { name: 'الطاقة (سعة وفرق جهد)', html: `PE = ${F('1', '2')} C (ΔV)<sup>2</sup>` },
+                  { name: 'الطاقة (شحنة وسعة)', html: `PE = ${F('Q<sup>2</sup>', '2C')}` },
+                  { name: 'القدرة الكهربائية', html: `P = ${F('PE', 't')}` }
+                ]
+              },
+              {
+                badge: 'ربط التوالي والتوازي والربط المختلط',
+                note: 'بالتوالي الشحنة متساوية (Q_eq = Q₁ = Q₂)؛ بالتوازي فرق الجهد متساوٍ (ΔV_eq = ΔV₁ = ΔV₂). في متسعتين توالي: C_eq = (C₁·C₂)/(C₁+C₂)[span_18](start_span)[span_18](end_span)[span_19](start_span)[span_19](end_span).',
+                rows: [
+                  { name: 'توالي — السعة المكافئة', html: `${F('1', 'C<sub>eq</sub>')} = ${F('1', 'C<sub>1</sub>')} + ${F('1', 'C<sub>2</sub>')} + ...` },
+                  { name: 'توازي — السعة المكافئة', html: `C<sub>eq</sub> = C<sub>1</sub> + C<sub>2</sub> + ...` },
+                  { name: 'مختلط — دمج متسعتين توالي', html: `C<sub>12</sub> = ${F('C<sub>1</sub> · C<sub>2</sub>', 'C<sub>1</sub> + C<sub>2</sub>')}` }
+                ]
+              },
+              {
+                badge: 'دوائر التيار المستمر (R — C)',
+                note: 'النوع الأول (توالي مع مصباح): عند اكتمال الشحن تصبح المتسعة مفتاحاً مفتوحاً فلا يمر تيار في فرعها (I = 0) و ΔV_c = ΔV_r[span_20](start_span)[span_20](end_span). النوع الثاني (توازي مع مصباح): ΔV_c = ΔV_r = I · r[span_21](start_span)[span_21](end_span).',
+                rows: [
+                  { name: 'تيار الدائرة', html: `I = ${F('ΔV<sub>bat</sub>', 'R + r')}` },
+                  { name: 'فرق جهد المقاومة', html: `ΔV<sub>r</sub> = I · r` }
+                ]
+              }
             ]
           },
           2: {
             label: 'فصل 2',
-            title: 'قوانين الفيزياء — الفصل الثاني: الحث الكهرومغناطيسي',
-            formulas: [
-              { name: 'الفيض المغناطيسي', html: `Φ<sub>B</sub> = B · A · cos θ` },
-              { name: 'قانون فرداي', html: `ε<sub>ind</sub> = −N · ${F('ΔΦ<sub>B</sub>', 'Δt')}` }
+            title: 'قوانين الفصل الثاني: الحث الكهرومغناطيسي',
+            sections: [
+              {
+                badge: 'الفيض والحث الكهرومغناطيسي',
+                note: 'الإشارة السالبة في قانون فرداي تمثل قانون لنز وتدل على معاكسة التغير في الفيض المغناطيسي.',
+                rows: [
+                  { name: 'الفيض المغناطيسي', html: `Φ<sub>B</sub> = B · A · cos θ` },
+                  { name: 'قوة دافعة حركية', html: `ε<sub>mot</sub> = v · B · L · sin θ` },
+                  { name: 'قانون فرداي', html: `ε<sub>ind</sub> = −N · ${F('ΔΦ<sub>B</sub>', 'Δt')}` },
+                  { name: 'الحث الذاتي', html: `ε<sub>self</sub> = −L · ${F('ΔI', 'Δt')}` }
+                ]
+              }
             ]
           },
           3: {
             label: 'فصل 3',
-            title: 'قوانين الفيزياء — الفصل الثالث: التيار المتناوب',
-            formulas: [
-              { name: 'الممانعة الكلية', html: `Z = ${SQRT('R<sup>2</sup> + (X<sub>L</sub> − X<sub>C</sub>)<sup>2</sup>')}` },
-              { name: 'تردد الرنين', html: `f<sub>r</sub> = ${F('1', `2π ${SQRT('L · C')}`)}` }
+            title: 'قوانين الفصل الثالث: التيار المتناوب',
+            sections: [
+              {
+                badge: 'الرادات والممانعة والرنين',
+                note: 'في حالة الرنين يكون X_L = X_C وتكون الممانعة مساوية للمقاومة Z = R.',
+                rows: [
+                  { name: 'الرادة الحثية', html: `X<sub>L</sub> = 2π f L` },
+                  { name: 'الرادة السعوية', html: `X<sub>C</sub> = ${F('1', '2π f C')}` },
+                  { name: 'الممانعة الكلية', html: `Z = ${SQRT('R<sup>2</sup> + (X<sub>L</sub> − X<sub>C</sub>)<sup>2</sup>')}` },
+                  { name: 'تردد الرنين', html: `f<sub>r</sub> = ${F('1', `2π ${SQRT('L · C')}`)}` }
+                ]
+              }
             ]
           }
         }
@@ -1292,32 +1340,76 @@
         chapters: {
           1: {
             label: 'فصل 1',
-            title: 'قوانين الكيمياء — الفصل الأول: الثرموداينمك',
-            formulas: [
-              { name: 'كمية الحرارة', html: `q = ζ · m · ΔT` },
-              { name: 'علاقة كبس', html: `ΔG = ΔH − T · ΔS` }
+            title: 'قوانين الفصل الأول: الثرموداينمك',
+            sections: [
+              {
+                badge: 'الحرارة وقانون هس وعلاقة كبس',
+                note: 'تُحوّل درجة الحرارة السيليزية إلى كلفن بالجمع مع 273: T(K) = t(°C) + 273.',
+                rows: [
+                  { name: 'كمية الحرارة', html: `q = ζ · m · ΔT` },
+                  { name: 'السعة الحرارية', html: `C = ζ · m = ${F('q', 'ΔT')}` },
+                  { name: 'حرارة التفاعل', html: `ΔH<sup>°</sup><sub>r</sub> = Σ n ΔH<sup>°</sup><sub>f</sub>(نواتج) − Σ n ΔH<sup>°</sup><sub>f</sub>(متفاعلات)` },
+                  { name: 'علاقة كبس', html: `ΔG = ΔH − T · ΔS` }
+                ]
+              }
             ]
           },
           2: {
             label: 'فصل 2',
-            title: 'قوانين الكيمياء — الفصل الثاني: الاتزان الكيميائي',
-            formulas: [
-              { name: 'ثابت الاتزان', html: `K<sub>c</sub> = ${F('[النواتج]<sup>n</sup>', '[المتفاعلات]<sup>m</sup>')}` }
+            title: 'قوانين الفصل الثاني: الاتزان الكيميائي',
+            sections: [
+              {
+                badge: 'ثوابت الاتزان',
+                note: 'Δn_g يساوي مجموع مولات الغازات الناتجة ناقص مجموع مولات الغازات المتفاعلة.',
+                rows: [
+                  { name: 'ثابت الاتزان التركيزي', html: `K<sub>c</sub> = ${F('[النواتج]<sup>n</sup>', '[المتفاعلات]<sup>m</sup>')}` },
+                  { name: 'ثابت الاتزان الجزئي', html: `K<sub>p</sub> = ${F('(P<sub>النواتج</sub>)<sup>n</sup>', '(P<sub>المتفاعلات</sub>)<sup>m</sup>')}` },
+                  { name: 'العلاقة بين Kp و Kc', html: `K<sub>p</sub> = K<sub>c</sub> · (R · T)<sup>Δn<sub>g</sub></sup>` }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      math: {
+        name: 'الرياضيات',
+        chapters: {
+          1: {
+            label: 'فصل 1',
+            title: 'قوانين الفصل الأول: الأعداد المركبة',
+            sections: [
+              {
+                badge: 'المقياس والسعة ودي موفر',
+                note: 'تُحدد السعة θ بالاعتماد على إشارتي cos θ و sin θ لتعيين الربع الصحيح.',
+                rows: [
+                  { name: 'المقياس', html: `r = ${SQRT('x<sup>2</sup> + y<sup>2</sup>')}` },
+                  { name: 'السعة (الظل)', html: `tan θ = ${F('y', 'x')}` },
+                  { name: 'الصيغة القطبية', html: `z = r (cos θ + i sin θ)` },
+                  { name: 'صيغة دي موفر', html: `[r (cos θ + i sin θ)]<sup>n</sup> = r<sup>n</sup> (cos nθ + i sin nθ)` }
+                ]
+              }
             ]
           },
-          3: {
-            label: 'فصل 3',
-            title: 'قوانين الكيمياء — الفصل الثالث: الاتزان الأيوني',
-            formulas: [
-              { name: 'الأس الهيدروجيني', html: `pH = −log [H<sup>+</sup>]` },
-              { name: 'معادلة بفر', html: `pH = pK<sub>a</sub> + log ${F('[Salt]', '[Acid]')}` }
+          2: {
+            label: 'فصل 2',
+            title: 'قوانين الفصل الثاني: القطوع المخروطية',
+            sections: [
+              {
+                badge: 'القطوع الثلاثة',
+                note: 'في القطع الناقص a > b و c² = a² − b²؛ وفي القطع الزائد c² = a² + b².',
+                rows: [
+                  { name: 'القطع المكافئ', html: `y<sup>2</sup> = ± 4px` },
+                  { name: 'القطع الناقص', html: `${F('x<sup>2</sup>', 'a<sup>2</sup>')} + ${F('y<sup>2</sup>', 'b<sup>2</sup>')} = 1` },
+                  { name: 'القطع الزائد', html: `${F('x<sup>2</sup>', 'a<sup>2</sup>')} − ${F('y<sup>2</sup>', 'b<sup>2</sup>')} = 1` }
+                ]
+              }
             ]
           }
         }
       }
     };
 
-    let selectedFormulaSubject = 'math';
+    let selectedFormulaSubject = 'physics';
     let selectedFormulaChapter = 1;
 
     function syncSimsimVisibilityForFormulas(isOpen) {
@@ -1365,7 +1457,7 @@
       const titleEl = document.getElementById('formulasModalTitle');
       if (!subjTabsEl || !chTabsEl || !listEl) return;
 
-      const subjOrder = ['math', 'physics', 'chemistry'];
+      const subjOrder = ['physics', 'chemistry', 'math'];
       subjTabsEl.innerHTML = subjOrder.map(k => {
         const active = k === selectedFormulaSubject;
         return `<button type="button" onclick="openFormulasModal('${k}', null)" class="px-3.5 py-1.5 rounded-xl text-xs font-black transition ${active ? 'bg-navy text-goldBright border border-gold' : 'bg-cream text-navy border border-gold/50'}">${SCIENTIFIC_CHAPTER_FORMULAS[k].name}</button>`;
@@ -1383,10 +1475,20 @@
       const currentCh = subjData.chapters[selectedFormulaChapter];
       if (titleEl) titleEl.textContent = currentCh.title;
 
-      listEl.innerHTML = currentCh.formulas.map(item => `
-        <div class="rounded-2xl bg-white border border-gold/55 px-4 py-3 flex items-center justify-between gap-3 shadow-2xs">
-          <span class="text-sm font-black text-navy shrink-0">${esc(item.name)}</span>
-          <div class="math-eq-box">${item.html}</div>
+      listEl.innerHTML = currentCh.sections.map(sec => `
+        <div class="formula-sheet-card">
+          <div class="formula-sheet-head">
+            <span class="text-xs font-black text-goldBright">${esc(sec.badge)}</span>
+          </div>
+          <div class="formula-sheet-body space-y-2">
+            ${sec.rows.map(r => `
+              <div class="rounded-xl bg-white border border-gold/40 px-3.5 py-2.5 flex items-center justify-between gap-3">
+                <span class="text-xs sm:text-sm font-black text-navy shrink-0">${esc(r.name)}</span>
+                <div class="math-eq-box">${r.html}</div>
+              </div>
+            `).join('')}
+            ${sec.note ? `<div class="formula-note-strip">📌 ${esc(sec.note)}</div>` : ''}
+          </div>
         </div>
       `).join('');
     }
@@ -1404,7 +1506,6 @@
       }, 4200);
     }
 
-    /* مجسم SIMSIM ثلاثي الأبعاد */
     function renderSimsimLogoAvatar() {
       const target = document.getElementById('simsimLogoAvatar');
       if (!target) return;
@@ -1543,7 +1644,7 @@
     function wakeSimsimUp() {
       simsimSleepingOnBed = false;
       applySimsimSleepVisuals();
-      showSimsimBubble('صحيت! جاهز بقوانين السادس العلمي 💪', 3400);
+      showSimsimBubble('صحيت! جاهز بقوانين وملاحظات السادس العلمي 💪', 3400);
     }
 
     function showSimsimBubble(text, durationMs = 4000) {
@@ -1589,7 +1690,7 @@
 
       const welcomeLines = [
         'أهلاً بأبطال السادس! طريق الـ 100 يبدأ من هسه 👋🔥',
-        'افتح القوانين واختار المادة والفصل بضغطة وحدة 📐',
+        'افتح القوانين وشوف تفاصيل وملاحظات الفصل الأول 📐',
         'وإذا ضجت اضغط نام وأطلع التخت 😴 zz'
       ];
 
