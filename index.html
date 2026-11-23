@@ -178,6 +178,15 @@
     }
 
 
+    @keyframes simsimHappyJump {
+      0%, 100% { transform: translateY(0) scale(1); }
+      30% { transform: translateY(-14px) scale(1.06); }
+      55% { transform: translateY(0) scale(0.97); }
+      75% { transform: translateY(-7px) scale(1.03); }
+    }
+    .simsim-happy-anim { animation: simsimHappyJump 0.9s ease-in-out 1; }
+    .simsim-yawn-anim { animation: simsimGentleBreath 1.6s ease-in-out 3; }
+
     /* عطسة سمسم وعصبيته */
     @keyframes simsimSneeze {
       0%   { transform: translateY(0) scale(1, 1) rotate(0deg); }
@@ -1015,6 +1024,28 @@
           <span class="text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-cream text-navy border border-gold/50">مرة واحدة لكل شخص</span>
         </div>
         <div id="receivedSupportBox" class="space-y-2"></div>
+      </div>
+
+      <div class="app-card p-5 space-y-3">
+        <div class="flex items-center justify-between gap-2">
+          <h3 class="text-base font-black">🏆 لوحة الشرف الأسبوعية</h3>
+          <span class="text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-cream text-navy border border-gold/50">أعلى 10 • تتصفر كل أسبوع</span>
+        </div>
+        <p id="weekResetLabel" class="text-[11px] font-bold opacity-70"></p>
+        <div id="weeklyBoardList" class="space-y-2"></div>
+      </div>
+
+      <div class="app-card p-5 space-y-3">
+        <div class="flex items-center justify-between gap-2">
+          <h3 class="text-base font-black">⚔️ تحدي بين صديقين</h3>
+          <span class="text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-cream text-navy border border-gold/50">ساعات دراسة هذا الأسبوع</span>
+        </div>
+        <form onsubmit="sendChallenge(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <select id="challengeTarget" required class="h-10 px-2.5 rounded-xl bg-cream text-navy border border-gold/50 text-sm font-bold"></select>
+          <input id="challengeHours" type="number" min="1" max="60" value="5" required class="h-10 px-2.5 rounded-xl bg-cream text-navy border border-gold/50 text-sm font-black text-center" />
+          <button type="submit" class="h-10 rounded-xl bg-navy text-goldBright border border-gold font-black text-sm">أرسل التحدي</button>
+        </form>
+        <div id="challengeList" class="space-y-2"></div>
       </div>
 
       <div class="app-card p-5 space-y-3">
@@ -4414,7 +4445,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, onAuthStateChanged, signInWithPopup, signInWithRedirect, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, onSnapshot, addDoc, updateDoc, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const app = initializeApp({
       apiKey: "AIzaSyCIktvOCzI7KPLav2xUniwZtReBJkT-q0I",
@@ -4491,6 +4522,7 @@
         await setDoc(doc(db, 'users', myUid), {
           name: state.user.name, title: state.user.title, avatar: state.user.avatar || '',
           status: state.user.status || 'active', points: state.points, minutes: state.minutes,
+          weekKey: currentWeekKey(), weekPts: (state.weekly && state.weekly.key === currentWeekKey()) ? state.weekly.pts : 0, weekMin: (state.weekly && state.weekly.key === currentWeekKey()) ? state.weekly.min : 0,
           sentSupportCount: state.sentSupportCount || 0, lastSeen: Date.now()
         }, { merge: true });
       } catch (e) { console.warn('sync', e); }
@@ -4516,7 +4548,7 @@
       const now = Date.now();
       state.peers = cache.filter(p => p.id !== myUid).map(p => ({
         id: p.id, name: p.name || 'طالب', title: p.title || 'طالب', avatar: p.avatar || '',
-        points: p.points || 0, status: (now - (p.lastSeen || 0) > 180000) ? 'sleeping' : (p.status || 'active')
+        points: p.points || 0, weekPts: p.weekKey === currentWeekKey() ? (p.weekPts || 0) : 0, weekMin: p.weekKey === currentWeekKey() ? (p.weekMin || 0) : 0, status: (now - (p.lastSeen || 0) > 180000) ? 'sleeping' : (p.status || 'active')
       }));
       renderUI();
     }
@@ -4665,6 +4697,220 @@
       };
       img.src = URL.createObjectURL(f);
     };
+
+    /* ===== لوحة الشرف الأسبوعية + التحدي + سمسم ===== */
+    const CHALLENGES_COL = 'challenges';
+    let allChallenges = [];
+    let unsubChallenges = null;
+
+    // الأسبوع يبدأ السبت ويتصفر تلقائياً
+    function currentWeekKey() {
+      const d = new Date();
+      d.setHours(0, 0, 0, 0);
+      d.setDate(d.getDate() - ((d.getDay() + 1) % 7));
+      return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+    }
+    function weekEndDate() {
+      const d = new Date();
+      d.setHours(0, 0, 0, 0);
+      d.setDate(d.getDate() - ((d.getDay() + 1) % 7) + 7);
+      return d;
+    }
+
+    // تتبع نقاط ودقائق الأسبوع الحالي (يتصفر تلقائياً كل أسبوع)
+    function trackWeekly() {
+      const key = currentWeekKey();
+      if (!state.weekly || state.weekly.key !== key) {
+        state.weekly = { key: key, pts: 0, min: 0, lastPts: state.points || 0, lastMin: state.minutes || 0 };
+      }
+      const w = state.weekly;
+      const dp = (state.points || 0) - (w.lastPts || 0);
+      const dm = (state.minutes || 0) - (w.lastMin || 0);
+      if (dp > 0) w.pts += dp;
+      if (dm > 0) w.min += dm;
+      w.lastPts = state.points || 0;
+      w.lastMin = state.minutes || 0;
+    }
+    trackWeekly();
+    const _persistBase = persist;
+    persist = function () { trackWeekly(); _persistBase(); };
+
+    function renderWeeklyBoard() {
+      const listEl = document.getElementById('weeklyBoardList');
+      if (!listEl) return;
+      const myName = state.user ? state.user.name : 'أنت';
+      const rows = [{ key: 'me', name: myName + ' (أنت)', pts: (state.weekly && state.weekly.pts) || 0, isMe: true }];
+      state.peers.filter(p => !ADMIN_UIDS.includes(p.id)).forEach(p => {
+        rows.push({ key: p.id, name: p.name, pts: p.weekPts || 0, isMe: false });
+      });
+      rows.sort((a, b) => b.pts - a.pts);
+      const medals = ['🥇', '🥈', '🥉'];
+      listEl.innerHTML = rows.slice(0, 10).map((r, i) =>
+        '<div class="flex items-center justify-between gap-2 px-3 py-2 rounded-2xl ' +
+        (r.isMe ? 'bg-amber-50 border border-gold' : 'bg-cream border border-gold/30') + '">' +
+        '<span class="text-sm font-black">' + (medals[i] || (i + 1)) + ' ' + esc(r.name) + '</span>' +
+        '<span class="text-xs font-black text-navy">' + r.pts + ' نقطة</span></div>'
+      ).join('');
+      const endEl = document.getElementById('weekResetLabel');
+      if (endEl) endEl.textContent = 'يتصفر يوم السبت: ' + weekEndDate().toLocaleDateString('ar');
+    }
+
+    function startChallengeListener() {
+      if (unsubChallenges || !myUid) return;
+      unsubChallenges = onSnapshot(
+        query(collection(db, CHALLENGES_COL), where('weekKey', '==', currentWeekKey())),
+        snap => {
+          allChallenges = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          renderChallenges();
+        },
+        err => console.warn('challenges listen', err)
+      );
+    }
+
+    function renderChallenges() {
+      const el = document.getElementById('challengeList');
+      if (!el || !myUid) return;
+      const sel = document.getElementById('challengeTarget');
+      if (sel && document.activeElement !== sel) {
+        const peers = state.peers.filter(p => !ADMIN_UIDS.includes(p.id));
+        sel.innerHTML = peers.length
+          ? peers.map(p => '<option value="' + esc(p.id) + '">' + esc(p.name) + '</option>').join('')
+          : '<option value="">ما في أصدقاء مسجلين بعد</option>';
+      }
+      const wk = currentWeekKey();
+      const mine = allChallenges.filter(c => c.weekKey === wk && (c.fromUid === myUid || c.toUid === myUid));
+      if (!mine.length) {
+        el.innerHTML = '<p class="text-xs font-bold opacity-70">ما في تحديات هذا الأسبوع. اختر صديق وتحداه!</p>';
+        return;
+      }
+      const myH = ((state.weekly && state.weekly.min) || 0) / 60;
+      el.innerHTML = mine.map(c => {
+        const iAmFrom = c.fromUid === myUid;
+        const otherUid = iAmFrom ? c.toUid : c.fromUid;
+        const otherName = iAmFrom ? c.toName : c.fromName;
+        const other = state.peers.find(p => p.id === otherUid);
+        const otherH = ((other && other.weekMin) || 0) / 60;
+        const pct = h => Math.min(100, Math.round((h / c.hours) * 100));
+        const pending = c.status === 'pending';
+        const acceptBtn = (!iAmFrom && pending)
+          ? '<button onclick="acceptChallenge(\'' + esc(c.id) + '\')" class="px-3 py-1.5 rounded-xl bg-navy text-goldBright text-xs font-black border border-gold">✅ اقبل التحدي</button>'
+          : '';
+        let winner = '';
+        if (myH >= c.hours && otherH < c.hours) winner = 'أنت وصلت الهدف أولاً 🏆';
+        else if (otherH >= c.hours && myH < c.hours) winner = esc(otherName) + ' وصل الهدف 🏆';
+        return '<div class="rounded-2xl p-3 bg-cream border border-gold/40 space-y-2">' +
+          '<div class="flex items-center justify-between gap-2 flex-wrap">' +
+          '<span class="text-sm font-black">' + esc(c.fromName) + ' ⚔️ ' + esc(c.toName) + ' — ' + c.hours + ' ساعة</span>' +
+          (pending ? '<span class="text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-100 text-amber-950">بانتظار القبول</span>' : '') +
+          '</div>' +
+          '<div class="text-[11px] font-bold">أنت: ' + myH.toFixed(1) + ' ساعة (' + pct(myH) + '%)</div>' +
+          '<div class="h-2 rounded-full bg-navy/10 overflow-hidden"><div class="h-full bg-navy" style="width:' + pct(myH) + '%"></div></div>' +
+          '<div class="text-[11px] font-bold">' + esc(otherName) + ': ' + otherH.toFixed(1) + ' ساعة (' + pct(otherH) + '%)</div>' +
+          '<div class="h-2 rounded-full bg-navy/10 overflow-hidden"><div class="h-full bg-gold" style="width:' + pct(otherH) + '%"></div></div>' +
+          (winner ? '<p class="text-xs font-black text-navy">' + winner + '</p>' : '') +
+          acceptBtn +
+          '</div>';
+      }).join('');
+    }
+
+    window.sendChallenge = async function (e) {
+      e.preventDefault();
+      if (!myUid || !state.user) { alert('سجّل دخولك أول عشان تتحدى صديقك.'); return; }
+      const sel = document.getElementById('challengeTarget');
+      const hours = Math.max(1, Math.min(60, parseInt(document.getElementById('challengeHours').value, 10) || 1));
+      const target = state.peers.find(p => p.id === sel.value);
+      if (!target) { alert('اختر صديق للتحدي.'); return; }
+      try {
+        await addDoc(collection(db, CHALLENGES_COL), {
+          fromUid: myUid, fromName: state.user.name, toUid: target.id, toName: target.name,
+          hours: hours, weekKey: currentWeekKey(), status: 'pending', createdAt: Date.now()
+        });
+        alert('أرسلت التحدي لـ ' + target.name + ': ' + hours + ' ساعة دراسة هذا الأسبوع ⚔️');
+      } catch (err) { alert('تعذر إرسال التحدي: ' + (err.message || err)); }
+    };
+
+    window.acceptChallenge = async function (id) {
+      try { await updateDoc(doc(db, CHALLENGES_COL, id), { status: 'accepted' }); }
+      catch (err) { alert('تعذر قبول التحدي: ' + (err.message || err)); }
+    };
+
+    // ردود سمسم: فرحة عند الإنجاز
+    function simsimHappyJump() {
+      const el = document.getElementById('simsimBodyMotion');
+      if (!el || simsimSleepingOnBed) return;
+      el.classList.remove('simsim-happy-anim');
+      void el.offsetWidth;
+      el.classList.add('simsim-happy-anim');
+      setTimeout(() => el.classList.remove('simsim-happy-anim'), 950);
+    }
+    const _bubbleBase = showSimsimBubble;
+    showSimsimBubble = function (text, durationMs) {
+      if (/^(كفو|صح عليك)/.test(String(text))) simsimHappyJump();
+      return _bubbleBase(text, durationMs);
+    };
+
+    // ردود حسب الوقت
+    function simsimTimeReaction() {
+      if (simsimSleepingOnBed) return;
+      const h = new Date().getHours();
+      if (h >= 23 || h < 5) {
+        const el = document.getElementById('simsimBodyMotion');
+        if (el) {
+          el.classList.add('simsim-yawn-anim');
+          setTimeout(() => el.classList.remove('simsim-yawn-anim'), 5000);
+        }
+        showSimsimBubble('🥱 الساعة متأخرة... روح نام يا بطل، الراحة جزء من التحصيل!', 5000);
+      } else if (h >= 5 && h < 9) {
+        simsimHappyJump();
+        showSimsimBubble('☀️ صباح الفل! يلا نبدي اليوم بجلسة قصيرة ونكسر الدنيا 💪', 5000);
+      }
+    }
+
+    // سمسم يسولف: نكتة أو معلومة من المواد
+    const SIMSIM_TIDBITS = [
+      { s: 'الفيزياء', t: 'سرعة الضوء في الفراغ تقريباً 300,000 كم في الثانية.' },
+      { s: 'الفيزياء', t: 'ليش الكهربائي ما يخاف من الظلام؟ لأن عنده تيار يشيله 😄' },
+      { s: 'الكيمياء', t: 'الماء يغلي عند 100 درجة مئوية تحت الضغط الجوي المعتاد.' },
+      { s: 'الكيمياء', t: 'شنو قال الكربون للأكسجين؟ أنت عندك جاذبية وأنا ما أقدر أفلت منك 😄' },
+      { s: 'الرياضيات', t: 'مجموع زوايا المثلث دائماً 180 درجة.' },
+      { s: 'الرياضيات', t: 'ليش الصفر ما يحب يتقدم؟ لأنه ما يسوي شي إلا لما يجي بعده رقم 😄' },
+      { s: 'الأحياء', t: 'الميتوكوندريا تنتج معظم طاقة الخلية، ولهذا تسمى محطة الطاقة.' },
+      { s: 'الأحياء', t: 'شنو يقول الخلية لما تزعل؟ لا تخاف، أنا انقسم وأرجع أحسن 😄' },
+      { s: 'الجيولوجيا', t: 'الماس نوع من الكربون، نفس عنصر الفحم، بس ترتيب ذراته مختلف.' },
+      { s: 'التاريخ', t: 'الكتابة المسمارية من أقدم أنظمة الكتابة المعروفة، ظهرت في بلاد الرافدين.' }
+    ];
+    function simsimTidbit() {
+      if (simsimSleepingOnBed || !SIMSIM_TIDBITS.length) return;
+      const item = SIMSIM_TIDBITS[Math.floor(Math.random() * SIMSIM_TIDBITS.length)];
+      showSimsimBubble('📚 ' + item.s + ': ' + item.t, 7000);
+    }
+
+    // غياب يوم كامل: سمسم يزعل
+    (function startSimsimDaily() {
+      const KEY = 'marsa_last_visit_v2';
+      try {
+        const last = Number(localStorage.getItem(KEY) || 0);
+        const hrs = last ? (Date.now() - last) / 3600000 : 0;
+        localStorage.setItem(KEY, String(Date.now()));
+        if (hrs >= 24) {
+          setTimeout(() => showSimsimBubble('😢 زعلت منك! غبت ' + Math.floor(hrs / 24) + ' يوم عن السادس... يلا نرجع نشتغل؟', 6000), 14000);
+        }
+      } catch (e) {}
+      setTimeout(simsimTimeReaction, 12000);
+      setInterval(simsimTimeReaction, 30 * 60 * 1000);
+      setTimeout(simsimTidbit, 90000);
+      setInterval(simsimTidbit, 8 * 60 * 1000);
+    })();
+
+    // ربط الواجهة بالتحديثات
+    const _renderUIBase = renderUI;
+    renderUI = function () {
+      _renderUIBase();
+      renderWeeklyBoard();
+      renderChallenges();
+      startChallengeListener();
+    };
+    renderUI();
   </script>
 </body>
 </html>
