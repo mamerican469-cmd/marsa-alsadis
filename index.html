@@ -184,6 +184,9 @@
       55% { transform: translateY(0) scale(0.97); }
       75% { transform: translateY(-7px) scale(1.03); }
     }
+    /* قراءة الأسماء والنصوص داخل البطاقات الكريمية بالوضع الداكن */
+    #weeklyBoardList, #challengeList, #challengeList * { color: #0B1A30; }
+    #challengeList .text-goldBright, #challengeList .bg-navy { color: #E5C37A; }
     .simsim-happy-anim { animation: simsimHappyJump 0.9s ease-in-out 1; }
     .simsim-yawn-anim { animation: simsimGentleBreath 1.6s ease-in-out 3; }
 
@@ -1041,7 +1044,14 @@
           <span class="text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-cream text-navy border border-gold/50">ساعات دراسة هذا الأسبوع</span>
         </div>
         <form onsubmit="sendChallenge(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-          <select id="challengeTarget" required class="h-10 px-2.5 rounded-xl bg-cream text-navy border border-gold/50 text-sm font-bold"></select>
+          <div class="relative">
+          <input type="hidden" id="challengeTarget" value="" />
+          <button type="button" id="challengePickerBtn" onclick="toggleChallengePicker()" class="w-full h-10 px-3 rounded-xl bg-cream text-navy border border-gold/60 text-sm font-black flex items-center justify-between shadow-sm">
+            <span id="challengePickerLabel">اختر صديق</span>
+            <span class="text-gold text-xs">▾</span>
+          </button>
+          <div id="challengePickerPanel" class="hidden absolute z-30 left-0 right-0 mt-2 max-h-72 overflow-y-auto rounded-2xl bg-navy border border-gold/70 shadow-2xl p-1.5 space-y-1"></div>
+        </div>
           <input id="challengeHours" type="number" min="1" max="60" value="5" required class="h-10 px-2.5 rounded-xl bg-cream text-navy border border-gold/50 text-sm font-black text-center" />
           <button type="submit" class="h-10 rounded-xl bg-navy text-goldBright border border-gold font-black text-sm">أرسل التحدي</button>
         </form>
@@ -4767,15 +4777,47 @@
       );
     }
 
+    let challengePickerOpen = false;
+    window.toggleChallengePicker = function () {
+      challengePickerOpen = !challengePickerOpen;
+      const panel = document.getElementById('challengePickerPanel');
+      if (panel) panel.classList.toggle('hidden', !challengePickerOpen);
+      renderChallenges();
+    };
+    document.getElementById('challengePickerPanel').addEventListener('click', e => {
+      const btn = e.target.closest('[data-pid]');
+      if (!btn) return;
+      document.getElementById('challengeTarget').value = btn.dataset.pid;
+      challengePickerOpen = false;
+      document.getElementById('challengePickerPanel').classList.add('hidden');
+      renderChallenges();
+    });
+
     function renderChallenges() {
       const el = document.getElementById('challengeList');
       if (!el || !myUid) return;
-      const sel = document.getElementById('challengeTarget');
-      if (sel && document.activeElement !== sel) {
-        const peers = state.peers.filter(p => !ADMIN_UIDS.includes(p.id));
-        sel.innerHTML = peers.length
-          ? peers.map(p => '<option value="' + esc(p.id) + '">' + esc(p.name) + '</option>').join('')
-          : '<option value="">ما في أصدقاء مسجلين بعد</option>';
+      const hidden = document.getElementById('challengeTarget');
+      const label = document.getElementById('challengePickerLabel');
+      const panel = document.getElementById('challengePickerPanel');
+      const peersList = state.peers.filter(p => !ADMIN_UIDS.includes(p.id));
+      if (hidden && label && panel) {
+        if (!peersList.find(p => p.id === hidden.value)) hidden.value = peersList[0] ? peersList[0].id : '';
+        const cur = peersList.find(p => p.id === hidden.value);
+        label.textContent = cur ? cur.name : 'ما في أصدقاء مسجلين بعد';
+        if (challengePickerOpen) {
+          panel.innerHTML = peersList.length
+            ? peersList.map(p => {
+                const sel = p.id === hidden.value;
+                const initial = esc((p.name || '؟').charAt(0));
+                const av = p.avatar
+                  ? '<img src="' + esc(p.avatar) + '" class="w-8 h-8 rounded-full object-cover border border-gold" alt="" />'
+                  : '<span class="w-8 h-8 rounded-full bg-gold/20 border border-gold text-goldBright flex items-center justify-center text-xs font-black">' + initial + '</span>';
+                return '<button type="button" data-pid="' + esc(p.id) + '" class="w-full flex items-center justify-between gap-2 px-2.5 py-2 rounded-xl text-sm font-black text-cream hover:bg-white/10 transition ' + (sel ? 'bg-white/10' : '') + '">' +
+                  '<span class="flex items-center gap-2">' + av + '<span>' + esc(p.name) + '</span></span>' +
+                  (sel ? '<span class="text-goldBright text-base">✓</span>' : '') + '</button>';
+              }).join('')
+            : '<p class="px-3 py-2 text-xs font-bold text-cream/70">ما في أصدقاء مسجلين بعد</p>';
+        }
       }
       const wk = currentWeekKey();
       const mine = allChallenges.filter(c => c.weekKey === wk && (c.fromUid === myUid || c.toUid === myUid));
