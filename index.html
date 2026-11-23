@@ -75,29 +75,29 @@
     .hg-flip { animation: hgturn .75s cubic-bezier(0.22, 1, 0.36, 1); transform-origin: 50% 50%; }
     @keyframes hgturn { from { transform: rotate(180deg); } to { transform: rotate(360deg); } }
 
-    /* مجسم SIMSIM الحر والتخت وحالة النوم zz */
+    /* مجسم SIMSIM وتخت صغير مرتب */
     @keyframes simsimGentleBreath {
       0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
-      50% { transform: translateY(-4px) rotate(1.5deg) scale(1.015); }
+      50% { transform: translateY(-3px) rotate(1.2deg) scale(1.01); }
     }
     @keyframes simsimWaveFly {
-      0% { transform: translateY(0px) rotate(-6deg) scale(1.05); }
-      25% { transform: translateY(-11px) rotate(8deg) scale(1.08); }
-      50% { transform: translateY(-3px) rotate(-7deg) scale(1.06); }
-      75% { transform: translateY(-11px) rotate(7deg) scale(1.08); }
-      100% { transform: translateY(0px) rotate(-6deg) scale(1.05); }
+      0% { transform: translateY(0px) rotate(-6deg) scale(1.04); }
+      25% { transform: translateY(-9px) rotate(7deg) scale(1.06); }
+      50% { transform: translateY(-2px) rotate(-6deg) scale(1.04); }
+      75% { transform: translateY(-9px) rotate(6deg) scale(1.06); }
+      100% { transform: translateY(0px) rotate(-6deg) scale(1.04); }
     }
     @keyframes simsimRoastShake {
-      0%, 100% { transform: translateX(0) rotate(0deg) scale(1.04); }
-      20% { transform: translateX(-5px) rotate(-4deg) scale(1.05); }
-      40% { transform: translateX(5px) rotate(4deg) scale(1.05); }
-      60% { transform: translateX(-4px) rotate(-3deg) scale(1.04); }
-      80% { transform: translateX(4px) rotate(3deg) scale(1.04); }
+      0%, 100% { transform: translateX(0) rotate(0deg); }
+      25% { transform: translateX(-4px) rotate(-3deg); }
+      50% { transform: translateX(4px) rotate(3deg); }
+      75% { transform: translateX(-3px) rotate(-2deg); }
     }
     @keyframes zzFloat {
-      0%, 100% { transform: translateY(3px) scale(0.92); opacity: 0.55; }
-      50% { transform: translateY(-10px) scale(1.12); opacity: 1; }
+      0%, 100% { transform: translateY(2px) scale(0.92); opacity: 0.6; }
+      50% { transform: translateY(-7px) scale(1.08); opacity: 1; }
     }
+
     .simsim-floating-widget {
       position: fixed;
       z-index: 52;
@@ -108,6 +108,64 @@
       border: none;
       box-shadow: none;
     }
+
+    .simsim-stage-box {
+      position: relative;
+      width: 84px;
+      height: 88px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .simsim-mini-bed {
+      position: relative;
+      width: 66px;
+      height: 24px;
+      border-radius: 8px;
+      background: #F7F3EA;
+      border: 1.5px solid #0B1A30;
+      box-shadow: 0 3px 8px rgba(11, 26, 48, 0.22);
+      z-index: 1;
+    }
+    .simsim-mini-bed-head {
+      position: absolute;
+      right: 0;
+      top: -6px;
+      width: 7px;
+      height: 28px;
+      border-radius: 5px 2px 2px 5px;
+      background: #0B1A30;
+      border-left: 1.5px solid #C69C4E;
+    }
+    .simsim-mini-bed-pillow {
+      position: absolute;
+      right: 8px;
+      top: 2px;
+      width: 14px;
+      height: 8px;
+      border-radius: 3px;
+      background: #FFFFFF;
+      border: 1px solid rgba(11, 26, 48, 0.45);
+    }
+    .simsim-mini-bed-blanket {
+      position: absolute;
+      left: 2px;
+      bottom: 1px;
+      width: 38px;
+      height: 12px;
+      border-radius: 4px 7px 6px 4px;
+      background: rgba(198, 156, 78, 0.35);
+      border-top: 1.5px solid #C69C4E;
+    }
+
+    #simsimBodyMotion {
+      position: relative;
+      z-index: 2;
+      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
     .simsim-gentle-motion {
       animation: simsimGentleBreath 3.2s ease-in-out infinite;
     }
@@ -115,16 +173,38 @@
       animation: simsimWaveFly 1.15s ease-in-out infinite;
     }
     .simsim-roast-anim {
-      animation: simsimRoastShake 0.45s ease-in-out 2;
+      animation: simsimRoastShake 0.42s ease-in-out 2;
     }
     .simsim-zzz-pop {
       animation: zzFloat 2s ease-in-out infinite;
     }
+
+    /* من ينام: يصغر شوية وينام مباشرة فوق التخت */
     .simsim-floating-widget.is-sleeping #simsimBodyMotion {
       animation: none;
-      transform: translate(-18px, 16px) rotate(-14deg) scale(0.92);
-      transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+      transform: translate(2px, 11px) rotate(-12deg) scale(0.76);
     }
+
+    .simsim-tiny-bar {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 2px 4px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(198, 156, 78, 0.65);
+      box-shadow: 0 4px 10px rgba(11, 26, 48, 0.16);
+    }
+    .simsim-tiny-btn {
+      padding: 1px 6px;
+      border-radius: 7px;
+      font-size: 9px;
+      font-weight: 900;
+      line-height: 1.5;
+      white-space: nowrap;
+      transition: transform 0.15s ease;
+    }
+    .simsim-tiny-btn:active { transform: scale(0.95); }
 
     .lux-pill {
       display: inline-flex;
@@ -213,49 +293,40 @@
     </div>
   </header>
 
-  <!-- مجسم SIMSIM العائم مع التخت وحالة النوم zz وقوانين السادس العلمي -->
-  <div id="simsimFloatingRoot" class="simsim-floating-widget" style="left: 18px; bottom: 102px;">
-    <div class="flex flex-col items-end gap-1.5 max-w-[270px]">
-      <div id="simsimSpeechBubble" class="hidden rounded-2xl px-3.5 py-2.5 bg-navy/95 text-white border border-gold/70 shadow-xl text-xs font-extrabold leading-snug text-right max-h-44 overflow-y-auto">
-        <span id="simsimSpeechMsg">أهلاً بأبطال السادس! طريق الـ 100 يبدأ من هسه، شدّوا حيلكم! 👋🔥</span>
+  <!-- مجسم SIMSIM وتخت صغير مرتب وأزرار أوامر مصغّرة -->
+  <div id="simsimFloatingRoot" class="simsim-floating-widget" style="left: 12px; bottom: 84px;">
+    <div class="flex flex-col items-start gap-1 max-w-[240px]">
+      <div id="simsimSpeechBubble" class="hidden rounded-2xl px-3 py-2 bg-navy/95 text-white border border-gold/70 shadow-xl text-xs font-bold leading-relaxed text-right max-h-48 overflow-y-auto whitespace-pre-line">
+        <span id="simsimSpeechMsg">أهلاً بأبطال السادس! طريق الـ 100 يبدأ من هسه! 👋🔥</span>
       </div>
 
-      <div class="relative flex items-end gap-1">
-        <!-- تخت سمسم للنوم والهدوء -->
-        <div id="simsimBed" title="تخت سمسم للراحة والنوم" class="w-16 h-10 rounded-xl bg-cream border-2 border-navy shadow-md relative overflow-hidden shrink-0">
-          <div class="w-2 h-full bg-navy border-l border-gold absolute right-0 top-0"></div>
-          <div class="w-5 h-3 bg-white border border-navy/60 rounded-md absolute right-2.5 top-1"></div>
-          <div class="w-9 h-4 bg-navy/85 border-t-2 border-gold rounded-t-md absolute left-1 bottom-0"></div>
-        </div>
-
-        <div id="simsimBodyMotion" class="simsim-gentle-motion flex flex-col items-center relative">
-          <!-- علامة النوم zz عند نوم سمسم -->
-          <div id="simsimSleepZZZ" class="hidden absolute -top-6 left-0 flex items-center gap-0.5 pointer-events-none z-10">
-            <span class="simsim-zzz-pop text-xs font-black text-goldBright drop-shadow">z</span>
-            <span class="simsim-zzz-pop text-sm font-black text-white drop-shadow" style="animation-delay:0.35s">z</span>
-            <span class="simsim-zzz-pop text-base drop-shadow" style="animation-delay:0.7s">😴</span>
+      <div class="simsim-stage-box">
+        <div id="simsimBodyMotion" class="simsim-gentle-motion flex flex-col items-center">
+          <div id="simsimSleepZZZ" class="hidden absolute -top-5 right-0 flex items-center gap-0.5 pointer-events-none z-10">
+            <span class="simsim-zzz-pop text-[11px] font-black text-goldBright drop-shadow">z</span>
+            <span class="simsim-zzz-pop text-xs font-black text-white drop-shadow" style="animation-delay:0.3s">z</span>
+            <span class="simsim-zzz-pop text-sm drop-shadow" style="animation-delay:0.6s">😴</span>
           </div>
 
-          <div id="simsimDragHandle" title="اسحب سمسم أو اكبس عليه — أو اكتب أمر / قوانين السادس العلمي" class="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center cursor-grab active:cursor-grabbing drop-shadow-[0_12px_18px_rgba(11,26,48,0.32)]">
+          <div id="simsimDragHandle" title="اسحب سمسم أو اكبس عليه" class="w-16 h-16 flex items-center justify-center cursor-grab active:cursor-grabbing drop-shadow-[0_8px_12px_rgba(11,26,48,0.28)]">
             <div id="simsimLogoAvatar" class="w-full h-full flex items-center justify-center pointer-events-none"></div>
           </div>
-          <span id="simsimNameTag" class="mt-0.5 text-xs font-extrabold tracking-wide text-navy dark:text-goldBright" style="font-family: ui-rounded, 'SF Pro Rounded', 'Cairo', sans-serif;">
+          <span id="simsimNameTag" class="text-[10px] font-extrabold tracking-wide text-navy dark:text-goldBright">
             SIMSIM
           </span>
         </div>
+
+        <div id="simsimBed" class="simsim-mini-bed -mt-2" aria-hidden="true">
+          <div class="simsim-mini-bed-head"></div>
+          <div class="simsim-mini-bed-pillow"></div>
+          <div class="simsim-mini-bed-blanket"></div>
+        </div>
       </div>
 
-      <!-- شريط أوامر سريع لسمسم (نوم على التخت / صحوة / قوانين فصل أول) -->
-      <div class="flex flex-wrap items-center justify-end gap-1 bg-white/95 text-navy border border-gold/60 rounded-2xl p-1.5 shadow-lg">
-        <button type="button" onclick="putSimsimToSleep()" class="px-2 py-1 rounded-xl bg-navy text-goldBright text-[10px] font-black hover:bg-navyLight transition whitespace-nowrap">
-          🛏️ نام
-        </button>
-        <button type="button" onclick="wakeSimsimUp()" class="px-2 py-1 rounded-xl bg-cream text-navy border border-gold/50 text-[10px] font-black hover:bg-gold/20 transition whitespace-nowrap">
-          ☀️ اصحى
-        </button>
-        <button type="button" onclick="openSimsimCommandPrompt()" class="px-2 py-1 rounded-xl bg-gold/20 text-navy border border-gold/50 text-[10px] font-black hover:bg-gold/35 transition whitespace-nowrap">
-          📐 قوانين
-        </button>
+      <div class="simsim-tiny-bar text-navy">
+        <button type="button" onclick="putSimsimToSleep()" class="simsim-tiny-btn bg-navy text-goldBright">🛏️ نام</button>
+        <button type="button" onclick="wakeSimsimUp()" class="simsim-tiny-btn bg-cream text-navy border border-gold/40">☀️ اصحى</button>
+        <button type="button" onclick="openSimsimCommandPrompt()" class="simsim-tiny-btn bg-gold/25 text-navy border border-gold/40">📐 قانون</button>
       </div>
     </div>
   </div>
@@ -829,21 +900,21 @@
     </div>
   </nav>
 
-  <!-- نافذة أوامر سمسم وقوانين السادس العلمي (كيمياء، فيزياء، رياضيات) -->
+  <!-- نافذة طلب قانون محدد أو نوم -->
   <div id="simsimCommandModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
     <div class="bg-white text-navy w-full max-w-md rounded-[28px] p-6 border-2 border-gold relative space-y-4 shadow-2xl">
       <button type="button" onclick="closeSimsimCommandPrompt()" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-cream font-black">✕</button>
-      <h3 class="text-lg font-black text-navy">🤖 اسأل SIMSIM (قوانين السادس العلمي أو نوم)</h3>
-      <p class="text-xs font-bold text-navy/75">مثال: <span class="text-gold font-black">قوانين فيزياء فصل اول</span> أو <span class="text-gold font-black">قوانين كيمياء فصل اول</span> أو <span class="text-gold font-black">قوانين رياضيات فصل اول</span> أو <span class="text-gold font-black">روح نام</span>.</p>
+      <h3 class="text-lg font-black text-navy">📐 قوانين السادس العلمي مع SIMSIM</h3>
+      <p class="text-xs font-bold text-navy/75">اكتب اسم القانون أو الموضوع (مثلاً: <span class="text-gold font-black">ديموافر</span> أو <span class="text-gold font-black">المتسعات</span> أو <span class="text-gold font-black">فرداي</span> أو <span class="text-gold font-black">بفر</span>).</p>
       <form onsubmit="submitSimsimCommandModal(event)" class="space-y-3">
-        <input id="simsimModalInput" type="text" required placeholder="اكتب طلبك لسمسم هنا..." class="w-full h-11 px-4 rounded-2xl bg-cream border border-gold/60 text-sm font-bold focus:outline-none" />
+        <input id="simsimModalInput" type="text" required placeholder="مثال: ديموافر" class="w-full h-11 px-4 rounded-2xl bg-cream border border-gold/60 text-sm font-bold focus:outline-none" />
         <div class="flex flex-wrap gap-1.5">
-          <button type="button" onclick="runSimsimDirectQuery('قوانين فيزياء فصل اول')" class="px-2.5 py-1 rounded-xl bg-cream border border-gold/50 text-[11px] font-black">⚛️ فيزياء ف1</button>
-          <button type="button" onclick="runSimsimDirectQuery('قوانين كيمياء فصل اول')" class="px-2.5 py-1 rounded-xl bg-cream border border-gold/50 text-[11px] font-black">🧪 كيمياء ف1</button>
-          <button type="button" onclick="runSimsimDirectQuery('قوانين رياضيات فصل اول')" class="px-2.5 py-1 rounded-xl bg-cream border border-gold/50 text-[11px] font-black">📐 رياضيات ف1</button>
-          <button type="button" onclick="putSimsimToSleep(); closeSimsimCommandPrompt();" class="px-2.5 py-1 rounded-xl bg-navy text-goldBright text-[11px] font-black">🛏️ نام على التخت</button>
+          <button type="button" onclick="runSimsimDirectQuery('ديموافر')" class="px-2.5 py-1 rounded-xl bg-cream border border-gold/50 text-[11px] font-black">ديموافر</button>
+          <button type="button" onclick="runSimsimDirectQuery('العازل')" class="px-2.5 py-1 rounded-xl bg-cream border border-gold/50 text-[11px] font-black">العازل</button>
+          <button type="button" onclick="runSimsimDirectQuery('فرداي')" class="px-2.5 py-1 rounded-xl bg-cream border border-gold/50 text-[11px] font-black">فرداي</button>
+          <button type="button" onclick="runSimsimDirectQuery('بفر')" class="px-2.5 py-1 rounded-xl bg-cream border border-gold/50 text-[11px] font-black">بفر</button>
         </div>
-        <button type="submit" class="w-full h-11 rounded-2xl bg-navy text-white border border-gold font-black text-sm">إرسال لسمسم</button>
+        <button type="submit" class="w-full h-11 rounded-2xl bg-navy text-white border border-gold font-black text-sm">عرض القانون</button>
       </form>
     </div>
   </div>
@@ -863,7 +934,7 @@
     </div>
   </div>
 
-  <!-- وضع الهدوء (Zen Focus Mode) -->
+  <!-- وضع الهدوء -->
   <div id="zenFocusModal" class="hidden fixed inset-0 z-50 overflow-y-auto" style="background: radial-gradient(circle at top, #14294A 0%, #0B1A30 58%, #060F1D 100%);">
     <div class="min-h-full flex items-center justify-center p-4">
       <div class="w-full max-w-md rounded-[32px] p-6 bg-white/95 text-navy border-2 border-gold shadow-2xl space-y-5 text-center">
@@ -1062,260 +1133,45 @@
     let simsimWelcomePlayed = false;
     let simsimSleepingOnBed = false;
 
-    /* قوانين السادس العلمي حصراً (كيمياء، فيزياء، رياضيات) مقسمة حسب الفصول */
-    const SIXTH_SCIENTIFIC_FORMULAS = {
-      physics: {
-        name: 'الفيزياء',
-        chapters: {
-          1: {
-            title: 'الفصل الأول: المتسعات',
-            items: [
-              'سعة المتسعة: C = Q / ΔV (تقاس بالفاراد F)',
-              'سعة المتسعة بعازل: Ck = k · C',
-              'سعة المتسعة ذات الصفيحتين: C = ε₀ · (A / d)',
-              'الطاقة المختزنة: PE = ½ C(ΔV)² = ½ Q·ΔV = ½ (Q²/C)',
-              'توازي: Ceq = C₁ + C₂ + ... (ΔV متساوٍ)',
-              'توالي: 1/Ceq = 1/C₁ + 1/C₂ + ... (Q متساوية)'
-            ]
-          },
-          2: {
-            title: 'الفصل الثاني: الحث الكهرومغناطيسي',
-            items: [
-              'الفيض المغناطيسي: ΦB = B · A · cos(θ)',
-              'قوة دافعة حركية: εmot = v · B · L · sin(θ)',
-              'قانون فرداي: εind = -N · (ΔΦB / Δt)',
-              'الحث الذاتي: εself = -L · (ΔI / Δt)',
-              'طاقة المجال المغناطيسي: PEmag = ½ L · I²'
-            ]
-          },
-          3: {
-            title: 'الفصل الثالث: التيار المتناوب',
-            items: [
-              'الرادة الحثية: XL = 2π f L = ω L',
-              'الرادة السعوية: XC = 1 / (2π f C) = 1 / (ω C)',
-              'الممانعة الكلية: Z = √(R² + (XL - XC)²)',
-              'زاوية فرق الطور: tan(φ) = (XL - XC) / R',
-              'عامل القدرة: PF = cos(φ) = R / Z',
-              'تردد الرنين: fr = 1 / (2π √(L · C))'
-            ]
-          },
-          4: {
-            title: 'الفصل الرابع: الموجات الكهرومغناطيسية',
-            items: [
-              'سرعة الموجة: c = λ · f ≈ 3 × 10⁸ m/s',
-              'طاقة الموجة: E = h · f'
-            ]
-          },
-          5: {
-            title: 'الفصل الخامس: البصريات الفيزيائية',
-            items: [
-              'تداخل بناء: Δl = m · λ (m = 0, 1, 2, ...)',
-              'تداخل إتلافي: Δl = (m + ½) · λ',
-              'فاصلة الهدب (يونغ): Δy = (λ · L) / d',
-              'محزز الحيود: d · sin(θ) = m · λ'
-            ]
-          },
-          6: {
-            title: 'الفصل السادس: الفيزياء الحديثة',
-            items: [
-              'طاقة الفوتون: E = h · f = (h · c) / λ',
-              'المعادلة الكهروضوئية: KEmax = h · f - w',
-              'جهد الإيقاف: KEmax = e · Vs',
-              'طول موجة دي برولي: λ = h / (m · v)'
-            ]
-          },
-          7: {
-            title: 'الفصل السابع: إلكترونيات الحالة الصلبة',
-            items: [
-              'فجوة الطاقة: Eg = Ec - Ev',
-              'تيار الباعث: IE = IC + IB',
-              'ربح التيار: α = IC / IE ، β = IC / IB'
-            ]
-          },
-          8: {
-            title: 'الفصل الثامن: الأطياف الذرية والليزر',
-            items: [
-              'فرق الطاقة بين مستويين: ΔE = Ei - Ef = h · f',
-              'طول الموجة المنبعث: λ = (h · c) / ΔE'
-            ]
-          },
-          9: {
-            title: 'الفصل التاسع: النظرية النسبية',
-            items: [
-              'عامل لورنتز: γ = 1 / √(1 - v²/c²)',
-              'تمدد الزمن: Δt = γ · Δt₀',
-              'انكماش الطول: L = L₀ / γ',
-              'تكافؤ الكتلة والطاقة: E = m · c²'
-            ]
-          },
-          10: {
-            title: 'الفصل العاشر: الفيزياء النووية',
-            items: [
-              'نصف قطر النواة: R = R₀ · A^(1/3)',
-              'طاقة الربط النووية: Eb = Δm · c²',
-              'النشاط الإشعاعي: A = λ · N ، عمر النصف: T½ = 0.693 / λ'
-            ]
-          }
-        }
-      },
-      chemistry: {
-        name: 'الكيمياء',
-        chapters: {
-          1: {
-            title: 'الفصل الأول: الثرموداينمك',
-            items: [
-              'كمية الحرارة: q = ζ · m · ΔT',
-              'السعة الحرارية: C = ζ · m = q / ΔT',
-              'قانون هس / المجموع: ΔH°r = ΣnΔH°f(نواتج) - ΣnΔH°f(متفاعلات)',
-              'علاقة كبس: ΔG = ΔH - T · ΔS (T بالكلفن K = °C + 273)',
-              'كبس والاتزان: ΔG° = -R · T · ln(Keq)'
-            ]
-          },
-          2: {
-            title: 'الفصل الثاني: الاتزان الكيميائي',
-            items: [
-              'ثابت الاتزان التركيزي: Kc = [النواتج]^n / [المتفاعلات]^m',
-              'ثابت الاتزان الجزئي: Kp = (P_النواتج)^n / (P_المتفاعلات)^m',
-              'العلاقة بين Kp و Kc: Kp = Kc · (R · T)^(Δng)'
-            ]
-          },
-          3: {
-            title: 'الفصل الثالث: الاتزان الأيوني',
-            items: [
-              'التأين الذاتي للماء: Kw = [H⁺][OH⁻] = 1 × 10⁻¹⁴',
-              'الأس الهيدروجيني: pH = -log[H⁺] ، pH + pOH = 14',
-              'الحامض الضعيف: Ka = [H⁺]² / [Acid]',
-              'القاعدة الضعيفة: Kb = [OH⁻]² / [Base]',
-              'معادلة بفر: pH = pKa + log([Salt]/[Acid])',
-              'حاصل الإذابة: Ksp = [A⁺]^a [B⁻]^b'
-            ]
-          },
-          4: {
-            title: 'الفصل الرابع: الكيمياء الكهربائية',
-            items: [
-              'جهد الخلية القياسي: E°cell = E°anode + E°cathode',
-              'الطاقة الحرة والجهد: ΔG° = -n · F · E°cell',
-              'معادلة نيرنست: Ecell = E°cell - (0.026 / n) · ln(Q)',
-              'قانون فاراداي الأول: Q(C) = I(A) × t(s)'
-            ]
-          },
-          5: {
-            title: 'الفصل الخامس: الكيمياء التناسقية',
-            items: [
-              'العدد الذري الفعال (EAN): العدد الذري للفلز - تأكسده + (2 × العدد التناسقي)'
-            ]
-          },
-          6: {
-            title: 'الفصل السادس: طرائق التحليل الكيميائي',
-            items: [
-              'الكتلة في التحليل الحجمي: m(g) = (N · V(mL) · EqWt) / 1000',
-              'التخفيف والمعايرة: M₁ · V₁ = M₂ · V₂'
-            ]
-          },
-          7: {
-            title: 'الفصل السابع: الكيمياء العضوية',
-            items: [
-              'الألكانات: CnH(2n+2)',
-              'الألكينات والسيكلوألكانات: CnH(2n)',
-              'الألكاينات: CnH(2n-2)'
-            ]
-          },
-          8: {
-            title: 'الفصل الثامن: الكيمياء الحياتية',
-            items: [
-              'الصيغة العامة للكربوهيدرات: Cx(H₂O)y'
-            ]
-          }
-        }
-      },
-      math: {
-        name: 'الرياضيات',
-        chapters: {
-          1: {
-            title: 'الفصل الأول: الأعداد المركبة',
-            items: [
-              'الصيغة الجبرية: z = x + y·i (i² = -1)',
-              'المقياس: r = |z| = √(x² + y²)',
-              'الصيغة القطبية: z = r (cos θ + i sin θ)',
-              'مبرهنة ديموافر: [r(cos θ + i sin θ)]ⁿ = rⁿ(cos nθ + i sin nθ)'
-            ]
-          },
-          2: {
-            title: 'الفصل الثاني: القطوع المخروطية',
-            items: [
-              'القطع المكافئ: y² = ±4px أو x² = ±4py',
-              'القطع الناقص: (x²/a²) + (y²/b²) = 1 (a > b و c² = a² - b²)',
-              'القطع الزائد: (x²/a²) - (y²/b²) = 1 (c² = a² + b²)'
-            ]
-          },
-          3: {
-            title: 'الفصل الثالث: تطبيقات التفاضل',
-            items: [
-              'معدل التغير الزمني: مشتقة الدالة بالنسبة للزمن (d/dt)',
-              'القيمة التقريبية: f(a + h) ≈ f(a) + h · f\'(a)'
-            ]
-          },
-          4: {
-            title: 'الفصل الرابع: التكامل',
-            items: [
-              'تكامل القوة: ∫ xⁿ dx = [x^(n+1)/(n+1)] + C (n ≠ -1)',
-              'التكامل المحدد: ∫[a→b] f(x) dx = F(b) - F(a)',
-              'الحجم الدوراني: V = π ∫[a→b] [f(x)]² dx'
-            ]
-          },
-          5: {
-            title: 'الفصل الخامس: المعادلات التفاضلية الاعتيادية',
-            items: [
-              'فصل المتغيرات: ∫ g(y) dy = ∫ f(x) dx'
-            ]
-          },
-          6: {
-            title: 'الفصل السادس: الهندسة الفضائية',
-            items: [
-              'مبرهنة (8) وخواص المستقيم والمستوي والزاوية الزوجية'
-            ]
-          }
+    /* قوانين مخصصة لكل موضوع حصراً للسادس العلمي (فيزياء، كيمياء، رياضيات) */
+    const SPECIFIC_TOPIC_FORMULAS = [
+      { keys: ['ديموافر', 'دي موافر', 'موفر'], title: 'مبرهنة ديموافر', formula: '[r (cos θ + i sin θ)]ⁿ = rⁿ (cos nθ + i sin nθ)' },
+      { keys: ['الصيغة القطبية', 'القطبية'], title: 'الصيغة القطبية للعدد المركب', formula: 'z = r (cos θ + i sin θ)' },
+      { keys: ['المقياس', 'مقياس'], title: 'مقياس العدد المركب', formula: 'r = |z| = √(x² + y²)' },
+      { keys: ['سعة المتسعة', 'المتسعة', 'متسعات'], title: 'سعة المتسعة', formula: 'C = Q / ΔV' },
+      { keys: ['العازل', 'ثابت العزل', 'عازل'], title: 'سعة المتسعة بوجود عازل', formula: 'Ck = k · C' },
+      { keys: ['التوالي', 'توالي'], title: 'ربط المتسعات على التوالي', formula: '1/Ceq = 1/C₁ + 1/C₂ + 1/C₃ + ...' },
+      { keys: ['التوازي', 'توازي'], title: 'ربط المتسعات على التوازي', formula: 'Ceq = C₁ + C₂ + C₃ + ...' },
+      { keys: ['الفيض المغناطيسي', 'الفيض'], title: 'الفيض المغناطيسي', formula: 'ΦB = B · A · cos(θ)' },
+      { keys: ['فرداي', 'فاراداي'], title: 'قانون فرداي', formula: 'εind = -N · (ΔΦB / Δt)' },
+      { keys: ['الرنين', 'تردد الرنين'], title: 'تردد الرنين', formula: 'fr = 1 / (2π √(L · C))' },
+      { keys: ['عامل القدرة'], title: 'عامل القدرة', formula: 'PF = cos(φ) = R / Z' },
+      { keys: ['أينشتاين', 'اينشتاين', 'كهروضوئية'], title: 'المعادلة الكهروضوئية لأينشتاين', formula: 'KEmax = h · f - w' },
+      { keys: ['دي برولي', 'دبرولي'], title: 'طول موجة دي برولي', formula: 'λ = h / (m · v)' },
+      { keys: ['الحرارة', 'كمية الحرارة'], title: 'كمية الحرارة', formula: 'q = ζ · m · ΔT' },
+      { keys: ['كبس', 'طاقة كبس'], title: 'علاقة كبس للطاقة الحرة', formula: 'ΔG = ΔH - T · ΔS' },
+      { keys: ['الأس الهيدروجيني', 'ph', 'بي اتش'], title: 'الأس الهيدروجيني', formula: 'pH = -log[H⁺]' },
+      { keys: ['بفر', 'بافر'], title: 'معادلة بفر', formula: 'pH = pKa + log([Salt] / [Acid])' },
+      { keys: ['القطع المكافئ', 'مكافئ'], title: 'القطع المكافئ (محور السينات)', formula: 'y² = ±4px' },
+      { keys: ['القطع الناقص', 'ناقص'], title: 'القطع الناقص وعلاقته', formula: '(x²/a²) + (y²/b²) = 1  ،  c² = a² - b²' },
+      { keys: ['القطع الزائد', 'زائد'], title: 'القطع الزائد وعلاقته', formula: '(x²/a²) - (y²/b²) = 1  ،  c² = a² + b²' },
+      { keys: ['التكامل المحدد', 'تكامل'], title: 'التكامل المحدد', formula: '∫[a→b] f(x) dx = F(b) - F(a)' }
+    ];
+
+    function getSpecificFormulaReply(rawText) {
+      const t = (rawText || '').trim().toLowerCase();
+      if (!t) return null;
+
+      for (const entry of SPECIFIC_TOPIC_FORMULAS) {
+        if (entry.keys.some(k => t.includes(k.toLowerCase()))) {
+          return `${entry.title}:\n${entry.formula}`;
         }
       }
-    };
 
-    function parseChapterNumber(raw) {
-      if (/(اول|أول|1|١)/.test(raw)) return 1;
-      if (/(ثاني|ثان|2|٢)/.test(raw)) return 2;
-      if (/(ثالث|3|٣)/.test(raw)) return 3;
-      if (/(رابع|4|٤)/.test(raw)) return 4;
-      if (/(خامس|5|٥)/.test(raw)) return 5;
-      if (/(سادس|6|٦)/.test(raw)) return 6;
-      if (/(سابع|7|٧)/.test(raw)) return 7;
-      if (/(ثامن|8|٨)/.test(raw)) return 8;
-      if (/(تاسع|9|٩)/.test(raw)) return 9;
-      if (/(عاشر|10|١٠)/.test(raw)) return 10;
+      if (/(قانون|قوانين|فيزياء|كيمياء|رياضيات|فصل)/.test(t)) {
+        return 'اكتب اسم القانون أو الموضوع بالضبط، مثل:\nديموافر — العازل — فرداي — بفر';
+      }
       return null;
-    }
-
-    function getSixthScientificFormulasReply(rawText) {
-      const t = (rawText || '').trim();
-      let subjKey = null;
-      if (t.includes('فيزياء')) subjKey = 'physics';
-      else if (t.includes('كيمياء')) subjKey = 'chemistry';
-      else if (t.includes('رياضيات')) subjKey = 'math';
-
-      const chNum = parseChapterNumber(t);
-      const asksFormulas = t.includes('قانون') || t.includes('قوانين') || !!subjKey || !!chNum;
-      if (!asksFormulas) return null;
-
-      if (!subjKey) {
-        return 'أعطي قوانين السادس العلمي فقط (فيزياء، كيمياء، رياضيات). حدد المادة والفصل، مثل: "قوانين فيزياء فصل اول".';
-      }
-
-      const subjObj = SIXTH_SCIENTIFIC_FORMULAS[subjKey];
-      if (chNum && subjObj.chapters[chNum]) {
-        const ch = subjObj.chapters[chNum];
-        return `📐 ${subjObj.name} — ${ch.title}:\n• ${ch.items.join('\n• ')}`;
-      }
-
-      const availableChapters = Object.keys(subjObj.chapters).join('، ');
-      return `أهلاً بك! حدد رقم الفصل في (${subjObj.name}) — الفصول المتوفرة: ${availableChapters}. مثال: "قوانين ${subjObj.name} فصل اول".`;
     }
 
     function showCheerMessage(msg) {
@@ -1458,15 +1314,17 @@
       const bubble = document.getElementById('simsimSpeechBubble');
       const msgEl = document.getElementById('simsimSpeechMsg');
       if (bubble && msgEl) {
-        msgEl.textContent = 'رحت أنام على التخت وما أزعجك 😴 zz (قل "اصحى" إذا احتجتني)';
+        msgEl.textContent = 'نمت على التخت وما أزعجك 😴 zz';
         bubble.classList.remove('hidden');
+        if (simsimBubbleTimerId) clearTimeout(simsimBubbleTimerId);
+        simsimBubbleTimerId = setTimeout(() => bubble.classList.add('hidden'), 3200);
       }
     }
 
     function wakeSimsimUp() {
       simsimSleepingOnBed = false;
       applySimsimSleepVisuals();
-      showSimsimBubble('صحيت! جاهز أساعدك بقوانين السادس العلمي (فيزياء، كيمياء، رياضيات) 💪', 4200);
+      showSimsimBubble('صحيت! اطلب قانون معين مثل: ديموافر 💪', 3600);
     }
 
     function openSimsimCommandPrompt() {
@@ -1494,21 +1352,13 @@
         return;
       }
 
-      if (simsimSleepingOnBed) {
-        const bubble = document.getElementById('simsimSpeechBubble');
-        const msgEl = document.getElementById('simsimSpeechMsg');
-        if (bubble && msgEl) {
-          msgEl.textContent = '😴 zz... سمسم نايم على التخت الآن وما يزعجك. اضغط "اصحى" حتى أرجع.';
-          bubble.classList.remove('hidden');
-        }
-        return;
-      }
+      if (simsimSleepingOnBed) return;
 
-      const formulaReply = getSixthScientificFormulasReply(raw);
+      const formulaReply = getSpecificFormulaReply(raw);
       if (formulaReply) {
-        showSimsimBubble(formulaReply, 9000);
+        showSimsimBubble(formulaReply, 8500);
       } else {
-        triggerSimsimRoast('اكتب مادة وقوانين فصل معين للسادس العلمي (فيزياء، كيمياء، رياضيات) أو قل لي "روح نام" 😤');
+        triggerSimsimRoast('اكتب اسم القانون المطلوب مثل: ديموافر 😤');
       }
     }
 
@@ -1535,9 +1385,9 @@
     function triggerSimsimRoast(customMsg) {
       if (simsimSleepingOnBed) return;
       const roasts = [
-        'ليش صار هواي ما فاتح المنصة وتدرس؟ السادس ما يرحم، افتح كتابك هسه! 😤',
-        'هاي وين كبست؟ يلا قوم ادرس، ترى وقت السادس يركض وانت كاعد! 😠',
-        'شكو كاعد تسخّت؟ شد حيلك وابدأ جلسة حتى ترفع معدلك! 💢'
+        'ليش صار هواي ما فاتح المنصة وتدرس؟ افتح كتابك هسه! 😤',
+        'هاي وين كبست؟ يلا قوم ادرس، ترى وقت السادس يركض! 😠',
+        'شكو كاعد تسخّت؟ شد حيلك وابدأ جلسة! 💢'
       ];
       const msg = customMsg || roasts[Math.floor(Math.random() * roasts.length)];
       const motionEl = document.getElementById('simsimBodyMotion');
@@ -1546,7 +1396,7 @@
         void motionEl.offsetWidth;
         motionEl.classList.add('simsim-roast-anim');
       }
-      showSimsimBubble(msg, 4600);
+      showSimsimBubble(msg, 4200);
     }
 
     function runSimsim10SecWelcomeFlight(force = false) {
@@ -1561,31 +1411,29 @@
       if (simsimWelcomeFlyInterval) clearInterval(simsimWelcomeFlyInterval);
 
       const welcomeLines = [
-        'أهلاً بأبطال السادس! نورت المنصة، طريق الـ 100 يبدأ من هسه 👋🔥',
-        'كل ساعة دراسة وياي تقرّبك لحلمك — شدّ حيلك ولا تتراجع 💪⭐',
-        'أعطيك قوانين السادس العلمي (فيزياء، كيمياء، رياضيات) وأنام على التخت إذا ضجت 🛏️📐',
-        'يلا نبلش! كبسة وحدة عليّ أرزلك إذا سخّتت 😄'
+        'أهلاً بأبطال السادس! طريق الـ 100 يبدأ من هسه 👋🔥',
+        'اطلب أي قانون مثل ديموافر وأعطيك إياه مباشرة 📐',
+        'وإذا ضجت اضغط نام وأروح على التخت 😴 zz'
       ];
 
       root.classList.remove('hidden');
       root.style.display = '';
-      showSimsimBubble(welcomeLines[0], 10000);
+      showSimsimBubble(welcomeLines[0], 9500);
 
       if (motionEl) {
         motionEl.classList.remove('simsim-gentle-motion');
         motionEl.classList.add('simsim-welcome-wave');
       }
 
-      const w = root.offsetWidth || 120;
-      const h = root.offsetHeight || 140;
-      const maxX = Math.max(12, window.innerWidth - w - 12);
-      const maxY = Math.max(84, window.innerHeight - h - 104);
+      const w = root.offsetWidth || 92;
+      const h = root.offsetHeight || 112;
+      const maxX = Math.max(10, window.innerWidth - w - 10);
+      const maxY = Math.max(80, window.innerHeight - h - 92);
 
       const waypoints = [
-        { left: Math.min(maxX, Math.max(12, window.innerWidth * 0.42)), top: Math.min(maxY, 115), msg: welcomeLines[0] },
-        { left: Math.max(12, window.innerWidth * 0.12), top: Math.min(maxY, window.innerHeight * 0.35), msg: welcomeLines[1] },
-        { left: Math.min(maxX, Math.max(12, window.innerWidth * 0.48)), top: Math.min(maxY, window.innerHeight * 0.52), msg: welcomeLines[2] },
-        { left: 18, top: Math.max(84, window.innerHeight - h - 102), msg: welcomeLines[3] }
+        { left: Math.min(maxX, Math.max(10, window.innerWidth * 0.45)), top: Math.min(maxY, 120), msg: welcomeLines[0] },
+        { left: Math.max(10, window.innerWidth * 0.14), top: Math.min(maxY, window.innerHeight * 0.42), msg: welcomeLines[1] },
+        { left: 12, top: Math.max(80, window.innerHeight - h - 84), msg: welcomeLines[2] }
       ];
 
       let idx = 0;
@@ -1597,7 +1445,7 @@
         root.style.transition = 'left 2.1s ease-in-out, top 2.1s ease-in-out';
         root.style.left = `${wp.left}px`;
         root.style.top = `${wp.top}px`;
-        showSimsimBubble(wp.msg, 3200);
+        showSimsimBubble(wp.msg, 3000);
       };
 
       stepFlight();
@@ -1607,20 +1455,20 @@
         } else {
           clearInterval(simsimWelcomeFlyInterval);
         }
-      }, 2400);
+      }, 2800);
 
       simsimWelcomeTimerId = setTimeout(() => {
         clearInterval(simsimWelcomeFlyInterval);
-        root.style.transition = 'left 0.9s ease-in-out, top 0.9s ease-in-out';
-        root.style.left = '18px';
-        root.style.top = `${Math.max(84, window.innerHeight - h - 102)}px`;
+        root.style.transition = 'left 0.8s ease-in-out, top 0.8s ease-in-out';
+        root.style.left = '12px';
+        root.style.top = `${Math.max(80, window.innerHeight - h - 84)}px`;
         if (motionEl && !simsimSleepingOnBed) {
           motionEl.classList.remove('simsim-welcome-wave');
           motionEl.classList.add('simsim-gentle-motion');
         }
         setTimeout(() => {
           root.style.transition = '';
-        }, 950);
+        }, 850);
       }, 10000);
     }
 
@@ -1633,14 +1481,14 @@
       let movedDuringDrag = false;
       let startX = 0;
       let startY = 0;
-      let origLeft = 18;
+      let origLeft = 12;
       let origTop = null;
 
       function clampPosition(leftVal, topVal) {
-        const w = root.offsetWidth || 120;
-        const h = root.offsetHeight || 140;
+        const w = root.offsetWidth || 92;
+        const h = root.offsetHeight || 112;
         const maxLeft = Math.max(8, window.innerWidth - w - 8);
-        const maxTop = Math.max(68, window.innerHeight - h - 84);
+        const maxTop = Math.max(68, window.innerHeight - h - 76);
         return {
           left: Math.min(maxLeft, Math.max(8, leftVal)),
           top: Math.min(maxTop, Math.max(68, topVal))
@@ -1693,8 +1541,8 @@
         const rect = root.getBoundingClientRect();
         const curLeft = rect.left;
         const curTop = rect.top;
-        const driftX = (Math.random() - 0.5) * 44;
-        const driftY = (Math.random() - 0.5) * 44;
+        const driftX = (Math.random() - 0.5) * 32;
+        const driftY = (Math.random() - 0.5) * 32;
         const next = clampPosition(curLeft + driftX, curTop + driftY);
         root.style.transition = 'left 1.8s ease-in-out, top 1.8s ease-in-out';
         root.style.bottom = 'auto';
@@ -1703,7 +1551,7 @@
         setTimeout(() => {
           root.style.transition = '';
         }, 1900);
-      }, 9500);
+      }, 10000);
     }
 
     function checkAbsenceRoastOnLoad() {
@@ -1869,7 +1717,6 @@
       }
     }
 
-    /* توليد 100 بطاقة ذاكرة سحرية متنوعة لمواد السادس العلمي */
     function buildScientific100Flashcards() {
       const groups = [
         {
@@ -2027,7 +1874,6 @@
       return cards.slice(0, 100);
     }
 
-    /* توليد 40 سؤالاً للفصل الأول لكل مادة من المواد السبع */
     function buildChapterOne40Questions() {
       const specs = [
         {
