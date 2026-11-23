@@ -217,7 +217,6 @@
     }
     .simsim-tiny-btn:active { transform: scale(0.95); }
 
-    /* تصميم بطاقات القوانين والملاحظات */
     .formula-sheet-card {
       border-radius: 20px;
       border: 1.5px solid rgba(198, 156, 78, 0.55);
@@ -461,6 +460,9 @@
               <button onclick="goToPage('study')" class="px-4 py-2.5 rounded-2xl bg-gold text-navyDeep font-black text-xs sm:text-sm shadow hover:brightness-105 transition whitespace-nowrap">
                 ابدأ جلسة الآن ←
               </button>
+              <button onclick="goToPage('library')" class="px-3.5 py-2.5 rounded-2xl bg-white/15 hover:bg-white/25 text-xs font-black text-goldBright border border-gold/60 transition whitespace-nowrap">
+                📚 مكتبة الملازم
+              </button>
               <button onclick="openFormulasModal('physics', 1)" class="px-3.5 py-2.5 rounded-2xl bg-white/15 hover:bg-white/25 text-xs font-black text-goldBright border border-gold/60 transition whitespace-nowrap">
                 📐 قوانين السادس العلمي
               </button>
@@ -493,6 +495,17 @@
       </div>
 
       <div class="space-y-3">
+        <div onclick="goToPage('library')" class="cursor-pointer rounded-[26px] p-4 sm:p-5 bg-gradient-to-l from-[#122647] to-[#1D3B68] text-white border border-gold/50 flex items-center justify-between shadow-sm hover:scale-[1.01] transition">
+          <div class="flex items-center gap-3.5">
+            <div class="w-12 h-12 rounded-2xl bg-gold/20 border border-gold/50 flex items-center justify-center text-2xl shrink-0">📚</div>
+            <div>
+              <h3 class="text-base sm:text-lg font-black text-goldBright">مكتبة الملازم والملفات</h3>
+              <p class="text-xs text-white/80 font-semibold">كيمياء، فيزياء، رياضيات، أحياء، عربي، إنكليزي، إسلامية، فرنسي</p>
+            </div>
+          </div>
+          <span class="text-xl font-black text-goldBright">‹</span>
+        </div>
+
         <div onclick="goToPage('quiz')" class="cursor-pointer rounded-[26px] p-4 sm:p-5 bg-gradient-to-l from-[#133A5E] to-[#1D5B79] text-white border border-gold/40 flex items-center justify-between shadow-sm hover:scale-[1.01] transition">
           <div class="flex items-center gap-3.5">
             <div class="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center text-2xl shrink-0">📝</div>
@@ -552,6 +565,48 @@
 
       <div class="text-center py-3 text-xs font-extrabold opacity-80">
         إعداد: مساعدين مرسى السادس ⚓
+      </div>
+    </section>
+
+    <!-- صفحة مكتبة الملازم والملفات للمواد الثماني -->
+    <section id="page-library" class="page-view hidden space-y-5">
+      <div class="app-card p-5 sm:p-6 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h3 class="text-lg sm:text-xl font-black">📚 مكتبة الملازم والملفات</h3>
+            <p class="text-xs font-bold opacity-75">روابط منشورات التليجرام والمعاينة المباشرة لكل المواد</p>
+          </div>
+          <span id="libraryCountBadge" class="px-3 py-1 rounded-full bg-cream text-navy border border-gold/60 text-xs font-black">0 ملزمة</span>
+        </div>
+
+        <div id="librarySubjectFilterBar" class="flex gap-1.5 overflow-x-auto pb-1"></div>
+
+        <div id="libraryBookletsList" class="space-y-3"></div>
+      </div>
+
+      <!-- إضافة ملزمة جديدة من الأدمن -->
+      <div id="libraryAdminBox" class="hidden app-card p-5 sm:p-6 border-2 border-gold space-y-3">
+        <h4 class="text-base font-black text-gold">➕ إضافة ملزمة أو ملف (رابط منشور تليجرام)</h4>
+        <form onsubmit="addBookletItem(event)" class="space-y-2.5">
+          <input id="libBookletTitle" type="text" required placeholder="اسم الملزمة أو الملف (مثال: ملزمة المتسعات — الفصل الأول)" class="w-full h-11 px-4 rounded-2xl bg-cream text-navy border border-gold/60 text-sm font-bold focus:outline-none" />
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <select id="libBookletSubject" class="h-11 px-3.5 rounded-2xl bg-cream text-navy border border-gold/60 text-xs sm:text-sm font-extrabold focus:outline-none">
+              <option value="الكيمياء">الكيمياء</option>
+              <option value="الفيزياء">الفيزياء</option>
+              <option value="الرياضيات">الرياضيات</option>
+              <option value="الأحياء">الأحياء</option>
+              <option value="العربي">العربي</option>
+              <option value="الإنكليزي">الإنكليزي</option>
+              <option value="الإسلامية">الإسلامية</option>
+              <option value="الفرنسي">الفرنسي</option>
+            </select>
+            <input id="libBookletUrl" type="url" required placeholder="رابط منشور التليجرام (https://t.me/...)" class="h-11 px-4 rounded-2xl bg-cream text-navy border border-gold/60 text-xs sm:text-sm font-bold focus:outline-none" />
+          </div>
+          <input id="libBookletNote" type="text" placeholder="ملاحظة مختصرة عن الملزمة (اختياري)" class="w-full h-10 px-4 rounded-2xl bg-cream text-navy border border-gold/50 text-xs font-bold focus:outline-none" />
+          <button type="submit" class="w-full h-11 rounded-2xl bg-navy text-white border-2 border-gold font-black text-sm hover:bg-navyLight transition">
+            نشر الملزمة في المكتبة
+          </button>
+        </form>
       </div>
     </section>
 
@@ -1008,6 +1063,30 @@
     </div>
   </nav>
 
+  <!-- نافذة معاينة منشور الملزمة على تليجرام -->
+  <div id="bookletPreviewModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-xs overflow-y-auto p-4">
+    <div class="min-h-full flex items-center justify-center py-4">
+      <div class="bg-ivory text-navy w-full max-w-lg rounded-[30px] p-5 sm:p-6 border-2 border-gold relative space-y-4 shadow-2xl">
+        <button type="button" onclick="closeBookletPreview()" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-cream border border-gold/60 font-black text-navy">✕</button>
+
+        <div class="text-right space-y-1">
+          <span id="previewBookletSubject" class="inline-block px-3 py-0.5 rounded-full bg-navy text-goldBright text-[11px] font-black">المادة</span>
+          <h3 id="previewBookletTitle" class="text-lg font-black text-navy">معاينة الملزمة</h3>
+          <p id="previewBookletNote" class="text-xs font-bold text-navy/70"></p>
+        </div>
+
+        <div id="previewBookletEmbedContainer" class="rounded-2xl bg-white border border-gold/50 p-3 min-h-[220px] flex flex-col items-center justify-center overflow-x-auto"></div>
+
+        <div class="flex items-center justify-between gap-2">
+          <a id="previewBookletExternalLink" href="#" target="_blank" rel="noopener noreferrer" class="flex-1 h-11 rounded-2xl bg-navy text-goldBright border border-gold font-black text-xs flex items-center justify-center gap-1.5 hover:bg-navyLight transition">
+            <span>✈️ فتح في تليجرام</span>
+          </a>
+          <button type="button" onclick="closeBookletPreview()" class="h-11 px-4 rounded-2xl bg-cream text-navy border border-gold/60 font-extrabold text-xs">إغلاق</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- نافذة قوانين وتفاصيل وملاحظات الفصول -->
   <div id="formulasModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-xs overflow-y-auto p-4">
     <div class="min-h-full flex items-center justify-center py-4">
@@ -1240,10 +1319,12 @@
     let simsimWelcomePlayed = false;
     let simsimSleepingOnBed = false;
 
+    const LIBRARY_SUBJECTS = ['الكل', 'الكيمياء', 'الفيزياء', 'الرياضيات', 'الأحياء', 'العربي', 'الإنكليزي', 'الإسلامية', 'الفرنسي'];
+    let selectedLibrarySubject = 'الكل';
+
     const F = (num, den) => `<span class="math-frac"><span class="math-num">${num}</span><span class="math-den">${den}</span></span>`;
     const SQRT = (inner) => `<span class="math-sqrt">${inner}</span>`;
 
-    /* جميع القوانين والملاحظات الجديدة بعد إزالة الشعارات وأسماء القنوات */
     const SCIENTIFIC_CHAPTER_FORMULAS = {
       physics: {
         name: 'الفيزياء',
@@ -2015,6 +2096,137 @@
       } catch (e) {}
     }
 
+    /* مكتبة الملازم والملفات للمواد الثماني */
+    function setLibrarySubjectFilter(subj) {
+      selectedLibrarySubject = subj;
+      renderLibrarySection();
+    }
+
+    function parseTelegramPostPath(rawUrl) {
+      try {
+        const u = new URL(String(rawUrl || '').trim());
+        const parts = u.pathname.split('/').filter(Boolean);
+        if (parts.length >= 2 && /^\d+$/.test(parts[parts.length - 1])) {
+          const postId = parts[parts.length - 1];
+          const channelOrGroup = parts.slice(0, -1).join('/');
+          return `${channelOrGroup}/${postId}`;
+        }
+      } catch (e) {}
+      return null;
+    }
+
+    function openBookletPreview(bookletId) {
+      const b = (state.booklets || []).find(item => String(item.id) === String(bookletId));
+      if (!b) return;
+      document.getElementById('previewBookletSubject').textContent = b.subject || 'ملزمة';
+      document.getElementById('previewBookletTitle').textContent = b.title || 'ملزمة دراسية';
+      document.getElementById('previewBookletNote').textContent = b.note || 'منشور ملزمة من تليجرام';
+      const extLink = document.getElementById('previewBookletExternalLink');
+      extLink.href = b.url || '#';
+
+      const container = document.getElementById('previewBookletEmbedContainer');
+      const tgPost = parseTelegramPostPath(b.url);
+      if (tgPost) {
+        container.innerHTML = `
+          <iframe src="https://t.me/${esc(tgPost)}?embed=1" class="w-full min-h-[260px] rounded-xl border border-gold/30 bg-white" frameborder="0" scrolling="yes"></iframe>
+          <p class="mt-2 text-[11px] font-bold text-navy/65 text-center">إذا كان المنشور داخل كروب خاص، اضغط "فتح في تليجرام" للوصول إليه مباشرة.</p>
+        `;
+      } else {
+        container.innerHTML = `
+          <div class="text-center space-y-2 py-4 px-2">
+            <div class="text-3xl">✈️</div>
+            <p class="text-xs font-extrabold text-navy">رابط الملزمة جاهز للفتح المباشر في تليجرام</p>
+            <p class="text-[11px] font-bold text-navy/65 break-all">${esc(b.url || '')}</p>
+          </div>
+        `;
+      }
+
+      document.getElementById('bookletPreviewModal').classList.remove('hidden');
+    }
+
+    function closeBookletPreview() {
+      document.getElementById('bookletPreviewModal').classList.add('hidden');
+      const container = document.getElementById('previewBookletEmbedContainer');
+      if (container) container.innerHTML = '';
+    }
+
+    function addBookletItem(e) {
+      e.preventDefault();
+      if (!isAdminUser()) return;
+      const title = (document.getElementById('libBookletTitle')?.value || '').trim();
+      const subject = document.getElementById('libBookletSubject')?.value || 'الفيزياء';
+      const url = (document.getElementById('libBookletUrl')?.value || '').trim();
+      const note = (document.getElementById('libBookletNote')?.value || '').trim();
+      if (!title || !url) return;
+      if (!Array.isArray(state.booklets)) state.booklets = [];
+      state.booklets.unshift({
+        id: Date.now(),
+        title,
+        subject,
+        url,
+        note: note || `ملزمة مادة ${subject}`
+      });
+      e.target.reset();
+      persist();
+      showCheerMessage(`تمت إضافة ملزمة "${title}" إلى مكتبة ${subject} 📚`);
+    }
+
+    function deleteBookletItem(id) {
+      if (!isAdminUser()) return;
+      state.booklets = (state.booklets || []).filter(item => String(item.id) !== String(id));
+      persist();
+    }
+
+    function renderLibrarySection() {
+      const bar = document.getElementById('librarySubjectFilterBar');
+      const listEl = document.getElementById('libraryBookletsList');
+      const countEl = document.getElementById('libraryCountBadge');
+      const adminBox = document.getElementById('libraryAdminBox');
+      if (!bar || !listEl) return;
+
+      if (adminBox) {
+        adminBox.classList.toggle('hidden', !isAdminUser());
+      }
+
+      bar.innerHTML = LIBRARY_SUBJECTS.map(s => {
+        const active = s === selectedLibrarySubject;
+        return `<button type="button" onclick="setLibrarySubjectFilter('${esc(s)}')" class="px-3 py-1.5 rounded-xl text-xs font-extrabold whitespace-nowrap shrink-0 transition ${active ? 'bg-navy text-goldBright border border-gold' : 'bg-cream text-navy border border-gold/50'}">${esc(s)}</button>`;
+      }).join('');
+
+      const allItems = Array.isArray(state.booklets) ? state.booklets : [];
+      const filtered = selectedLibrarySubject === 'الكل'
+        ? allItems
+        : allItems.filter(item => item.subject === selectedLibrarySubject);
+
+      if (countEl) countEl.textContent = `${filtered.length} ملزمة`;
+
+      if (!filtered.length) {
+        listEl.innerHTML = `<div class="rounded-2xl bg-cream border border-gold/45 p-5 text-center text-xs font-extrabold text-navy/75">لا توجد ملازم مضافة في قسم (${esc(selectedLibrarySubject)}) حالياً.</div>`;
+        return;
+      }
+
+      listEl.innerHTML = filtered.map(item => `
+        <div class="rounded-2xl bg-cream text-navy border border-gold/55 p-4 space-y-3 shadow-2xs">
+          <div class="flex items-start justify-between gap-2">
+            <div class="space-y-1 min-w-0">
+              <span class="inline-block px-2.5 py-0.5 rounded-full bg-navy text-goldBright text-[11px] font-black">${esc(item.subject)}</span>
+              <h4 class="text-sm sm:text-base font-black text-navy leading-snug">${esc(item.title)}</h4>
+              ${item.note ? `<p class="text-xs font-bold text-navy/70">${esc(item.note)}</p>` : ''}
+            </div>
+            ${isAdminUser() ? `<button type="button" onclick="deleteBookletItem(${item.id})" class="text-xs font-black text-rose-700 px-2 py-1 shrink-0">حذف</button>` : ''}
+          </div>
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <button type="button" onclick="openBookletPreview(${item.id})" class="h-10 rounded-xl bg-white hover:bg-gold/15 text-navy border border-gold font-black text-xs transition">
+              👁️ معاينة المنشور
+            </button>
+            <a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer" class="h-10 rounded-xl bg-navy hover:bg-navyLight text-goldBright border border-gold font-black text-xs flex items-center justify-center gap-1 transition">
+              <span>✈️ فتح في تليجرام</span>
+            </a>
+          </div>
+        </div>
+      `).join('');
+    }
+
     function openRecallReminder(actionFn) {
       pendingRecallAction = typeof actionFn === 'function' ? actionFn : null;
       const inp = document.getElementById('recallNoteInput');
@@ -2247,7 +2459,7 @@
           ]
         },
         {
-          subject: 'اللغة العربية',
+          subject: 'العربي',
           items: [
             ['استفهام التصديق', 'استفهام يُطلب به معرفة ثبوت النسبة أو نفيها ويُجاب عنه بأحد أحرف الجواب مثل (نعم أو لا).', 'يأتي مع (هل) ومع (الهمزة) عندما لا تكون معادلة لها (أم) المتصلة.'],
             ['استفهام التصور', 'استفهام يُطلب به تعيين المفرد ويُجاب عنه بالتعيين لا بأحرف الجواب.', 'يأتي غالباً مع الهمزة متبوعة بـ (أم) المعادلة العاطفة أو مع أسماء الاستفهام.'],
@@ -2262,17 +2474,7 @@
           ]
         },
         {
-          subject: 'الأدب',
-          items: [
-            ['الشعر الحر (شعر التفعيلة)', 'نمط شعري يعتمد على التفعيلة كوحدة موسيقية بدلاً من الشطرين المتساويين والالتزام بقافية موحدة.', 'يمنح الشاعر مرونة إيقاعية لتصوير التجربة النفسية والاجتماعية.'],
-            ['مدرسة الإحياء', 'اتجاه شعري حديث أعاد للشعر العربي رصانته وجزالة ألفاظه وارتباطه بالتراث الشعري الأصيل.', 'حافظ أصحابه على الوزن والقافية واللغة الفصيحة المنتقاة.'],
-            ['الالتزام في الأدب', 'موقف الأديب الواعي تجاه قضايا أمته ومجتمعه وإسهامه بفنه في معالجة همومها.', 'يربط بين التجربة الفنية والمسؤولية الاجتماعية والوطنية.'],
-            ['الرمز في الشعر الحديث', 'توظيف صورة أو شخصية أو لفظة ذات دلالة عميقة تتجاوز معناها الظاهري المباشر.', 'يُثري النص الشعري ويمنحه أبعاداً إيحائية متعددة.'],
-            ['الموشحات', 'فن شعري نشأ في الأندلس وتميز بتنوع الأوزان والقوافي وتوزيع الأدوار بين الأدوار والأقفال.', 'يعكس حيوية التجديد الموسيقي والغنائي في التراث العربي.']
-          ]
-        },
-        {
-          subject: 'اللغة الإنكليزية',
+          subject: 'الإنكليزي',
           items: [
             ['Past Continuous vs. Past Simple', 'Past continuous describes a longer ongoing action in the past interrupted by a shorter past simple action.', 'Example: While I was studying, the phone rang.'],
             ['Used to + Base Verb', 'Expresses a past habit, routine, or state that is no longer true now.', 'Example: He used to smoke, but he quit last year.'],
@@ -2336,7 +2538,7 @@
           ]
         },
         {
-          subject: 'اللغة العربية',
+          subject: 'العربي',
           chapter: 'الفصل الأول: الاستفهام',
           seeds: [
             ['ما نوع الاستفهام في الجملة التي يُجاب عنها بأحد أحرف الجواب (نعم أو لا)؟', 'استفهام تصديق', 'استفهام تصور', 'استفهام مجازي للنفي', 'استفهام مجازي للتعجب'],
@@ -2348,19 +2550,7 @@
           ]
         },
         {
-          subject: 'الأدب',
-          chapter: 'الفصل الأول: الشعر الحديث والمدارس الأدبية',
-          seeds: [
-            ['بماذا يتميز الشعر الحر مقارنة بالشعر العمودي في منهج السادس؟', 'بالاعتماد على التفعيلة كوحدة موسيقية بدلاً من الشطرين المتساويين', 'بالالتزام بقافية واحدة في جميع الأبيات', 'بخلوّه التام من الوزن الموسيقي', 'باقتصاره على النثر فقط'],
-            ['ما السمة الأبرز لمدرسة الإحياء في الأدب العربي الحديث؟', 'إحياء التراث الشعري والعودة إلى متانة الأسلوب والجزالة', 'الاعتماد الكامل على النثر المرسل', 'تجنب القافية والبحور الخليلية نهائياً', 'الاقتصار على الرمزية الغامضة'],
-            ['ما المقصود بالالتزام في الأدب الحديث؟', 'مشاركة الأديب لقضايا مجتمعه وأمته والتعبير عن همومها بوعي ومسؤولية', 'الالتزام بعدد ثابت من الأبيات', 'الاقتصار على وصف الطبيعة فقط', 'استخدام الألفاظ الغريبة فقط'],
-            ['ما دور التجديد في قصيدة التفعيلة عند رواد الشعر الحر؟', 'تنويع القوافي وتفاوت أطوال الأشطر بحسب دفقة الشعور', 'إلغاء المعنى والفكرة من القصيدة', 'الالتزام بقافية واحدة لا تتغير', 'منع استخدام الصور البيانية'],
-            ['كيف نظر أدباء مدرسة الإحياء إلى اللغة الشعرية؟', 'حرصوا على صفاء اللغة وجزالة اللفظ وفصاحة التراكيب', 'دعوا إلى العامية المطلقة في الشعر', 'أهملوا البلاغة والبيان', 'استغنوا عن القافية كلياً'],
-            ['ما العلاقة بين الشاعر ومجتمعه في النصوص المقررة في الفصل الأول؟', 'يعبّر الشاعر عن طموحات أمته وقضاياها الإنسانية والوطنية', 'ينعزل الشاعر عن محيطه كلياً', 'يكتفي بالمبالغات اللفظية فقط', 'يبتعد عن القضايا الاجتماعية']
-          ]
-        },
-        {
-          subject: 'اللغة الإنكليزية',
+          subject: 'الإنكليزي',
           chapter: 'Unit 1: Health & Past Tenses',
           seeds: [
             ['Choose the correct form: While I ______ for the exam, the lights went out.', 'was studying', 'studied', 'have studied', 'am study'],
@@ -2458,6 +2648,11 @@
         { id: 'p2', name: 'مصطفى كريم', title: 'قناص الوزاريات', status: 'idle', points: 14, avatar: '' },
         { id: 'p3', name: 'نور الهدى', title: 'طالبة النخبة', status: 'sleeping', points: 9, avatar: '' }
       ],
+      booklets: [
+        { id: 901, title: 'ملزمة المتسعات — الفصل الأول', subject: 'الفيزياء', url: 'https://t.me/marsa_alsadis', note: 'شرح وقوانين وملاحظات المتسعات' },
+        { id: 902, title: 'ملخص الثرموداينمك — الفصل الأول', subject: 'الكيمياء', url: 'https://t.me/marsa_alsadis', note: 'قوانين الحرارة وهس وكبس' },
+        { id: 903, title: 'ملزمة الأعداد المركبة والقطوع', subject: 'الرياضيات', url: 'https://t.me/marsa_alsadis', note: 'ملاحظات وحالات القطوع المخروطية' }
+      ],
       questions: buildChapterOne40Questions(),
       flashcards: buildScientific100Flashcards(),
       tasks: [
@@ -2519,6 +2714,7 @@
     if (!Array.isArray(state.goals)) state.goals = [];
     if (!Array.isArray(state.tasks)) state.tasks = [];
     if (!Array.isArray(state.peers)) state.peers = [];
+    if (!Array.isArray(state.booklets)) state.booklets = defaultState.booklets.slice();
     if (!Array.isArray(state.receivedSupport)) state.receivedSupport = [];
     if (!Array.isArray(state.supportedPeers)) state.supportedPeers = [];
     if (typeof state.sentSupportCount !== 'number') state.sentSupportCount = 0;
@@ -3844,6 +4040,7 @@
         renderQuizSection();
       }
       renderFcSection();
+      renderLibrarySection();
       renderGoals();
       renderAdminStudents();
       renderSessionTaskSelectors();
@@ -3941,7 +4138,7 @@
     setPersistence(auth, browserLocalPersistence).catch(() => {});
     const db = getFirestore(app);
 
-    let myUid = null, unsub = null, unsubAdmin = null, unsubBan = null, cache = [], hb = null, justLogged = false, pendingName = '';
+    let myUid = null, unsub = null, unsubAdmin = null, unsubBan = null, unsubLibrary = null, cache = [], hb = null, justLogged = false, pendingName = '';
 
     const ERR = {
       'auth/email-already-in-use': 'هذا الإيميل مسجّل من قبل، سجّل دخول.',
@@ -4011,6 +4208,14 @@
           name: state.user.name, tasks: state.tasks, goals: state.goals || [], updatedAt: Date.now()
         }, { merge: true });
       } catch (e) { console.warn('syncData', e); }
+      if (ADMIN_UIDS.includes(myUid)) {
+        try {
+          await setDoc(doc(db, 'platformConfig', 'bookletsLibrary'), {
+            booklets: state.booklets || [],
+            updatedAt: Date.now()
+          }, { merge: true });
+        } catch (e) { console.warn('syncBooklets', e); }
+      }
     }
     let st; function fbSync() { clearTimeout(st); st = setTimeout(fbSyncNow, 1500); }
     const _persist = persist;
@@ -4039,6 +4244,7 @@
         if (unsub) { unsub(); unsub = null; }
         if (unsubAdmin) { unsubAdmin(); unsubAdmin = null; }
         if (unsubBan) { unsubBan(); unsubBan = null; }
+        if (unsubLibrary) { unsubLibrary(); unsubLibrary = null; }
         window.adminStudents = [];
         cache = []; state.peers = [];
         state.user = null;
@@ -4057,6 +4263,15 @@
         unsubBan = onSnapshot(doc(db, 'bannedUsers', u.uid), snap => {
           if (snap.exists()) forceKickCurrentUser();
         }, err => console.warn('ban listen', err));
+      }
+
+      if (!unsubLibrary) {
+        unsubLibrary = onSnapshot(doc(db, 'platformConfig', 'bookletsLibrary'), snap => {
+          if (snap.exists() && Array.isArray(snap.data().booklets)) {
+            state.booklets = snap.data().booklets;
+            renderLibrarySection();
+          }
+        }, err => console.warn('library listen', err));
       }
 
       let p = {};
