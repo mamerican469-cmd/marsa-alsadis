@@ -373,23 +373,23 @@
   </svg>
 
   <header class="sticky top-0 z-30 backdrop-blur-md border-b border-gold/35">
-    <div id="topHeaderBar" class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between gap-3 bg-white/95 text-navy transition-colors">
-      <div class="flex items-center gap-3 min-w-0">
-        <div class="brand-logo-slot w-12 h-12 rounded-2xl bg-white border-2 border-gold shadow-sm overflow-hidden flex items-center justify-center shrink-0"></div>
-        <div class="truncate">
-          <span class="block text-[11px] font-bold text-gold truncate">منصة السادس الإعدادي ✦</span>
-          <h1 class="text-lg sm:text-xl font-black leading-tight truncate">مرسى السادس</h1>
+    <div id="topHeaderBar" class="max-w-3xl mx-auto px-3 sm:px-4 py-3 flex items-center justify-between gap-2 sm:gap-3 bg-white/95 text-navy transition-colors">
+      <div class="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+        <div class="brand-logo-slot w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-white border-2 border-gold shadow-sm overflow-hidden flex items-center justify-center shrink-0"></div>
+        <div class="min-w-0">
+          <span class="block text-[10px] sm:text-[11px] font-bold text-gold whitespace-nowrap">منصة السادس الإعدادي ✦</span>
+          <h1 class="text-base sm:text-xl font-black leading-tight whitespace-nowrap">مرسى السادس</h1>
         </div>
       </div>
 
-      <div class="flex items-center gap-2 shrink-0">
-        <button onclick="toggleTheme()" title="تبديل المظهر الليلي / النهاري" class="w-10 h-10 rounded-2xl bg-cream text-navy border border-gold/50 flex items-center justify-center text-base shadow-xs hover:scale-105 transition shrink-0">
+      <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        <button onclick="toggleTheme()" title="تبديل المظهر الليلي / النهاري" class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-cream text-navy border border-gold/50 flex items-center justify-center text-base shadow-xs hover:scale-105 transition shrink-0">
           🎨
         </button>
-        <button id="authOpenBtn" onclick="openLoginScreen()" class="h-10 px-4 rounded-2xl bg-navy text-white border border-gold text-xs font-extrabold shadow-xs hover:bg-navyLight transition inline-flex items-center gap-1.5 whitespace-nowrap shrink-0">
+        <button id="authOpenBtn" onclick="openLoginScreen()" class="h-9 sm:h-10 px-2.5 sm:px-4 rounded-2xl bg-navy text-white border border-gold text-xs font-extrabold shadow-xs hover:bg-navyLight transition inline-flex items-center gap-1 sm:gap-1.5 whitespace-nowrap shrink-0">
           <span>👤</span><span>ملفي</span>
         </button>
-        <button id="logoutBtn" onclick="logoutAccount()" class="hidden h-10 px-3.5 rounded-2xl bg-rose-600/10 text-rose-700 border border-rose-400/40 text-xs font-extrabold whitespace-nowrap shrink-0">
+        <button id="logoutBtn" onclick="logoutAccount()" class="hidden h-9 sm:h-10 px-2.5 sm:px-3.5 rounded-2xl bg-rose-600/10 text-rose-700 border border-rose-400/40 text-xs font-extrabold whitespace-nowrap shrink-0">
           خروج
         </button>
       </div>
@@ -1075,13 +1075,14 @@
           <p id="previewBookletNote" class="text-xs font-bold text-navy/70"></p>
         </div>
 
-        <div id="previewBookletEmbedContainer" class="rounded-2xl bg-white border border-gold/50 p-3 min-h-[220px] flex flex-col items-center justify-center overflow-x-auto"></div>
+        <div class="rounded-2xl bg-white border border-gold/50 p-4 text-center space-y-2">
+          <div class="text-4xl">✈️</div>
+          <p class="text-sm font-extrabold text-navy">الملزمة تنفتح داخل تطبيق تليجرام</p>
+          <p class="text-[11px] font-bold text-navy/65">اضغط الزر تحت وراح يفتح المنشور مباشرة بالتطبيق. إذا الملزمة بكروب أو قناة خاصة لازم تكون عضو فيها.</p>
+        </div>
 
         <div class="flex items-center justify-between gap-2">
-          <a id="previewBookletExternalLink" href="#" target="_blank" rel="noopener noreferrer" class="flex-1 h-11 rounded-2xl bg-navy text-goldBright border border-gold font-black text-xs flex items-center justify-center gap-1.5 hover:bg-navyLight transition">
-            <span>✈️ فتح في تليجرام</span>
-          </a>
-          <a id="previewBookletAppLink" href="#" class="hidden flex-1 h-11 rounded-2xl bg-white text-navy border border-gold font-black text-xs flex items-center justify-center gap-1.5">
+          <a id="previewBookletAppLink" href="#" class="flex-1 h-11 rounded-2xl bg-navy text-goldBright border border-gold font-black text-xs flex items-center justify-center gap-1.5 hover:bg-navyLight transition">
             <span>📲 فتح بالتطبيق</span>
           </a>
           <button type="button" onclick="closeBookletPreview()" class="h-11 px-4 rounded-2xl bg-cream text-navy border border-gold/60 font-extrabold text-xs">إغلاق</button>
@@ -2105,96 +2106,53 @@
       renderLibrarySection();
     }
 
-    function parseTelegramPostPath(rawUrl) {
+    /* يحوّل رابط تليجرام (t.me) إلى رابط يفتح تطبيق تليجرام مباشرة */
+    function toTelegramAppLink(rawUrl) {
       try {
         let raw = String(rawUrl || '').trim();
         if (!/^https?:\/\//i.test(raw)) raw = 'https://' + raw;
         const u = new URL(raw);
         if (!/(^|\.)(t\.me|telegram\.me|telegram\.dog)$/i.test(u.hostname)) return null;
         let parts = u.pathname.split('/').filter(Boolean);
-        if (parts[0] === 's') parts = parts.slice(1);      /* t.me/s/channel/123 */
-        if (parts[0] === 'c' || parts[0] === 'joinchat' || parts[0] === 'addlist') return null; /* خاص */
-        if (parts.length >= 2 && /^\d+$/.test(parts[parts.length - 1])) {
-          return `${parts[0]}/${parts[parts.length - 1]}`;   /* قناة/رقم المنشور */
+        if (parts[0] === 's') parts = parts.slice(1);
+        if (!parts.length) return null;
+        const nums = parts.slice(1);
+        const allNums = nums.length > 0 && nums.every(x => /^\d+$/.test(x));
+        if (parts[0] === 'c' && parts.length >= 3 && allNums) {            /* كروب/قناة خاصة */
+          const channel = parts[1];
+          const rest = parts.slice(2);
+          const post = rest[rest.length - 1];
+          const thread = rest.length >= 2 ? rest[0] : '';
+          return `tg://privatepost?channel=${channel}&post=${post}` + (thread ? `&thread=${thread}` : '');
         }
+        if (parts[0] === 'joinchat' && parts[1]) return `tg://join?invite=${encodeURIComponent(parts[1])}`;
+        if (parts[0].startsWith('+')) return `tg://join?invite=${encodeURIComponent(parts[0].slice(1))}`;
+        if (parts[0] === 'addlist') return null;
+        if (allNums) {                                                      /* قناة/كروب عام */
+          const post = nums[nums.length - 1];
+          const thread = nums.length >= 2 ? nums[0] : '';
+          return `tg://resolve?domain=${encodeURIComponent(parts[0])}&post=${post}` + (thread ? `&thread=${thread}` : '');
+        }
+        return `tg://resolve?domain=${encodeURIComponent(parts[0])}`;
       } catch (e) {}
       return null;
-    }
-
-    function cleanupTgEmbed() {
-      if (window.__tgEmbedHandler) { window.removeEventListener('message', window.__tgEmbedHandler); window.__tgEmbedHandler = null; }
-      if (window.__tgEmbedTimer) { clearTimeout(window.__tgEmbedTimer); window.__tgEmbedTimer = null; }
     }
 
     function openBookletPreview(bookletId) {
       const b = (state.booklets || []).find(item => String(item.id) === String(bookletId));
       if (!b) return;
-      document.getElementById('previewBookletSubject').textContent = b.subject || 'ملزمة';
-      document.getElementById('previewBookletTitle').textContent = b.title || 'ملزمة دراسية';
-      document.getElementById('previewBookletNote').textContent = b.note || 'منشور ملزمة من تليجرام';
-      const extLink = document.getElementById('previewBookletExternalLink');
-      extLink.href = b.url || '#';
-      const appLink = document.getElementById('previewBookletAppLink');
-      if (appLink) {
-        const tgp = parseTelegramPostPath(b.url);
-        if (tgp) {
-          const [dom, post] = tgp.split('/');
-          appLink.href = `tg://resolve?domain=${encodeURIComponent(dom)}&post=${encodeURIComponent(post)}`;
-          appLink.classList.remove('hidden');
-        } else {
-          appLink.classList.add('hidden');
-        }
-      }
-
-      const container = document.getElementById('previewBookletEmbedContainer');
-      const tgPost = parseTelegramPostPath(b.url);
-      cleanupTgEmbed();
-      if (tgPost) {
-        container.innerHTML = `
-          <div id="tgEmbedLoading" class="text-center text-xs font-bold text-navy/60 py-10">⏳ جاري تحميل المنشور...</div>
-          <div id="tgEmbedFallback" class="hidden text-center space-y-2 py-4 px-2">
-            <div class="text-4xl">✈️</div>
-            <p class="text-sm font-extrabold text-navy">الملزمة جاهزة — افتحها مباشرة من تليجرام</p>
-            <p class="text-[11px] font-bold text-navy/65">المعاينة ما ظهرت (منشورات الكروبات ما تنعرض داخل المنصة). اضغط زر "فتح في تليجرام" تحت.</p>
-          </div>
-          <iframe id="tgEmbedFrame" src="https://t.me/${esc(tgPost)}?embed=1&mode=tme" class="w-full rounded-xl border border-gold/30 bg-white" style="height:0;border:0" scrolling="yes"></iframe>
-        `;
-        const frame = document.getElementById('tgEmbedFrame');
-        window.__tgEmbedHandler = (ev) => {
-          if (!/^https:\/\/(t\.me|telegram\.me)$/.test(ev.origin)) return;
-          try {
-            const d = typeof ev.data === 'string' ? JSON.parse(ev.data) : ev.data;
-            if (d && d.event === 'resize' && d.height > 60) {
-              frame.style.height = Math.max(160, d.height) + 'px';
-              frame.style.border = '';
-              ['tgEmbedLoading', 'tgEmbedFallback'].forEach(id => { const el = document.getElementById(id); if (el) el.classList.add('hidden'); });
-              clearTimeout(window.__tgEmbedTimer);
-            }
-          } catch (e) {}
-        };
-        window.addEventListener('message', window.__tgEmbedHandler);
-        window.__tgEmbedTimer = setTimeout(() => {
-          const l = document.getElementById('tgEmbedLoading'); if (l) l.classList.add('hidden');
-          const f = document.getElementById('tgEmbedFallback'); if (f) f.classList.remove('hidden');
-        }, 7000);
-      } else {
-        container.innerHTML = `
-          <div class="text-center space-y-2 py-4 px-2">
-            <div class="text-3xl">✈️</div>
-            <p class="text-xs font-extrabold text-navy">رابط الملزمة جاهز للفتح المباشر في تليجرام</p>
-            <p class="text-[11px] font-bold text-navy/65 break-all">${esc(b.url || '')}</p>
-          </div>
-        `;
-      }
-
-      document.getElementById('bookletPreviewModal').classList.remove('hidden');
+      const appUrl = toTelegramAppLink(b.url);
+      if (!appUrl) { window.open(b.url, '_blank', 'noopener'); return; }
+      /* يفتح تطبيق تليجرام مباشرة بدون أي نافذة */
+      window.location.href = appUrl;
+      /* إذا التطبيق ما انفتح (الصفحة بقت ظاهرة) نفتح الرابط العادي كاحتياط */
+      setTimeout(() => {
+        if (!document.hidden) window.open(b.url, '_blank', 'noopener');
+      }, 1800);
     }
 
     function closeBookletPreview() {
-      cleanupTgEmbed();
       document.getElementById('bookletPreviewModal').classList.add('hidden');
-      const container = document.getElementById('previewBookletEmbedContainer');
-      if (container) container.innerHTML = '';
     }
 
     function addBookletItem(e) {
