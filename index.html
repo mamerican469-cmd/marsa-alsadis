@@ -177,7 +177,6 @@
       transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-
     @keyframes simsimHappyJump {
       0%, 100% { transform: translateY(0) scale(1); }
       30% { transform: translateY(-14px) scale(1.06); }
@@ -449,6 +448,24 @@
       background: #0B1A30;
       color: #E5C37A;
       border-color: #C69C4E;
+    }
+
+    /* تخفيف الضغط ومنع كراش المتصفح أثناء الكتابة وفتح الكيبورد */
+    body.is-typing #simsimFloatingRoot,
+    body.is-typing #simsimSpeechBubble,
+    body.is-typing #simsimMenu,
+    body.is-typing #cheerToastBanner {
+      display: none !important;
+    }
+    body.is-typing .simsim-gentle-motion,
+    body.is-typing .simsim-welcome-wave,
+    body.is-typing .hg-stream {
+      animation: none !important;
+    }
+    body.is-typing header,
+    body.is-typing .app-card {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
     }
   </style>
 </head>
@@ -1446,6 +1463,8 @@
     let simsimWelcomeFlyInterval = null;
     let simsimWelcomePlayed = false;
     let simsimSleepingOnBed = false;
+    let isUserTypingNow = false;
+    let typingBlurTimer = null;
 
     const LIBRARY_SUBJECTS = ['الكل', 'الكيمياء', 'الفيزياء', 'الرياضيات', 'الأحياء', 'العربي', 'الإنكليزي', 'الإسلامية', 'الفرنسي'];
     let selectedLibrarySubject = 'الكل';
@@ -1872,7 +1891,7 @@
     }
 
     function showCheerMessage(msg) {
-      if (simsimSleepingOnBed) return;
+      if (simsimSleepingOnBed || isUserTypingNow) return;
       const banner = document.getElementById('cheerToastBanner');
       const txt = document.getElementById('cheerToastText');
       if (!banner || !txt) return;
@@ -2016,7 +2035,7 @@
       applySimsimSleepVisuals();
       const bubble = document.getElementById('simsimSpeechBubble');
       const msgEl = document.getElementById('simsimSpeechMsg');
-      if (bubble && msgEl) {
+      if (bubble && msgEl && !isUserTypingNow) {
         msgEl.textContent = 'نمت على السرير وما أزعجك 😴 zz';
         bubble.classList.remove('hidden');
         if (simsimBubbleTimerId) clearTimeout(simsimBubbleTimerId);
@@ -2031,7 +2050,7 @@
     }
 
     function showSimsimBubble(text, durationMs = 4000) {
-      if (simsimSleepingOnBed) return;
+      if (simsimSleepingOnBed || isUserTypingNow) return;
       const bubble = document.getElementById('simsimSpeechBubble');
       const msgEl = document.getElementById('simsimSpeechMsg');
       if (!bubble || !msgEl) return;
@@ -2044,7 +2063,7 @@
     }
 
     function triggerSimsimRoast(customMsg) {
-      if (simsimSleepingOnBed) return;
+      if (simsimSleepingOnBed || isUserTypingNow) return;
       const roasts = [
         'ليش صار هواي ما فاتح المنصة وتدرس؟ افتح كتابك هسه! 😤',
         'هاي وين كبست؟ يلا قوم ادرس، ترى وقت السادس يركض! 😠',
@@ -2060,8 +2079,38 @@
       showSimsimBubble(msg, 4000);
     }
 
+    function setTypingPerformanceMode(active) {
+      isUserTypingNow = !!active;
+      document.body.classList.toggle('is-typing', isUserTypingNow);
+      if (isUserTypingNow) {
+        if (simsimWelcomeTimerId) clearTimeout(simsimWelcomeTimerId);
+        if (simsimWelcomeFlyInterval) clearInterval(simsimWelcomeFlyInterval);
+        document.getElementById('simsimSpeechBubble')?.classList.add('hidden');
+        if (typeof closeSimsimMenu === 'function') closeSimsimMenu();
+      }
+    }
+
+    document.addEventListener('focusin', e => {
+      if (e.target && e.target.matches('input, textarea, select')) {
+        clearTimeout(typingBlurTimer);
+        setTypingPerformanceMode(true);
+      }
+    });
+
+    document.addEventListener('focusout', e => {
+      if (e.target && e.target.matches('input, textarea, select')) {
+        clearTimeout(typingBlurTimer);
+        typingBlurTimer = setTimeout(() => {
+          const activeEl = document.activeElement;
+          if (!activeEl || !activeEl.matches('input, textarea, select')) {
+            setTypingPerformanceMode(false);
+          }
+        }, 250);
+      }
+    });
+
     function runSimsim10SecWelcomeFlight(force = false) {
-      if (simsimSleepingOnBed) return;
+      if (simsimSleepingOnBed || isUserTypingNow) return;
       if (simsimWelcomePlayed && !force) return;
       simsimWelcomePlayed = true;
       const root = document.getElementById('simsimFloatingRoot');
@@ -2071,66 +2120,29 @@
       if (simsimWelcomeTimerId) clearTimeout(simsimWelcomeTimerId);
       if (simsimWelcomeFlyInterval) clearInterval(simsimWelcomeFlyInterval);
 
-      const welcomeLines = [
-        'أهلاً بأبطال السادس! طريق الـ 100 يبدأ من هسه 👋🔥',
-        'افتح القوانين وشوف ملخصات وملاحظات الفصول كاملة 📐',
-        'وإذا ضجت اضغط نام وأطلع التخت 😴 zz'
-      ];
-
       root.classList.remove('hidden');
       root.style.display = '';
-      showSimsimBubble(welcomeLines[0], 9500);
+      showSimsimBubble('أهلاً بأبطال السادس! طريق الـ 100 يبدأ من هسه 👋🔥', 4500);
 
       if (motionEl) {
         motionEl.classList.remove('simsim-gentle-motion');
         motionEl.classList.add('simsim-welcome-wave');
       }
 
-      const w = root.offsetWidth || 98;
-      const h = root.offsetHeight || 95;
-      const maxX = Math.max(10, window.innerWidth - w - 10);
-      const maxY = Math.max(80, window.innerHeight - h - 92);
-
-      const waypoints = [
-        { left: Math.min(maxX, Math.max(10, window.innerWidth * 0.45)), top: Math.min(maxY, 120), msg: welcomeLines[0] },
-        { left: Math.max(10, window.innerWidth * 0.14), top: Math.min(maxY, window.innerHeight * 0.42), msg: welcomeLines[1] },
-        { left: 12, top: Math.max(80, window.innerHeight - h - 84), msg: welcomeLines[2] }
-      ];
-
-      let idx = 0;
-      root.style.bottom = 'auto';
-
-      const stepFlight = () => {
-        if (idx >= waypoints.length || simsimSleepingOnBed) return;
-        const wp = waypoints[idx++];
-        root.style.transition = 'left 2.1s ease-in-out, top 2.1s ease-in-out';
-        root.style.left = `${wp.left}px`;
-        root.style.top = `${wp.top}px`;
-        showSimsimBubble(wp.msg, 3000);
-      };
-
-      stepFlight();
-      simsimWelcomeFlyInterval = setInterval(() => {
-        if (idx < waypoints.length && !simsimSleepingOnBed) {
-          stepFlight();
-        } else {
-          clearInterval(simsimWelcomeFlyInterval);
-        }
-      }, 2800);
+      root.style.transition = 'transform 1.4s ease-in-out';
+      root.style.transform = 'translate3d(18px, -24px, 0)';
 
       simsimWelcomeTimerId = setTimeout(() => {
-        clearInterval(simsimWelcomeFlyInterval);
-        root.style.transition = 'left 0.8s ease-in-out, top 0.8s ease-in-out';
-        root.style.left = '12px';
-        root.style.top = `${Math.max(80, window.innerHeight - h - 84)}px`;
+        root.style.transform = 'translate3d(0px, 0px, 0)';
         if (motionEl && !simsimSleepingOnBed) {
           motionEl.classList.remove('simsim-welcome-wave');
           motionEl.classList.add('simsim-gentle-motion');
         }
         setTimeout(() => {
           root.style.transition = '';
-        }, 850);
-      }, 10000);
+          root.style.transform = '';
+        }, 1450);
+      }, 4500);
     }
 
     /* سمسم يعطس ثم يعصب */
@@ -2171,10 +2183,10 @@
       if (!ctx) return;
       try {
         const t = ctx.currentTime + 0.02;
-        simsimNoiseBurst(ctx, t, 0.28, 900, 2600, 0.12, 2);        /* هـ.. شهقة */
-        simsimNoiseBurst(ctx, t + 0.34, 0.12, 1400, 3200, 0.1, 2); /* هـ.. */
-        simsimNoiseBurst(ctx, t + 0.58, 0.26, 4200, 1200, 0.42, 0.9); /* تشييي! */
-        const o = ctx.createOscillator(), g = ctx.createGain();      /* نبرة الصوت */
+        simsimNoiseBurst(ctx, t, 0.28, 900, 2600, 0.12, 2);
+        simsimNoiseBurst(ctx, t + 0.34, 0.12, 1400, 3200, 0.1, 2);
+        simsimNoiseBurst(ctx, t + 0.58, 0.26, 4200, 1200, 0.42, 0.9);
+        const o = ctx.createOscillator(), g = ctx.createGain();
         o.type = 'triangle';
         o.frequency.setValueAtTime(520, t + 0.58);
         o.frequency.exponentialRampToValueAtTime(260, t + 0.8);
@@ -2213,7 +2225,7 @@
     let simsimTapResetId = null;
 
     function simsimSneezeThenAngry() {
-      if (simsimSleepingOnBed) return;
+      if (simsimSleepingOnBed || isUserTypingNow) return;
       const root = document.getElementById('simsimFloatingRoot');
       const motionEl = document.getElementById('simsimBodyMotion');
       if (!root || !motionEl) return;
@@ -2236,7 +2248,6 @@
       };
       const pick = arr => arr[Math.floor(Math.random() * arr.length)];
 
-      /* 1) عطسة */
       root.classList.add('simsim-sneezing');
       document.querySelectorAll('#simsimEyesGroup .simsim-pupil').forEach(el => { el.style.display = 'none'; });
       void motionEl.offsetWidth;
@@ -2244,7 +2255,6 @@
       showSimsimBubble(pick(sneezes), 1500);
       playSimsimSneezeSound();
 
-      /* 2) عصبية حسب المستوى */
       simsimMoodTimers.push(setTimeout(() => {
         root.classList.remove('simsim-sneezing');
         motionEl.classList.remove('simsim-sneeze-anim');
@@ -2256,13 +2266,11 @@
         playSimsimGrowlSound(level);
       }, 950));
 
-      /* 3) يهدأ */
       simsimMoodTimers.push(setTimeout(() => {
         root.classList.remove('lvl-1', 'lvl-2', 'lvl-3');
         clearSimsimMood();
       }, 3800 + level * 700));
 
-      /* 4) لو كبست 5 مرات ورا بعض يتعصب وينط لمكان ثاني */
       if (simsimTapCount >= 5) {
         simsimTapCount = 0;
         simsimMoodTimers.push(setTimeout(() => {
@@ -2283,6 +2291,7 @@
     let simsimMenuTimerId = null;
 
     function openSimsimMenu() {
+      if (isUserTypingNow) return;
       const root = document.getElementById('simsimFloatingRoot');
       const menu = document.getElementById('simsimMenu');
       if (!root || !menu) return;
@@ -2357,6 +2366,7 @@
         origLeft = rect.left;
         origTop = rect.top;
         closeSimsimMenu();
+        root.style.transform = '';
         root.style.bottom = 'auto';
         root.style.left = `${origLeft}px`;
         root.style.top = `${origTop}px`;
@@ -2369,9 +2379,7 @@
         if (!dragging) return;
         const dx = e.clientX - startX;
         const dy = e.clientY - startY;
-        if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
-          movedDuringDrag = true;
-        }
+        if (Math.abs(dx) > 5 || Math.abs(dy) > 5) movedDuringDrag = true;
         const pos = clampPosition(origLeft + dx, origTop + dy);
         root.style.left = `${pos.left}px`;
         root.style.top = `${pos.top}px`;
@@ -2397,25 +2405,6 @@
 
       handle.addEventListener('pointerup', finishPointer);
       handle.addEventListener('pointercancel', finishPointer);
-
-      setInterval(() => {
-        if (dragging || simsimSleepingOnBed || simsimMenuOpen) return;
-        const formulasOpen = !document.getElementById('formulasModal')?.classList.contains('hidden');
-        if (formulasOpen) return;
-        const rect = root.getBoundingClientRect();
-        const curLeft = rect.left;
-        const curTop = rect.top;
-        const driftX = (Math.random() - 0.5) * 32;
-        const driftY = (Math.random() - 0.5) * 32;
-        const next = clampPosition(curLeft + driftX, curTop + driftY);
-        root.style.transition = 'left 1.8s ease-in-out, top 1.8s ease-in-out';
-        root.style.bottom = 'auto';
-        root.style.left = `${next.left}px`;
-        root.style.top = `${next.top}px`;
-        setTimeout(() => {
-          root.style.transition = '';
-        }, 1900);
-      }, 10000);
     }
 
     function checkAbsenceRoastOnLoad() {
@@ -2448,7 +2437,7 @@
         if (!parts.length) return null;
         const nums = parts.slice(1);
         const allNums = nums.length > 0 && nums.every(x => /^\d+$/.test(x));
-        if (parts[0] === 'c' && parts.length >= 3 && allNums) {            /* كروب/قناة خاصة */
+        if (parts[0] === 'c' && parts.length >= 3 && allNums) {
           const channel = parts[1];
           const rest = parts.slice(2);
           const post = rest[rest.length - 1];
@@ -2458,7 +2447,7 @@
         if (parts[0] === 'joinchat' && parts[1]) return `tg://join?invite=${encodeURIComponent(parts[1])}`;
         if (parts[0].startsWith('+')) return `tg://join?invite=${encodeURIComponent(parts[0].slice(1))}`;
         if (parts[0] === 'addlist') return null;
-        if (allNums) {                                                      /* قناة/كروب عام */
+        if (allNums) {
           const post = nums[nums.length - 1];
           const thread = nums.length >= 2 ? nums[0] : '';
           return `tg://resolve?domain=${encodeURIComponent(parts[0])}&post=${post}` + (thread ? `&thread=${thread}` : '');
@@ -2473,9 +2462,7 @@
       if (!b) return;
       const appUrl = toTelegramAppLink(b.url);
       if (!appUrl) { window.open(b.url, '_blank', 'noopener'); return; }
-      /* يفتح تطبيق تليجرام مباشرة بدون أي نافذة */
       window.location.href = appUrl;
-      /* إذا التطبيق ما انفتح (الصفحة بقت ظاهرة) نفتح الرابط العادي كاحتياط */
       setTimeout(() => {
         if (!document.hidden) window.open(b.url, '_blank', 'noopener');
       }, 1800);
@@ -3171,6 +3158,7 @@
           b.className = 'bottom-nav-item py-1.5 rounded-2xl text-navy/75 flex flex-col items-center gap-0.5';
         }
       });
+      renderUI();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -3549,7 +3537,7 @@
         botEl.setAttribute('d', `M45 274 L175 274 L175 ${yb + mound} Q110 ${Math.max(162, yb - mound * 0.4)} 45 ${yb + mound} Z`);
       }
       stream.setAttribute('y2', Math.min(274, yb + 4));
-      stream.style.display = (timerId && topH > 0.5) ? '' : 'none';
+      stream.style.display = (timerId && topH > 0.5 && !isUserTypingNow) ? '' : 'none';
     }
 
     function paintModeButtons() {
@@ -4208,7 +4196,7 @@
     }
 
     function renderUI() {
-      document.body.className = state.theme === 'dark' ? 'theme-dark min-h-screen' : 'theme-light min-h-screen';
+      document.body.className = `${state.theme === 'dark' ? 'theme-dark' : 'theme-light'} min-h-screen${isUserTypingNow ? ' is-typing' : ''}`;
       document.getElementById('topHeaderBar').className = state.theme === 'dark'
         ? 'max-w-3xl mx-auto px-4 py-3 flex items-center justify-between gap-3 bg-navy/95 text-white transition-colors'
         : 'max-w-3xl mx-auto px-4 py-3 flex items-center justify-between gap-3 bg-white/95 text-navy transition-colors';
@@ -4253,129 +4241,137 @@
         avatarFb.classList.remove('hidden');
       }
 
-      const fullRoster = [
-        { isMe: true, peerKey: 'me', name: `${myName} (أنت)`, rawName: myName, title: myTitle, status: myStatus, points: state.points, avatar: state.user?.avatar || '' },
-        ...state.peers.map(p => ({ ...p, isMe: false, peerKey: String(p.id || p.name), rawName: p.name }))
-      ];
+      const isPageOpen = id => !document.getElementById(id)?.classList.contains('hidden');
 
-      const maxPts = Math.max(...fullRoster.map(x => x.points || 0), 0);
-      const gapEl = document.getElementById('leaderGapLabel');
-      if (gapEl) {
-        const diffPts = Math.max(0, maxPts - (state.points || 0));
-        gapEl.textContent = diffPts === 0 ? 'أنت بالصدارة ⭐' : `يبعدك ${diffPts} نقطة عن الصدارة`;
-      }
+      if (isPageOpen('page-top')) {
+        const fullRoster = [
+          { isMe: true, peerKey: 'me', name: `${myName} (أنت)`, rawName: myName, title: myTitle, status: myStatus, points: state.points, avatar: state.user?.avatar || '' },
+          ...state.peers.map(p => ({ ...p, isMe: false, peerKey: String(p.id || p.name), rawName: p.name }))
+        ];
 
-      fullRoster.sort((a, b) => {
-        if (radarSortMode === 'points') {
-          return (b.points || 0) - (a.points || 0);
+        const maxPts = Math.max(...fullRoster.map(x => x.points || 0), 0);
+        const gapEl = document.getElementById('leaderGapLabel');
+        if (gapEl) {
+          const diffPts = Math.max(0, maxPts - (state.points || 0));
+          gapEl.textContent = diffPts === 0 ? 'أنت بالصدارة ⭐' : `يبعدك ${diffPts} نقطة عن الصدارة`;
         }
-        const aAct = a.status === 'active' ? 1 : 0;
-        const bAct = b.status === 'active' ? 1 : 0;
-        if (bAct !== aAct) return bAct - aAct;
-        return (b.points || 0) - (a.points || 0);
-      });
 
-      ['all', 'active', 'idle', 'sleeping'].forEach(mode => {
-        const btn = document.getElementById('rf' + mode.charAt(0).toUpperCase() + mode.slice(1));
-        if (!btn) return;
-        btn.className = radarFilterMode === mode
-          ? 'px-3 py-1.5 rounded-xl text-xs font-extrabold whitespace-nowrap bg-navy text-white border border-gold'
-          : 'px-3 py-1.5 rounded-xl text-xs font-extrabold whitespace-nowrap bg-cream text-navy border border-gold/50';
-      });
+        fullRoster.sort((a, b) => {
+          if (radarSortMode === 'points') {
+            return (b.points || 0) - (a.points || 0);
+          }
+          const aAct = a.status === 'active' ? 1 : 0;
+          const bAct = b.status === 'active' ? 1 : 0;
+          if (bAct !== aAct) return bAct - aAct;
+          return (b.points || 0) - (a.points || 0);
+        });
 
-      const sActBtn = document.getElementById('sortActiveBtn');
-      const sPtsBtn = document.getElementById('sortPointsBtn');
-      if (sActBtn && sPtsBtn) {
-        sActBtn.className = radarSortMode === 'active'
-          ? 'px-2.5 py-1 rounded-xl text-[11px] font-black bg-navy text-goldBright border border-gold'
-          : 'px-2.5 py-1 rounded-xl text-[11px] font-black bg-cream text-navy border border-gold/50';
-        sPtsBtn.className = radarSortMode === 'points'
-          ? 'px-2.5 py-1 rounded-xl text-[11px] font-black bg-navy text-goldBright border border-gold'
-          : 'px-2.5 py-1 rounded-xl text-[11px] font-black bg-cream text-navy border border-gold/50';
+        ['all', 'active', 'idle', 'sleeping'].forEach(mode => {
+          const btn = document.getElementById('rf' + mode.charAt(0).toUpperCase() + mode.slice(1));
+          if (!btn) return;
+          btn.className = radarFilterMode === mode
+            ? 'px-3 py-1.5 rounded-xl text-xs font-extrabold whitespace-nowrap bg-navy text-white border border-gold'
+            : 'px-3 py-1.5 rounded-xl text-xs font-extrabold whitespace-nowrap bg-cream text-navy border border-gold/50';
+        });
+
+        const sActBtn = document.getElementById('sortActiveBtn');
+        const sPtsBtn = document.getElementById('sortPointsBtn');
+        if (sActBtn && sPtsBtn) {
+          sActBtn.className = radarSortMode === 'active'
+            ? 'px-2.5 py-1 rounded-xl text-[11px] font-black bg-navy text-goldBright border border-gold'
+            : 'px-2.5 py-1 rounded-xl text-[11px] font-black bg-cream text-navy border border-gold/50';
+          sPtsBtn.className = radarSortMode === 'points'
+            ? 'px-2.5 py-1 rounded-xl text-[11px] font-black bg-navy text-goldBright border border-gold'
+            : 'px-2.5 py-1 rounded-xl text-[11px] font-black bg-cream text-navy border border-gold/50';
+        }
+
+        const filteredRoster = fullRoster.filter(m => radarFilterMode === 'all' || m.status === radarFilterMode);
+
+        document.getElementById('membersActivityList').innerHTML = filteredRoster.length ? filteredRoster.map(m => {
+          const alreadySupported = hasAlreadySupportedPeer(m.peerKey);
+          return `
+            <div class="p-3.5 rounded-2xl bg-cream text-navy border ${m.status === 'active' ? 'border-2 border-emerald-500/70' : 'border-gold/45'} space-y-2.5">
+              <div class="flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3 min-w-0">
+                  <div class="w-10 h-10 rounded-full bg-navy text-goldBright border border-gold flex items-center justify-center font-black shrink-0 overflow-hidden">
+                    ${m.avatar ? `<img src="${m.avatar}" class="w-full h-full object-cover" />` : '🎓'}
+                  </div>
+                  <div class="truncate">
+                    <p class="text-sm font-black truncate">${m.name}</p>
+                    <span class="text-xs font-bold text-navy/70">${m.title} • ${m.points} نقطة</span>
+                  </div>
+                </div>
+                ${statusBadgeHtml(m.status)}
+              </div>
+              ${m.isMe ? '' : (alreadySupported
+                ? `<div class="pt-1 border-t border-gold/25 flex items-center justify-between">
+                    <span class="text-[11px] font-black text-emerald-800">✓ تم إرسال رسالة الدعم لهذا الطالب (مرة واحدة فقط)</span>
+                  </div>`
+                : `<div class="flex flex-wrap items-center gap-1.5 pt-1 border-t border-gold/25">
+                    <button type="button" onclick="sendPeerSupport('${esc(m.peerKey)}', '${esc(m.rawName)}', '🔥 كفو مستمر')" class="px-2.5 py-1 rounded-xl bg-white hover:bg-emerald-50 text-navy border border-gold/50 text-[11px] font-black transition">
+                      🔥 كفو مستمر
+                    </button>
+                    <button type="button" onclick="sendPeerSupport('${esc(m.peerKey)}', '${esc(m.rawName)}', '💪 عاشت إيدك')" class="px-2.5 py-1 rounded-xl bg-white hover:bg-amber-50 text-navy border border-gold/50 text-[11px] font-black transition">
+                      💪 عاشت إيدك
+                    </button>
+                    <button type="button" onclick="sendPeerSupport('${esc(m.peerKey)}', '${esc(m.rawName)}', '⭐ بطل الـ 100')" class="px-2.5 py-1 rounded-xl bg-white hover:bg-navy hover:text-goldBright text-navy border border-gold/50 text-[11px] font-black transition">
+                      ⭐ بطل الـ 100
+                    </button>
+                  </div>`
+              )}
+            </div>
+          `;
+        }).join('') : '<p class="text-xs font-bold opacity-70 py-2">لا يوجد طلاب ضمن هذا الفلتر حالياً.</p>';
+
+        renderReceivedSupportBox();
       }
 
-      const filteredRoster = fullRoster.filter(m => radarFilterMode === 'all' || m.status === radarFilterMode);
-
-      document.getElementById('membersActivityList').innerHTML = filteredRoster.length ? filteredRoster.map(m => {
-        const alreadySupported = hasAlreadySupportedPeer(m.peerKey);
-        return `
-          <div class="p-3.5 rounded-2xl bg-cream text-navy border ${m.status === 'active' ? 'border-2 border-emerald-500/70' : 'border-gold/45'} space-y-2.5">
-            <div class="flex items-center justify-between gap-3">
-              <div class="flex items-center gap-3 min-w-0">
-                <div class="w-10 h-10 rounded-full bg-navy text-goldBright border border-gold flex items-center justify-center font-black shrink-0 overflow-hidden">
-                  ${m.avatar ? `<img src="${m.avatar}" class="w-full h-full object-cover" />` : '🎓'}
-                </div>
-                <div class="truncate">
-                  <p class="text-sm font-black truncate">${m.name}</p>
-                  <span class="text-xs font-bold text-navy/70">${m.title} • ${m.points} نقطة</span>
-                </div>
+      if (isPageOpen('page-study') || isPageOpen('page-tasks')) {
+        const taskMarkup = state.tasks.map(t => {
+          const isSelected = String(state.activeTaskId) === String(t.id);
+          return `
+            <div class="flex items-center justify-between gap-2 p-3 rounded-2xl bg-cream text-navy border ${isSelected ? 'border-2 border-navy' : 'border-gold/45'}">
+              <label class="flex items-center gap-2.5 cursor-pointer text-sm font-extrabold min-w-0">
+                <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTaskItem(${t.id})" class="w-4 h-4 accent-navy shrink-0" />
+                <span class="${t.done ? 'line-through opacity-50' : ''} truncate">${esc(t.text)}</span>
+              </label>
+              <div class="flex items-center gap-1.5 shrink-0">
+                <button type="button" onclick="setSessionTask('${t.id}')" class="text-[11px] font-black px-2.5 py-1 rounded-lg ${isSelected ? 'bg-navy text-goldBright' : 'bg-white text-navy border border-gold/50'}">
+                  ${isSelected ? '🎯 مهمة الجلسة' : 'اختيار للجلسة'}
+                </button>
+                <button onclick="deleteTaskItem(${t.id})" class="text-xs font-bold text-rose-700 px-2 py-1">حذف</button>
               </div>
-              ${statusBadgeHtml(m.status)}
             </div>
-            ${m.isMe ? '' : (alreadySupported
-              ? `<div class="pt-1 border-t border-gold/25 flex items-center justify-between">
-                  <span class="text-[11px] font-black text-emerald-800">✓ تم إرسال رسالة الدعم لهذا الطالب (مرة واحدة فقط)</span>
-                </div>`
-              : `<div class="flex flex-wrap items-center gap-1.5 pt-1 border-t border-gold/25">
-                  <button type="button" onclick="sendPeerSupport('${esc(m.peerKey)}', '${esc(m.rawName)}', '🔥 كفو مستمر')" class="px-2.5 py-1 rounded-xl bg-white hover:bg-emerald-50 text-navy border border-gold/50 text-[11px] font-black transition">
-                    🔥 كفو مستمر
-                  </button>
-                  <button type="button" onclick="sendPeerSupport('${esc(m.peerKey)}', '${esc(m.rawName)}', '💪 عاشت إيدك')" class="px-2.5 py-1 rounded-xl bg-white hover:bg-amber-50 text-navy border border-gold/50 text-[11px] font-black transition">
-                    💪 عاشت إيدك
-                  </button>
-                  <button type="button" onclick="sendPeerSupport('${esc(m.peerKey)}', '${esc(m.rawName)}', '⭐ بطل الـ 100')" class="px-2.5 py-1 rounded-xl bg-white hover:bg-navy hover:text-goldBright text-navy border border-gold/50 text-[11px] font-black transition">
-                    ⭐ بطل الـ 100
-                  </button>
-                </div>`
-            )}
+          `;
+        }).join('');
+        if (isPageOpen('page-study')) document.getElementById('studyTaskList').innerHTML = taskMarkup;
+        if (isPageOpen('page-tasks')) document.getElementById('tasksTabList').innerHTML = taskMarkup;
+      }
+
+      if (isPageOpen('page-settings')) {
+        document.getElementById('admQListView').innerHTML = state.questions.slice(0, 35).map(q => `
+          <div class="flex items-center justify-between p-2.5 rounded-xl bg-cream text-navy font-bold">
+            <span>[${q.subject}] ${q.question}</span>
+            <button onclick="adminDelQ(${q.id})" class="text-rose-700 font-black px-2">حذف</button>
           </div>
-        `;
-      }).join('') : '<p class="text-xs font-bold opacity-70 py-2">لا يوجد طلاب ضمن هذا الفلتر حالياً.</p>';
+        `).join('');
 
-      renderReceivedSupportBox();
-
-      const taskMarkup = state.tasks.map(t => {
-        const isSelected = String(state.activeTaskId) === String(t.id);
-        return `
-          <div class="flex items-center justify-between gap-2 p-3 rounded-2xl bg-cream text-navy border ${isSelected ? 'border-2 border-navy' : 'border-gold/45'}">
-            <label class="flex items-center gap-2.5 cursor-pointer text-sm font-extrabold min-w-0">
-              <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTaskItem(${t.id})" class="w-4 h-4 accent-navy shrink-0" />
-              <span class="${t.done ? 'line-through opacity-50' : ''} truncate">${esc(t.text)}</span>
-            </label>
-            <div class="flex items-center gap-1.5 shrink-0">
-              <button type="button" onclick="setSessionTask('${t.id}')" class="text-[11px] font-black px-2.5 py-1 rounded-lg ${isSelected ? 'bg-navy text-goldBright' : 'bg-white text-navy border border-gold/50'}">
-                ${isSelected ? '🎯 مهمة الجلسة' : 'اختيار للجلسة'}
-              </button>
-              <button onclick="deleteTaskItem(${t.id})" class="text-xs font-bold text-rose-700 px-2 py-1">حذف</button>
-            </div>
+        document.getElementById('admCListView').innerHTML = state.flashcards.slice(0, 35).map(c => `
+          <div class="flex items-center justify-between p-2.5 rounded-xl bg-cream text-navy font-bold">
+            <span>[${c.subject}] ${c.front}</span>
+            <button onclick="adminDelFc(${c.id})" class="text-rose-700 font-black px-2">حذف</button>
           </div>
-        `;
-      }).join('');
-      document.getElementById('studyTaskList').innerHTML = taskMarkup;
-      document.getElementById('tasksTabList').innerHTML = taskMarkup;
+        `).join('');
+        renderAdminStudents();
+      }
 
-      document.getElementById('admQListView').innerHTML = state.questions.slice(0, 35).map(q => `
-        <div class="flex items-center justify-between p-2.5 rounded-xl bg-cream text-navy font-bold">
-          <span>[${q.subject}] ${q.question}</span>
-          <button onclick="adminDelQ(${q.id})" class="text-rose-700 font-black px-2">حذف</button>
-        </div>
-      `).join('');
-
-      document.getElementById('admCListView').innerHTML = state.flashcards.slice(0, 35).map(c => `
-        <div class="flex items-center justify-between p-2.5 rounded-xl bg-cream text-navy font-bold">
-          <span>[${c.subject}] ${c.front}</span>
-          <button onclick="adminDelFc(${c.id})" class="text-rose-700 font-black px-2">حذف</button>
-        </div>
-      `).join('');
-
-      if (!suppressQuizResetOnPersist) {
+      if (!suppressQuizResetOnPersist && isPageOpen('page-quiz')) {
         renderQuizSection();
       }
-      renderFcSection();
-      renderLibrarySection();
-      renderGoals();
-      renderAdminStudents();
-      renderSessionTaskSelectors();
+      if (isPageOpen('page-cards')) renderFcSection();
+      if (isPageOpen('page-library')) renderLibrarySection();
+      if (isPageOpen('page-tasks')) renderGoals();
+      if (isPageOpen('page-study')) renderSessionTaskSelectors();
       syncZenView();
     }
 
@@ -4602,7 +4598,9 @@
         unsubLibrary = onSnapshot(doc(db, 'platformConfig', 'bookletsLibrary'), snap => {
           if (snap.exists() && Array.isArray(snap.data().booklets)) {
             state.booklets = snap.data().booklets;
-            renderLibrarySection();
+            if (!document.getElementById('page-library')?.classList.contains('hidden')) {
+              renderLibrarySection();
+            }
           }
         }, err => console.warn('library listen', err));
       }
@@ -4641,7 +4639,9 @@
       if (ADMIN_UIDS.includes(u.uid) && !unsubAdmin) {
         unsubAdmin = onSnapshot(collection(db, 'userData'), s => {
           window.adminStudents = s.docs.map(d => ({ id: d.id, ...d.data() }));
-          renderAdminStudents();
+          if (!document.getElementById('page-settings')?.classList.contains('hidden')) {
+            renderAdminStudents();
+          }
         }, err => console.warn('admin listen', err));
       }
       clearInterval(hb); hb = setInterval(fbSyncNow, 60000);
@@ -4713,7 +4713,6 @@
     let allChallenges = [];
     let unsubChallenges = null;
 
-    // الأسبوع يبدأ السبت ويتصفر تلقائياً
     function currentWeekKey() {
       const d = new Date();
       d.setHours(0, 0, 0, 0);
@@ -4727,7 +4726,6 @@
       return d;
     }
 
-    // تتبع نقاط ودقائق الأسبوع الحالي (يتصفر تلقائياً كل أسبوع)
     function trackWeekly() {
       const key = currentWeekKey();
       if (!state.weekly || state.weekly.key !== key) {
@@ -4771,7 +4769,9 @@
         query(collection(db, CHALLENGES_COL), where('weekKey', '==', currentWeekKey())),
         snap => {
           allChallenges = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-          renderChallenges();
+          if (!document.getElementById('page-top')?.classList.contains('hidden')) {
+            renderChallenges();
+          }
         },
         err => console.warn('challenges listen', err)
       );
@@ -4876,10 +4876,9 @@
       catch (err) { alert('تعذر قبول التحدي: ' + (err.message || err)); }
     };
 
-    // ردود سمسم: فرحة عند الإنجاز
     function simsimHappyJump() {
       const el = document.getElementById('simsimBodyMotion');
-      if (!el || simsimSleepingOnBed) return;
+      if (!el || simsimSleepingOnBed || isUserTypingNow) return;
       el.classList.remove('simsim-happy-anim');
       void el.offsetWidth;
       el.classList.add('simsim-happy-anim');
@@ -4887,13 +4886,13 @@
     }
     const _bubbleBase = showSimsimBubble;
     showSimsimBubble = function (text, durationMs) {
+      if (isUserTypingNow) return;
       if (/^(كفو|صح عليك)/.test(String(text))) simsimHappyJump();
       return _bubbleBase(text, durationMs);
     };
 
-    // ردود حسب الوقت
     function simsimTimeReaction() {
-      if (simsimSleepingOnBed) return;
+      if (simsimSleepingOnBed || isUserTypingNow) return;
       const h = new Date().getHours();
       if (h >= 23 || h < 5) {
         const el = document.getElementById('simsimBodyMotion');
@@ -4908,7 +4907,6 @@
       }
     }
 
-    // سمسم يسولف: نكتة أو معلومة من المواد
     const SIMSIM_TIDBITS = [
       { s: 'الفيزياء', t: 'سرعة الضوء في الفراغ تقريباً 300,000 كم في الثانية.' },
       { s: 'الفيزياء', t: 'ليش الكهربائي ما يخاف من الظلام؟ لأن عنده تيار يشيله 😄' },
@@ -4922,12 +4920,11 @@
       { s: 'التاريخ', t: 'الكتابة المسمارية من أقدم أنظمة الكتابة المعروفة، ظهرت في بلاد الرافدين.' }
     ];
     function simsimTidbit() {
-      if (simsimSleepingOnBed || !SIMSIM_TIDBITS.length) return;
+      if (simsimSleepingOnBed || isUserTypingNow || !SIMSIM_TIDBITS.length) return;
       const item = SIMSIM_TIDBITS[Math.floor(Math.random() * SIMSIM_TIDBITS.length)];
       showSimsimBubble('📚 ' + item.s + ': ' + item.t, 7000);
     }
 
-    // غياب يوم كامل: سمسم يزعل
     (function startSimsimDaily() {
       const KEY = 'marsa_last_visit_v2';
       try {
@@ -4944,12 +4941,13 @@
       setInterval(simsimTidbit, 8 * 60 * 1000);
     })();
 
-    // ربط الواجهة بالتحديثات
     const _renderUIBase = renderUI;
     renderUI = function () {
       _renderUIBase();
-      renderWeeklyBoard();
-      renderChallenges();
+      if (!document.getElementById('page-top')?.classList.contains('hidden')) {
+        renderWeeklyBoard();
+        renderChallenges();
+      }
       startChallengeListener();
     };
     renderUI();
