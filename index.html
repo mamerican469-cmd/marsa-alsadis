@@ -5008,11 +5008,19 @@
       }
     }
 
+    // تحديث نص المؤقت فقط (بدون إعادة رسم البطاقة) لمنع الوميض
     setInterval(() => {
       cleanupExpiredChallenges();
-      if (!document.getElementById('page-top')?.classList.contains('hidden')) {
-        renderChallenges();
-      }
+      const now = Date.now();
+      document.querySelectorAll('[data-del-at]').forEach(el => {
+        const at = Number(el.dataset.delAt) || 0;
+        if (!at) return;
+        const sec = Math.max(0, Math.ceil((at - now) / 1000));
+        const mm = String(Math.floor(sec / 60)).padStart(2, '0');
+        const ss = String(sec % 60).padStart(2, '0');
+        const t = '⏳ حذف الجلسة خلال ' + mm + ':' + ss;
+        if (el.textContent.trim() !== t) el.textContent = t;
+      });
     }, 1000);
 
     window.toggleChallengeChatBox = function (id) {
@@ -5158,7 +5166,7 @@
           <div class="rounded-2xl p-3 bg-navy text-white border-2 border-gold space-y-2">
             <div class="flex items-center justify-between gap-2 flex-wrap">
               <span class="text-xs sm:text-sm font-black text-goldBright">🏆 إعلان الفائز: ${esc(detectedWinner || 'انتهت الجلسة')}</span>
-              <span class="px-2.5 py-0.5 rounded-full bg-rose-600/20 text-goldBright border border-gold/50 text-[11px] font-black">
+              <span data-del-at="${c.deleteAt || 0}" class="px-2.5 py-0.5 rounded-full bg-rose-600/20 text-goldBright border border-gold/50 text-[11px] font-black">
                 ⏳ حذف الجلسة خلال ${remMinStr}:${remSecStr}
               </span>
             </div>
