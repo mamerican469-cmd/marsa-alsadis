@@ -495,6 +495,13 @@
       -webkit-backdrop-filter: none !important;
     }
   </style>
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#0b1530">
+  <link rel="icon" type="image/png" href="icon-192.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="مرسى السادس">
 </head>
 <body class="theme-light min-h-screen">
 
@@ -2692,6 +2699,18 @@
     }
 
     function playAlertSound(kind) {
+      if (kind === 'session_end' || kind === 'challenge_end') {
+        // رنين 5 ثواني
+        const notes = [];
+        for (let i = 0; i < 10; i++) {
+          notes.push([880, 0.18, i * 0.5], [1175, 0.18, i * 0.5 + 0.2]);
+        }
+        playToneSequence(notes);
+        if (navigator.vibrate) {
+          try { navigator.vibrate([400, 200, 400, 200, 400, 200, 400, 200, 400]); } catch (e) {}
+        }
+        return;
+      }
       if (kind === 'rest_end') {
         playToneSequence([
           [587.33, 0.16, 0],
@@ -2722,6 +2741,7 @@
       if (Notification.permission === 'default') {
         try { await Notification.requestPermission(); } catch (e) {}
       }
+      if ('Notification' in window && Notification.permission === 'granted' && window.enablePush) window.enablePush();
       if (showFeedback) {
         playAlertSound('rest_end');
         if (Notification.permission === 'granted') {
@@ -2739,7 +2759,10 @@
           body,
           tag,
           renotify: true,
-          silent: false
+          silent: false,
+          icon: 'icon-192.png',
+          badge: 'icon-192.png',
+          vibrate: [400, 200, 400, 200, 400]
         });
         n.onclick = () => {
           window.focus();
@@ -3642,9 +3665,30 @@
           restMins: document.getElementById('restMins').value, restUsedSec
         }));
       } catch (e) {}
+      try { syncTimerPush(); } catch (e) {}
     }
 
-    function clearSavedTimer() { try { localStorage.removeItem(TIMER_KEY); } catch (e) {} }
+    let _pushEnd = 0, _pushKind = '';
+    function syncTimerPush() {
+      if (!window.scheduleTimerPush) return;
+      let secs = 0, kind = '';
+      if (onBreak && breakRem > 0) { secs = breakRem; kind = 'rest'; }
+      else if (!onBreak && timerId && studyMode === 'timer' && remSec > 0) { secs = remSec; kind = 'session'; }
+      if (secs > 0) {
+        const endAt = Date.now() + secs * 1000;
+        if (kind !== _pushKind || Math.abs(endAt - _pushEnd) > 20000) {
+          _pushEnd = endAt; _pushKind = kind;
+          window.scheduleTimerPush(endAt,
+            kind === 'rest' ? '☕ انتهى الريست' : '🎉 خلصت جلستك',
+            kind === 'rest' ? 'يلا ارجع للدراسة 💪' : 'أحسنت! اكتملت الجلسة');
+        }
+      } else if (_pushKind) {
+        _pushKind = ''; _pushEnd = 0;
+        if (window.cancelTimerPush) window.cancelTimerPush();
+      }
+    }
+
+    function clearSavedTimer() { try { localStorage.removeItem(TIMER_KEY); } catch (e) {} _pushKind = ''; _pushEnd = 0; if (window.cancelTimerPush) window.cancelTimerPush(); }
 
     function refreshStudyClock() {
       let formatted, p;
@@ -4561,6 +4605,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, onAuthStateChanged, signInWithPopup, signInWithRedirect, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, onSnapshot, addDoc, updateDoc, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
 
     const app = initializeApp({
       apiKey: "AIzaSyCIktvOCzI7KPLav2xUniwZtReBJkT-q0I",
@@ -4574,6 +4619,28 @@
     auth.languageCode = 'ar';
     setPersistence(auth, browserLocalPersistence).catch(() => {});
     const db = getFirestore(app);
+
+    // ===== Push (FCM) =====
+    const VAPID_KEY = "ضع_مفتاح_VAPID_هنا";
+    window.enablePush = async function () {
+      try {
+        if (!('serviceWorker' in navigator) || !('Notification' in window)) return;
+        if (Notification.permission !== 'granted' || !auth.currentUser) return;
+        if (VAPID_KEY.indexOf('ضع') === 0) return;
+        const reg = await navigator.serviceWorker.register('firebase-messaging-sw.js');
+        const token = await getToken(getMessaging(app), { vapidKey: VAPID_KEY, serviceWorkerRegistration: reg });
+        if (token) await setDoc(doc(db, 'users', auth.currentUser.uid), { fcmToken: token }, { merge: true });
+      } catch (e) { console.warn('push', e); }
+    };
+    window.scheduleTimerPush = function (endAt, title, body) {
+      if (!auth.currentUser) return;
+      return setDoc(doc(db, 'timers', auth.currentUser.uid), { uid: auth.currentUser.uid, endAt, title, body }).catch(() => {});
+    };
+    window.cancelTimerPush = function () {
+      if (!auth.currentUser) return;
+      return deleteDoc(doc(db, 'timers', auth.currentUser.uid)).catch(() => {});
+    };
+    onAuthStateChanged(auth, (u) => { if (u) window.enablePush(); });
 
     let myUid = null, unsub = null, unsubAdmin = null, unsubBan = null, unsubLibrary = null, unsubAdminMsgs = null, cache = [], adminMsgsCache = [], hb = null, justLogged = false, pendingName = '';
 
@@ -5193,6 +5260,7 @@
           endedAt: Date.now(),
           deleteAt: Date.now() + CHALLENGE_DELETE_GRACE_MS
         });
+        try { playAlertSound('challenge_end'); } catch (e) {}
       } catch (e) {}
     };
 
@@ -5469,6 +5537,29 @@
       startChallengeListener();
     };
     renderUI();
+  </script>
+  <button id="installBtn" style="display:none;position:fixed;bottom:90px;left:16px;right:16px;z-index:99999;padding:14px;border:0;border-radius:16px;background:#d4af37;color:#0b1530;font-weight:800;font-size:16px;font-family:inherit;box-shadow:0 8px 24px rgba(0,0,0,.4)">📲 ثبّت مرسى السادس على جهازك</button>
+  <script>
+    (function () {
+      if ('serviceWorker' in navigator) navigator.serviceWorker.register('firebase-messaging-sw.js').catch(function () {});
+      var deferredPrompt, btn = document.getElementById('installBtn');
+      var standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+      var ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+      window.addEventListener('beforeinstallprompt', function (e) {
+        e.preventDefault(); deferredPrompt = e;
+        if (!standalone) btn.style.display = 'block';
+      });
+      btn.onclick = async function () {
+        if (deferredPrompt) { deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt = null; }
+        else if (ios) { alert('اضغط زر المشاركة ثم "إضافة إلى الشاشة الرئيسية"'); }
+        btn.style.display = 'none';
+      };
+      window.addEventListener('appinstalled', function () { btn.style.display = 'none'; });
+      if (ios && !standalone) btn.style.display = 'block';
+      if (new URLSearchParams(location.search).get('ring') === '1') {
+        document.addEventListener('click', function () { try { playAlertSound('session_end'); } catch (e) {} }, { once: true });
+      }
+    })();
   </script>
 </body>
 </html>
