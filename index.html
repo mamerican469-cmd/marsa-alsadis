@@ -1099,13 +1099,14 @@
           <span class="text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-cream text-navy border border-gold/50">حذف تلقائي بعد الانتهاء</span>
         </div>
         <form onsubmit="sendChallenge(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-          <div class="relative">
+          <div class="relative sm:col-span-3">
           <input type="hidden" id="challengeTarget" value="" />
-          <button type="button" id="challengePickerBtn" onclick="toggleChallengePicker()" class="w-full h-10 px-3 rounded-xl bg-cream text-navy border border-gold/60 text-sm font-black flex items-center justify-between shadow-sm">
-            <span id="challengePickerLabel">اختر صديق</span>
-            <span class="text-gold text-xs">▾</span>
-          </button>
-          <div id="challengePickerPanel" class="hidden absolute z-30 left-0 right-0 mt-2 max-h-72 overflow-y-auto rounded-2xl bg-navy border border-gold/70 shadow-2xl p-1.5 space-y-1"></div>
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <span class="text-xs font-black">🔥 اختر من المتفاعلين الآن</span>
+            <span id="challengePickerLabel" class="text-[11px] font-black px-2.5 py-0.5 rounded-full bg-navy text-goldBright border border-gold">لم تختر أحداً</span>
+          </div>
+          <div id="challengePickerPanel" class="grid grid-cols-2 gap-2 max-h-72 overflow-y-auto p-0.5"></div>
+          <p class="text-[11px] font-bold opacity-70 mt-2">🤝 يوصل التحدي للصديق، وما يبدأ إلا إذا وافق عليه.</p>
         </div>
           <input id="challengeHours" type="number" min="1" max="60" value="5" required class="h-10 px-2.5 rounded-xl bg-cream text-navy border border-gold/50 text-sm font-black text-center" />
           <button type="submit" class="h-10 rounded-xl bg-navy text-goldBright border border-gold font-black text-sm">أرسل التحدي</button>
@@ -4045,10 +4046,15 @@
         const members = state.peers.filter(p => p.id && !ADMIN_UIDS.includes(p.id));
         if (targetSelect) {
           const prevVal = targetSelect.value || 'all';
-          targetSelect.innerHTML = '<option value="all">📢 إرسال رسالة عامة لكل أعضاء المنصة</option>' +
+          const optsHtml = '<option value="all">📢 إرسال رسالة عامة لكل أعضاء المنصة</option>' +
             members.map(m => `<option value="${esc(m.id)}">👤 ${esc(m.name)} (${esc(m.title || 'طالب')})</option>`).join('');
-          if (Array.from(targetSelect.options).some(o => o.value === prevVal)) {
-            targetSelect.value = prevVal;
+          // لا نعيد بناء القائمة إلا إذا تغيّرت الأسماء فعلاً، حتى لا تنغلق أو ترجع للأول
+          if (targetSelect.dataset.sig !== optsHtml) {
+            targetSelect.innerHTML = optsHtml;
+            targetSelect.dataset.sig = optsHtml;
+            if (Array.from(targetSelect.options).some(o => o.value === prevVal)) {
+              targetSelect.value = prevVal;
+            }
           }
         }
         if (rosterBox) {
@@ -4696,13 +4702,23 @@
       }
     };
 
+    const openInboxReplyIds = new Set();
+
+    function hiddenInboxKey() { return 'hiddenAdminMsgs_' + (myUid || ''); }
+    function getHiddenInbox() {
+      try { return JSON.parse(localStorage.getItem(hiddenInboxKey()) || '[]'); } catch (e) { return []; }
+    }
+
     function renderAdminInbox() {
       const box = document.getElementById('adminInboxList');
       if (!box || !myUid) return;
+      const amAdmin = isAdminUser();
+      const hidden = new Set(getHiddenInbox());
       const mine = adminMsgsCache
-        .filter(m => m.toUid === 'all' || m.toUid === myUid || (isAdminUser() && m.fromUid === myUid))
+        .filter(m => !hidden.has(m.id))
+        .filter(m => m.toUid === 'all' || m.toUid === myUid || m.fromUid === myUid || (amAdmin && ADMIN_UIDS.includes(m.toUid)))
         .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
-        .slice(0, 5);
+        .slice(0, amAdmin ? 15 : 8);
 
       if (!mine.length) {
         box.innerHTML = '<p class="text-xs font-bold opacity-70">لا توجد رسائل من الإدارة حالياً.</p>';
@@ -4710,21 +4726,99 @@
       }
 
       box.innerHTML = mine.map(m => {
-        const badge = m.toUid === 'all' ? '📢 رسالة عامة' : (isAdminUser() ? `👤 إلى: ${esc(m.toName || 'عضو')}` : '✉️ رسالة خاصة لك');
-        const delBtn = isAdminUser()
-          ? `<button type="button" onclick="deleteAdminMessage('${esc(m.id)}')" class="text-[11px] font-black text-rose-700 px-1.5">حذف</button>`
-          : '';
+        const fromAdmin = ADMIN_UIDS.includes(m.fromUid);
+        const isMyReply = !amAdmin && m.fromUid === myUid;
+        let badge;
+        if (m.toUid === 'all') badge = '📢 رسالة عامة';
+        else if (isMyReply) badge = '↩️ ردّك على الإدارة';
+        else if (amAdmin && !fromAdmin) badge = '↩️ رد من الطالب';
+        else if (amAdmin) badge = `👤 إلى: ${esc(m.toName || 'عضو')}`;
+        else badge = '✉️ رسالة خاصة لك';
+
+        const delBtn = `<button type="button" onclick="deleteInboxMessage('${esc(m.id)}')" class="text-[11px] font-black text-rose-700 px-1.5">🗑️ حذف</button>`;
+
+        let replyBtn = '';
+        if (!amAdmin && fromAdmin) {
+          replyBtn = `<button type="button" onclick="toggleInboxReply('${esc(m.id)}')" class="text-[11px] font-black text-navy px-1.5">↩️ رد</button>`;
+        } else if (amAdmin && !fromAdmin) {
+          replyBtn = `<button type="button" onclick="openAdminDirectModal('${esc(m.fromUid)}', '${esc(m.fromName || 'طالب')}')" class="text-[11px] font-black text-navy px-1.5">↩️ رد</button>`;
+        }
+
+        const replyBox = (!amAdmin && fromAdmin && openInboxReplyIds.has(m.id)) ? `
+            <div class="flex gap-2 pt-1">
+              <input id="inboxReplyInput_${esc(m.id)}" type="text" maxlength="300" placeholder="اكتب ردّك للإدارة..."
+                onkeydown="if(event.key==='Enter'){event.preventDefault();sendInboxReply('${esc(m.id)}');}"
+                class="flex-1 h-9 px-3 rounded-xl border border-gold/60 bg-white text-xs font-bold text-navy">
+              <button type="button" onclick="sendInboxReply('${esc(m.id)}')" class="h-9 px-3.5 rounded-xl bg-navy text-goldBright font-black text-xs shrink-0">إرسال</button>
+            </div>` : '';
+
         return `
           <div class="p-3 rounded-2xl bg-cream text-navy border border-gold/55 space-y-1">
             <div class="flex items-center justify-between gap-2">
               <span class="text-[11px] font-black text-gold">${esc(m.fromName || 'إدارة مرسى السادس')} • ${badge}</span>
-              ${delBtn}
+              <span class="flex items-center">${replyBtn}${delBtn}</span>
             </div>
             <p class="text-xs sm:text-sm font-extrabold text-navy leading-relaxed">${esc(m.text)}</p>
+            ${replyBox}
           </div>
         `;
       }).join('');
     }
+
+    window.toggleInboxReply = function (id) {
+      if (openInboxReplyIds.has(id)) openInboxReplyIds.delete(id);
+      else openInboxReplyIds.add(id);
+      renderAdminInbox();
+      const inp = document.getElementById('inboxReplyInput_' + id);
+      if (inp) inp.focus();
+    };
+
+    window.sendInboxReply = async function (id) {
+      if (!myUid || !state.user || isAdminUser()) return;
+      const inp = document.getElementById('inboxReplyInput_' + id);
+      const text = (inp?.value || '').trim().slice(0, 300);
+      if (!text) return;
+      const orig = adminMsgsCache.find(x => x.id === id);
+      const toUid = (orig && ADMIN_UIDS.includes(orig.fromUid)) ? orig.fromUid : ADMIN_UIDS[0];
+      try {
+        await addDoc(collection(db, 'adminMessages'), {
+          fromUid: myUid,
+          fromName: state.user.name || 'طالب',
+          toUid: toUid,
+          toName: (orig && orig.fromName) || 'الإدارة',
+          text: text,
+          replyTo: id,
+          createdAt: Date.now()
+        });
+        openInboxReplyIds.delete(id);
+        renderAdminInbox();
+        showCheerMessage('تم إرسال ردّك للإدارة ✅');
+      } catch (err) {
+        alert('تعذر إرسال الرد: ' + (err.message || err));
+      }
+    };
+
+    window.deleteInboxMessage = async function (id) {
+      if (!myUid || !id) return;
+      const m = adminMsgsCache.find(x => x.id === id);
+      if (!m) return;
+      // الرسالة العامة: الطالب يخفيها عن نفسه فقط (حتى لا تختفي عن الباقين)
+      if (m.toUid === 'all' && !isAdminUser()) {
+        const list = getHiddenInbox();
+        if (!list.includes(id)) list.push(id);
+        try { localStorage.setItem(hiddenInboxKey(), JSON.stringify(list.slice(-200))); } catch (e) {}
+        renderAdminInbox();
+        return;
+      }
+      if (!confirm('تريد حذف هذه الرسالة؟')) return;
+      try {
+        await deleteDoc(doc(db, 'adminMessages', id));
+        adminMsgsCache = adminMsgsCache.filter(x => x.id !== id);
+        renderAdminInbox();
+      } catch (err) {
+        alert('تعذر حذف الرسالة: ' + (err.message || err));
+      }
+    };
 
     window.deleteAdminMessage = async function (msgId) {
       if (!isAdminUser() || !msgId) return;
@@ -4765,6 +4859,9 @@
         id: p.id, name: p.name || 'طالب', title: p.title || 'طالب', avatar: p.avatar || '',
         points: p.points || 0, weekPts: p.weekKey === currentWeekKey() ? (p.weekPts || 0) : 0, weekMin: p.weekKey === currentWeekKey() ? (p.weekMin || 0) : 0, status: (now - (p.lastSeen || 0) > 180000) ? 'sleeping' : (p.status || 'active')
       }));
+      const sig = JSON.stringify(state.peers);
+      if (sig === window.__peersSig) return; // ما تغيّر شي ظاهر، لا نعيد رسم الصفحة
+      window.__peersSig = sig;
       renderUI();
     }
     setInterval(applyPeers, 60000);
@@ -4816,12 +4913,33 @@
       }
 
       if (!unsubAdminMsgs) {
-        unsubAdminMsgs = onSnapshot(collection(db, 'adminMessages'), snap => {
-          adminMsgsCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-          if (!document.getElementById('page-top')?.classList.contains('hidden')) {
-            renderAdminInbox();
-          }
-        }, err => console.warn('adminMsgs listen', err));
+        const amIAdmin = ADMIN_UIDS.includes(u.uid);
+        const rerenderInbox = () => {
+          if (!document.getElementById('page-top')?.classList.contains('hidden')) renderAdminInbox();
+        };
+        if (amIAdmin) {
+          unsubAdminMsgs = onSnapshot(collection(db, 'adminMessages'), snap => {
+            adminMsgsCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            rerenderInbox();
+          }, err => console.warn('adminMsgs listen', err));
+        } else {
+          let partTo = [], partFrom = [];
+          const mergeMsgs = () => {
+            const map = new Map();
+            [...partTo, ...partFrom].forEach(x => map.set(x.id, x));
+            adminMsgsCache = [...map.values()];
+            rerenderInbox();
+          };
+          const u1 = onSnapshot(query(collection(db, 'adminMessages'), where('toUid', 'in', ['all', u.uid])), snap => {
+            partTo = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            mergeMsgs();
+          }, err => console.warn('adminMsgs to listen', err));
+          const u2 = onSnapshot(query(collection(db, 'adminMessages'), where('fromUid', '==', u.uid)), snap => {
+            partFrom = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            mergeMsgs();
+          }, err => console.warn('adminMsgs from listen', err));
+          unsubAdminMsgs = () => { u1(); u2(); };
+        }
       }
 
       let p = {};
@@ -5023,6 +5141,19 @@
       });
     }, 1000);
 
+    window.deleteChallengeNow = async function (id) {
+      if (!myUid || !id) return;
+      if (!confirm('تريد حذف هذا التحدي؟ تكدر تبدي تحدي جديد بعده.')) return;
+      try {
+        await deleteDoc(doc(db, CHALLENGES_COL, id));
+        allChallenges = allChallenges.filter(c => c.id !== id);
+        openChatChallengeIds.delete(id);
+        renderChallenges();
+      } catch (err) {
+        alert('تعذر حذف التحدي: ' + (err.message || err));
+      }
+    };
+
     window.toggleChallengeChatBox = function (id) {
       if (openChatChallengeIds.has(id)) openChatChallengeIds.delete(id);
       else openChatChallengeIds.add(id);
@@ -5095,9 +5226,8 @@
     document.getElementById('challengePickerPanel').addEventListener('click', e => {
       const btn = e.target.closest('[data-pid]');
       if (!btn) return;
-      document.getElementById('challengeTarget').value = btn.dataset.pid;
-      challengePickerOpen = false;
-      document.getElementById('challengePickerPanel').classList.add('hidden');
+      const hiddenEl = document.getElementById('challengeTarget');
+      hiddenEl.value = (hiddenEl.value === btn.dataset.pid) ? '' : btn.dataset.pid;
       renderChallenges();
     });
 
@@ -5107,24 +5237,36 @@
       const hidden = document.getElementById('challengeTarget');
       const label = document.getElementById('challengePickerLabel');
       const panel = document.getElementById('challengePickerPanel');
-      const peersList = state.peers.filter(p => !ADMIN_UIDS.includes(p.id));
+      // المتفاعلون الآن فقط (غير نائمين / غير خارج الجلسة)
+      const peersList = state.peers.filter(p => !ADMIN_UIDS.includes(p.id) && p.status === 'active');
       if (hidden && label && panel) {
-        if (!peersList.find(p => p.id === hidden.value)) hidden.value = peersList[0] ? peersList[0].id : '';
+        if (!peersList.find(p => p.id === hidden.value)) hidden.value = '';
         const cur = peersList.find(p => p.id === hidden.value);
-        label.textContent = cur ? cur.name : 'ما في أصدقاء مسجلين بعد';
-        if (challengePickerOpen) {
-          panel.innerHTML = peersList.length
-            ? peersList.map(p => {
-                const sel = p.id === hidden.value;
-                const initial = esc((p.name || '؟').charAt(0));
-                const av = p.avatar
-                  ? '<img src="' + esc(p.avatar) + '" class="w-8 h-8 rounded-full object-cover border border-gold" alt="" />'
-                  : '<span class="w-8 h-8 rounded-full bg-gold/20 border border-gold text-goldBright flex items-center justify-center text-xs font-black">' + initial + '</span>';
-                return '<button type="button" data-pid="' + esc(p.id) + '" class="w-full flex items-center justify-between gap-2 px-2.5 py-2 rounded-xl text-sm font-black text-cream hover:bg-white/10 transition ' + (sel ? 'bg-white/10' : '') + '">' +
-                  '<span class="flex items-center gap-2">' + av + '<span>' + esc(p.name) + '</span></span>' +
-                  (sel ? '<span class="text-goldBright text-base">✓</span>' : '') + '</button>';
-              }).join('')
-            : '<p class="px-3 py-2 text-xs font-bold text-cream/70">ما في أصدقاء مسجلين بعد</p>';
+        label.textContent = cur ? ('✓ ' + cur.name) : 'لم تختر أحداً';
+        const html = peersList.length
+          ? peersList.map(p => {
+              const sel = p.id === hidden.value;
+              const initial = esc((p.name || '؟').charAt(0));
+              const av = p.avatar
+                ? '<img src="' + esc(p.avatar) + '" class="w-11 h-11 rounded-full object-cover border-2 border-gold" alt="" />'
+                : '<span class="w-11 h-11 rounded-full bg-navy text-goldBright border-2 border-gold flex items-center justify-center text-base font-black">' + initial + '</span>';
+              const hrs = ((p.weekMin || 0) / 60).toFixed(1);
+              return '<button type="button" data-pid="' + esc(p.id) + '" class="relative flex flex-col items-center text-center gap-1 p-2.5 rounded-2xl border-2 transition ' +
+                (sel ? 'bg-navy text-white border-gold shadow-lg' : 'bg-cream text-navy border-gold/40') + '">' +
+                (sel ? '<span class="absolute top-1.5 left-2 text-goldBright text-sm font-black">✓</span>' : '') +
+                '<span class="relative">' + av + '<span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white"></span></span>' +
+                '<span class="text-xs font-black leading-tight line-clamp-1 max-w-full truncate">' + esc(p.name) + '</span>' +
+                '<span class="text-[10px] font-bold opacity-70 truncate max-w-full">' + esc(p.title || 'طالب') + '</span>' +
+                '<span class="text-[10px] font-black px-2 py-0.5 rounded-full ' + (sel ? 'bg-gold/25 text-goldBright' : 'bg-navy/10 text-navy') + '">🔥 متفاعل • ' + hrs + ' س</span>' +
+                '</button>';
+            }).join('')
+          : '<p class="col-span-2 text-center text-xs font-bold opacity-70 py-4">😴 ما في أحد متفاعل هسه. جرّب بعد شوي.</p>';
+        // لا نلمس القائمة إلا إذا تغيّرت فعلاً، حتى ما ترجع للأول أثناء التمرير
+        if (panel.dataset.sig !== html) {
+          const keep = panel.scrollTop;
+          panel.innerHTML = html;
+          panel.dataset.sig = html;
+          panel.scrollTop = keep;
         }
       }
       const wk = currentWeekKey();
@@ -5212,6 +5354,7 @@
           '<div class="flex items-center justify-between gap-2 flex-wrap">' +
           '<span class="text-sm font-black">' + esc(c.fromName) + ' ⚔️ ' + esc(c.toName) + ' — ' + c.hours + ' ساعة</span>' +
           (pending ? '<span class="text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-100 text-amber-950">بانتظار القبول</span>' : '') +
+          '<button type="button" onclick="deleteChallengeNow(\'' + esc(c.id) + '\')" class="px-2.5 py-1 rounded-xl bg-rose-600/10 text-rose-800 border border-rose-300 text-[11px] font-black">🗑️ حذف التحدي</button>' +
           '</div>' +
           '<div class="text-[11px] font-bold">أنت: ' + myH.toFixed(1) + ' ساعة (' + pct(myH) + '%)</div>' +
           '<div class="h-2 rounded-full bg-navy/10 overflow-hidden"><div class="h-full bg-navy" style="width:' + pct(myH) + '%"></div></div>' +
@@ -5234,7 +5377,8 @@
       const sel = document.getElementById('challengeTarget');
       const hours = Math.max(1, Math.min(60, parseInt(document.getElementById('challengeHours').value, 10) || 1));
       const target = state.peers.find(p => p.id === sel.value);
-      if (!target) { alert('اختر صديق للتحدي.'); return; }
+      if (!target) { alert('اختر صديق متفاعل للتحدي.'); return; }
+      if (target.status !== 'active') { alert(target.name + ' مو متفاعل هسه. اختر واحد من المتفاعلين.'); return; }
       try {
         await addDoc(collection(db, CHALLENGES_COL), {
           fromUid: myUid, fromName: state.user.name, toUid: target.id, toName: target.name,
