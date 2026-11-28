@@ -1133,11 +1133,23 @@
         </div>
         <form onsubmit="sendChallenge(event)" class="space-y-4">
           <input type="hidden" id="challengeTarget" value="" />
+          <div class="rounded-2xl p-3 bg-navy/70 border-2 border-gold/60 flex items-center gap-3">
+            <div class="flex-1 min-w-0">
+              <div class="text-[11px] font-bold opacity-75">🪪 آيدي الطالب مالتك · شاركه ويا صديقك</div>
+              <div id="myStudentId" dir="ltr" class="text-base sm:text-lg font-black tracking-wider text-goldBright truncate">—</div>
+            </div>
+            <button type="button" id="copyIdBtn" onclick="copyMyStudentId()" class="h-9 px-3.5 rounded-xl bg-gold text-navyDeep text-xs font-black shrink-0">نسخ</button>
+          </div>
           <div class="space-y-2">
             <div class="flex items-center justify-between gap-2">
               <span class="flex items-center gap-2 text-sm font-black"><span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gold text-navyDeep text-xs font-black">1</span> اختر خصمك</span>
               <span id="challengePickerLabel" class="text-[11px] font-black px-2.5 py-0.5 rounded-full bg-navy text-goldBright border border-gold">لم تختر أحداً</span>
             </div>
+            <div class="flex gap-2">
+              <input id="challengeIdInput" type="text" dir="ltr" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="24" placeholder="MRS-26-XXXX-XXXX-X" class="flex-1 min-w-0 h-10 px-3 rounded-xl bg-cream text-navy border border-gold/60 text-sm font-black tracking-wider" />
+              <button type="button" onclick="findFriendById()" class="h-10 px-4 rounded-xl bg-navy text-goldBright border border-gold text-xs font-black shrink-0">🔎 ابحث بالآيدي</button>
+            </div>
+            <p id="challengeIdMsg" class="text-[11px] font-bold opacity-80 min-h-[1rem]"></p>
             <div id="challengePickerPanel" class="grid grid-cols-2 gap-2 max-h-72 overflow-y-auto p-0.5"></div>
           </div>
           <div class="space-y-2">
@@ -1214,6 +1226,15 @@
             <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-gold/20 text-goldBright">مباشر</span>
           </div>
           <div id="adminSessionsList" class="space-y-3"><p class="text-xs font-bold opacity-70">ماكو جلسات جارية هسه.</p></div>
+        </div>
+
+        <!-- ===== إثباتات الطلاب بالصور (للأدمن فقط) ===== -->
+        <div class="interaction-popover-box space-y-2.5" id="adminProofsBox">
+          <div class="flex items-center justify-between gap-2">
+            <h4 class="text-sm font-black text-goldBright">📸 إثباتات الطلاب (خط اليد)</h4>
+            <span id="adminProofsCount" class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-gold/20 text-goldBright">0 بالانتظار</span>
+          </div>
+          <div id="adminProofsList" class="space-y-3"><p class="text-xs font-bold opacity-70">ماكو إثباتات هسه.</p></div>
         </div>
 
         <!-- تواصل الأدمن مع أي شخص بالمنصة (مربع تفاعلي) -->
@@ -5219,7 +5240,9 @@
     }
 
     function startChallengeListener() {
-      if (unsubChallenges || !myUid) return;
+      if (!myUid) return;
+      startProofListener();
+      if (unsubChallenges) return;
       unsubChallenges = onSnapshot(
         query(collection(db, CHALLENGES_COL), where('weekKey', '==', currentWeekKey())),
         snap => {
@@ -5354,6 +5377,7 @@
     function renderChallenges() {
       const el = document.getElementById('challengeList');
       if (!el || !myUid) return;
+      renderMyId();
       const hidden = document.getElementById('challengeTarget');
       const label = document.getElementById('challengePickerLabel');
       const panel = document.getElementById('challengePickerPanel');
@@ -5482,7 +5506,7 @@
           '<div class="h-2 rounded-full bg-navy/10 overflow-hidden"><div class="h-full bg-navy" style="width:' + pct(myH) + '%"></div></div>' +
           '<div class="text-[11px] font-bold">' + esc(otherName) + ': ' + otherH.toFixed(1) + ' ساعة (' + pct(otherH) + '%)</div>' +
           '<div class="h-2 rounded-full bg-navy/10 overflow-hidden"><div class="h-full bg-gold" style="width:' + pct(otherH) + '%"></div></div>' +
-          adminBannerFor(c) + askBoxFor(c) +
+          adminBannerFor(c) + askBoxFor(c) + proofBoxFor(c, myH) +
           winnerCardHtml +
           (!isCompleted ? `<div class="flex items-center gap-2 pt-1 flex-wrap">
             ${acceptBtn}
@@ -5516,6 +5540,194 @@
     window.acceptChallenge = async function (id) {
       try { await updateDoc(doc(db, CHALLENGES_COL, id), { status: 'accepted' }); }
       catch (err) { alert('تعذر قبول التحدي: ' + (err.message || err)); }
+    };
+
+    /* ===== إثبات الإنجاز بصور خط اليد (يوصل للمشرف فقط) ===== */
+    const PROOF_COL = 'challengeProofs';
+    let allProofs = [], unsubProofs = null;
+    const proofDrafts = {}; // challengeId -> { img }
+
+    function startProofListener() {
+      if (unsubProofs || !myUid) return;
+      const col = collection(db, PROOF_COL);
+      const q = ADMIN_UIDS.includes(myUid) ? col : query(col, where('uid', '==', myUid));
+      unsubProofs = onSnapshot(q, snap => {
+        allProofs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        if (ADMIN_UIDS.includes(myUid)) renderAdminProofs();
+        else if (!document.getElementById('page-top')?.classList.contains('hidden')) renderChallenges();
+      }, err => console.warn('proofs listen', err));
+    }
+
+    function fitProofImage(src, quarter, cb, maxDim, q) {
+      const im = new Image();
+      im.onload = () => {
+        const k = Math.min(1, (maxDim || 1100) / Math.max(im.width, im.height)), w = im.width * k, h = im.height * k;
+        const c = document.createElement('canvas');
+        c.width = quarter ? h : w; c.height = quarter ? w : h;
+        const g = c.getContext('2d');
+        g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height);
+        g.translate(c.width / 2, c.height / 2); if (quarter) g.rotate(Math.PI / 2);
+        g.drawImage(im, -w / 2, -h / 2, w, h);
+        cb(c.toDataURL('image/jpeg', q || 0.62));
+      };
+      im.onerror = () => alert('ما كدرت أفتح هاي الصورة، جرّب غيرها.');
+      im.src = src;
+    }
+
+    // طالب: بطاقة رفع الإثبات داخل التحدي
+    function proofBoxFor(c, myH) {
+      if (isAdminUser() || (c.status !== 'accepted' && c.status !== 'completed')) return '';
+      const half = c.hours / 2, id = esc(c.id);
+      if (c.status === 'accepted' && myH < half) {
+        return '<div class="rounded-2xl px-3 py-2 bg-white border border-gold/40 text-[11px] font-bold">📸 رفع إثبات الإنجاز (صورتين بخط إيدك) يفتح عند نص الجلسة: ' + half.toFixed(1) + ' ساعة</div>';
+      }
+      const sent = allProofs.filter(p => p.challengeId === c.id && p.uid === myUid);
+      const draft = proofDrafts[c.id];
+      const tag = s => s === 'ok' ? '<span class="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-600 text-white">انقبلت ✓</span>'
+        : s === 'rejected' ? '<span class="text-[10px] font-black px-2 py-0.5 rounded-full bg-rose-600 text-white">انرفضت، ارفع غيرها</span>'
+        : '<span class="text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-100 text-amber-950">وصلت للمشرف، بانتظار المراجعة</span>';
+      const btn = 'h-9 px-3 rounded-xl text-xs font-black border ';
+      return '<div class="rounded-2xl p-3 bg-white border-2 border-gold space-y-2">' +
+        '<div class="flex items-center justify-between gap-2"><span class="text-sm font-black">📸 إثبات الإنجاز</span><span class="text-[10px] font-black px-2 py-0.5 rounded-full bg-navy text-goldBright">' + sent.filter(p => p.status !== 'rejected').length + ' من 2</span></div>' +
+        '<div class="text-[11px] font-bold text-amber-900">🔒 تصل للمشرف فقط، ما يشوفها الطرف الثاني.</div>' +
+        '<div class="text-[11px] font-bold opacity-75">صوّر ملخص أو مادة كملتها بخط إيدك. دوّر الصورة واكتب ملاحظة قبل الإرسال، وإذا بيها خطأ احذفها وارفع غيرها.</div>' +
+        (draft
+          ? '<div class="rounded-xl border border-gold/50 p-2 space-y-2"><img src="' + draft.img + '" alt="معاينة" class="w-full max-h-64 object-contain rounded-lg bg-cream" />' +
+            '<input id="pnote_' + id + '" type="text" maxlength="160" placeholder="شنو كملت؟ مثلاً: ملخص الفصل الثالث كيمياء" class="w-full h-9 px-3 rounded-xl bg-cream text-navy border border-gold/50 text-xs font-bold" />' +
+            '<div class="grid grid-cols-3 gap-2"><button type="button" onclick="rotateProofDraft(\'' + id + '\')" class="' + btn + 'bg-cream text-navy border-gold/60">🔄 تدوير</button>' +
+            '<button type="button" onclick="dropProofDraft(\'' + id + '\')" class="' + btn + 'bg-rose-600/10 text-rose-800 border-rose-300">🗑️ حذف</button>' +
+            '<button type="button" onclick="sendProofPhoto(\'' + id + '\')" class="' + btn + 'bg-gold text-navyDeep border-gold">إرسال</button></div></div>'
+          : '<label class="flex items-center justify-center gap-2 min-h-[56px] rounded-2xl border-2 border-dashed border-gold bg-cream text-navy text-xs font-black cursor-pointer">📷 التقط أو اختار صورة' +
+            '<input type="file" accept="image/*" class="hidden" onchange="pickProofPhoto(\'' + id + '\', this)" /></label>') +
+        sent.map(p => '<div class="flex items-center gap-2"><img src="' + p.img + '" alt="" class="w-12 h-12 rounded-lg object-cover border border-gold/40 shrink-0" />' +
+          '<div class="flex-1 min-w-0"><div class="text-[11px] font-bold truncate">' + esc(p.note || 'بدون ملاحظة') + '</div>' + tag(p.status) + '</div>' +
+          (p.status !== 'ok' ? '<button type="button" onclick="deleteProofPhoto(\'' + esc(p.id) + '\')" class="' + btn + 'bg-rose-600/10 text-rose-800 border-rose-300 shrink-0">حذف</button>' : '') + '</div>').join('') +
+        '</div>';
+    }
+
+    window.pickProofPhoto = function (cid, inp) {
+      const f = inp.files && inp.files[0]; inp.value = '';
+      if (!f) return;
+      if (!/^image\//.test(f.type)) { alert('اختار ملف صورة.'); return; }
+      const rd = new FileReader();
+      rd.onload = () => fitProofImage(rd.result, false, url => { proofDrafts[cid] = { img: url }; renderChallenges(); });
+      rd.readAsDataURL(f);
+    };
+    window.rotateProofDraft = function (cid) {
+      const d = proofDrafts[cid]; if (!d) return;
+      fitProofImage(d.img, true, url => { d.img = url; renderChallenges(); });
+    };
+    window.dropProofDraft = function (cid) { delete proofDrafts[cid]; renderChallenges(); };
+    window.sendProofPhoto = async function (cid) {
+      const d = proofDrafts[cid];
+      if (!d || !myUid || !state.user) return;
+      if (d.img.length > 900000) { alert('الصورة كبيرة، دوّرها أو صوّرها من جديد.'); return; }
+      if (allProofs.filter(p => p.challengeId === cid && p.uid === myUid && p.status !== 'rejected').length >= 4) { alert('وصلت الحد الأقصى من الصور، احذف وحدة حتى ترفع غيرها.'); return; }
+      const note = ((document.getElementById('pnote_' + cid) || {}).value || '').trim().slice(0, 160);
+      try {
+        await addDoc(collection(db, PROOF_COL), { challengeId: cid, uid: myUid, name: state.user.name, note: note, img: d.img, status: 'pending', ts: Date.now() });
+        delete proofDrafts[cid];
+        renderChallenges();
+      } catch (err) { alert('تعذر إرسال الصورة: ' + (err.message || err)); }
+    };
+    window.deleteProofPhoto = async function (id) {
+      if (!confirm('تحذف هاي الصورة وترفع غيرها؟')) return;
+      try { await deleteDoc(doc(db, PROOF_COL, id)); }
+      catch (err) { alert('تعذر حذف الصورة: ' + (err.message || err)); }
+    };
+
+    // أدمن: مراجعة الإثباتات
+    window.reviewProof = async function (id, status) {
+      if (!isAdminUser()) return;
+      try { await updateDoc(doc(db, PROOF_COL, id), { status: status, reviewedAt: Date.now() }); }
+      catch (err) { alert('تعذر التحديث: ' + (err.message || err)); }
+    };
+    window.viewProofFull = function (id) {
+      const p = allProofs.find(x => x.id === id); if (!p) return;
+      const ov = document.createElement('div');
+      ov.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;padding:12px';
+      ov.onclick = () => ov.remove();
+      const im = document.createElement('img'); im.src = p.img; im.style.cssText = 'max-width:100%;max-height:100%;object-fit:contain;border-radius:12px';
+      ov.appendChild(im); document.body.appendChild(ov);
+    };
+    function renderAdminProofs() {
+      const box = document.getElementById('adminProofsList');
+      if (!box || !isAdminUser()) return;
+      const pend = allProofs.filter(p => p.status === 'pending').sort((a, b) => a.ts - b.ts);
+      const done = allProofs.filter(p => p.status !== 'pending').sort((a, b) => (b.reviewedAt || b.ts) - (a.reviewedAt || a.ts)).slice(0, 8);
+      const cnt = document.getElementById('adminProofsCount'); if (cnt) cnt.textContent = pend.length + ' بالانتظار';
+      const row = p => '<div class="rounded-2xl p-2.5 bg-white/10 border border-gold/40 flex gap-3 items-start text-white">' +
+        '<img src="' + p.img + '" alt="إثبات" onclick="viewProofFull(\'' + esc(p.id) + '\')" class="w-20 h-20 rounded-xl object-cover border border-gold/50 cursor-pointer shrink-0" />' +
+        '<div class="flex-1 min-w-0 space-y-1"><div class="text-xs font-black">' + esc(p.name) + '</div>' +
+        '<div class="text-[11px] font-bold opacity-80 break-words">' + esc(p.note || 'بدون ملاحظة') + '</div>' +
+        '<div class="text-[10px] opacity-60">' + new Date(p.ts).toLocaleString('ar') + '</div>' +
+        '<div class="flex gap-1.5 flex-wrap">' +
+        (p.status === 'pending'
+          ? '<button type="button" onclick="reviewProof(\'' + esc(p.id) + '\', \'ok\')" class="h-8 px-3 rounded-xl bg-gold text-navyDeep text-xs font-black">قبول</button><button type="button" onclick="reviewProof(\'' + esc(p.id) + '\', \'rejected\')" class="h-8 px-3 rounded-xl bg-white/10 border border-gold/40 text-xs font-black">رفض</button>'
+          : '<span class="text-[11px] font-black ' + (p.status === 'ok' ? 'text-emerald-300' : 'text-rose-300') + '">' + (p.status === 'ok' ? 'مقبولة ✓' : 'مرفوضة') + '</span><button type="button" onclick="deleteProofPhoto(\'' + esc(p.id) + '\')" class="h-8 px-3 rounded-xl bg-rose-600/20 text-rose-200 border border-rose-300/40 text-xs font-black">حذف</button>') +
+        '</div></div></div>';
+      const html = (pend.length || done.length) ? pend.map(row).join('') + (done.length ? '<div class="text-[11px] font-black opacity-70 pt-1">آخر المراجعات</div>' + done.map(row).join('') : '') : '<p class="text-xs font-bold opacity-70">ماكو إثباتات هسه.</p>';
+      if (box.dataset.sig !== html) { box.innerHTML = html; box.dataset.sig = html; }
+    }
+
+    /* ===== آيدي الطالب القوي: MRS-26-XXXX-XXXX-C ===== */
+    const ID_ALPH = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; // بدون O/0 وI/1/L حتى ما يتلخبط
+    const ID_PREFIX = 'MRS-26';
+    const _idCache = {};
+    function cyrb53(str) {
+      let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+      for (let i = 0; i < str.length; i++) {
+        const ch = str.charCodeAt(i);
+        h1 = Math.imul(h1 ^ ch, 2654435761); h2 = Math.imul(h2 ^ ch, 1597334677);
+      }
+      h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+      h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+      return 4294967296 * (2097151 & h2) + (h1 >>> 0);
+    }
+    function idCheckChar(body) {
+      let s = 0;
+      for (let i = 0; i < body.length; i++) s += (ID_ALPH.indexOf(body[i]) + 1) * (i + 1);
+      return ID_ALPH[s % ID_ALPH.length];
+    }
+    function studentIdOf(uid) {
+      if (!uid) return '';
+      if (_idCache[uid]) return _idCache[uid];
+      let n = cyrb53('marsa6|' + uid) % Math.pow(31, 8), body = '';
+      for (let i = 0; i < 8; i++) { body = ID_ALPH[n % 31] + body; n = Math.floor(n / 31); }
+      return (_idCache[uid] = ID_PREFIX + '-' + body.slice(0, 4) + '-' + body.slice(4) + '-' + idCheckChar(body));
+    }
+    function parseStudentId(raw) {
+      const s = String(raw || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+      if (!s.startsWith('MRS26') || s.length !== 14) return null;
+      const body = s.slice(5, 13), chk = s[13];
+      if ([...body].some(c => ID_ALPH.indexOf(c) < 0) || idCheckChar(body) !== chk) return null;
+      return ID_PREFIX + '-' + body.slice(0, 4) + '-' + body.slice(4) + '-' + chk;
+    }
+    function renderMyId() {
+      const el = document.getElementById('myStudentId');
+      if (el && state.user && state.user.uid) el.textContent = studentIdOf(state.user.uid);
+    }
+    window.copyMyStudentId = async function () {
+      if (!state.user || !state.user.uid) return;
+      const id = studentIdOf(state.user.uid), btn = document.getElementById('copyIdBtn');
+      try { await navigator.clipboard.writeText(id); }
+      catch (e) {
+        const ta = document.createElement('textarea'); ta.value = id; document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); } catch (e2) {} ta.remove();
+      }
+      if (btn) { btn.textContent = 'تم النسخ ✓'; setTimeout(() => { btn.textContent = 'نسخ'; }, 1600); }
+    };
+    window.findFriendById = function () {
+      const msg = document.getElementById('challengeIdMsg'), inp = document.getElementById('challengeIdInput');
+      const say = s => { if (msg) msg.textContent = s; };
+      const id = parseStudentId(inp ? inp.value : '');
+      if (!id) { say('❌ الآيدي غلط أو ناقص. تأكد من كتابته مثل MRS-26-XXXX-XXXX-X'); return; }
+      if (state.user && studentIdOf(state.user.uid) === id) { say('😅 هذا آيديك أنت، اكتب آيدي صديقك.'); return; }
+      const peer = state.peers.find(p => !ADMIN_UIDS.includes(p.id) && studentIdOf(p.id) === id);
+      if (!peer) { say('🔍 ماكو طالب بهذا الآيدي.'); return; }
+      document.getElementById('challengeTarget').value = peer.id;
+      say(peer.status === 'active' ? '✅ تم اختيار ' + peer.name + '، حدد الساعات وأرسل التحدي.' : '⚠️ ' + peer.name + ' مو متفاعل هسه، التحدي ينقبل بس إذا كان متفاعل.');
+      renderChallenges();
     };
 
     /* ===== دخول المشرف للجلسات + التحفيز + سؤال «شنو كملتو؟» ===== */
