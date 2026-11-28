@@ -1207,6 +1207,15 @@
           <button onclick="exportJsonData()" class="h-9 px-3 rounded-xl bg-cream text-navy border border-gold text-xs font-extrabold whitespace-nowrap">نسخ JSON</button>
         </div>
 
+        <!-- ===== الجلسات الجارية: دخول المشرف والتحفيز وسؤال شنو كملتو ===== -->
+        <div class="interaction-popover-box space-y-2.5" id="adminSessionsBox">
+          <div class="flex items-center justify-between gap-2">
+            <h4 class="text-sm font-black text-goldBright">🎓 الجلسات الجارية · ادخل وحفّزهم</h4>
+            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-gold/20 text-goldBright">مباشر</span>
+          </div>
+          <div id="adminSessionsList" class="space-y-3"><p class="text-xs font-bold opacity-70">ماكو جلسات جارية هسه.</p></div>
+        </div>
+
         <!-- تواصل الأدمن مع أي شخص بالمنصة (مربع تفاعلي) -->
         <div class="interaction-popover-box space-y-2.5">
           <div class="flex items-center justify-between">
@@ -5216,6 +5225,8 @@
         snap => {
           allChallenges = snap.docs.map(d => ({ id: d.id, ...d.data() }));
           cleanupExpiredChallenges();
+          watchAdminSignals();
+          if (isAdminUser()) renderAdminSessions();
           if (!document.getElementById('page-top')?.classList.contains('hidden')) {
             renderChallenges();
           }
@@ -5279,6 +5290,7 @@
         senderUid: myUid,
         senderName: state.user.name,
         text: rawText.slice(0, 140),
+        isAdmin: isAdminUser(),
         ts: Date.now()
       });
       if (inp && presetText === null) inp.value = '';
@@ -5385,6 +5397,8 @@
       }
       const myH = ((state.weekly && state.weekly.min) || 0) / 60;
       const now = Date.now();
+      const _keep = {}; let _focus = null;
+      el.querySelectorAll('input[id]').forEach(i => { _keep[i.id] = i.value; if (document.activeElement === i) _focus = i.id; });
       el.innerHTML = mine.map(c => {
         const iAmFrom = c.fromUid === myUid;
         const otherUid = iAmFrom ? c.toUid : c.fromUid;
@@ -5450,9 +5464,9 @@
               <button type="button" onclick="sendChallengeInteraction('${esc(c.id)}')" class="h-9 px-3.5 rounded-xl bg-gold text-navyDeep font-black text-xs shrink-0">إرسال</button>
             </div>
             ${msgs.length ? `<div class="space-y-1.5 max-h-32 overflow-y-auto pt-1">${msgs.map(m => `
-              <div class="px-2.5 py-1.5 rounded-xl bg-white/10 text-xs">
-                <span class="font-black text-goldBright">${esc(m.senderName)}:</span>
-                <span class="font-bold text-white"> ${esc(m.text)}</span>
+              <div class="px-2.5 py-1.5 rounded-xl text-xs ${m.isAdmin ? 'bg-gold text-navyDeep border border-goldBright' : 'bg-white/10'}">
+                <span class="font-black ${m.isAdmin ? 'text-navyDeep' : 'text-goldBright'}">${m.isAdmin ? '🎓 المشرف ' : ''}${esc(m.senderName)}:</span>
+                <span class="font-bold ${m.isAdmin ? 'text-navyDeep' : 'text-white'}"> ${esc(m.text)}</span>
               </div>
             `).join('')}</div>` : ''}
           </div>
@@ -5468,6 +5482,7 @@
           '<div class="h-2 rounded-full bg-navy/10 overflow-hidden"><div class="h-full bg-navy" style="width:' + pct(myH) + '%"></div></div>' +
           '<div class="text-[11px] font-bold">' + esc(otherName) + ': ' + otherH.toFixed(1) + ' ساعة (' + pct(otherH) + '%)</div>' +
           '<div class="h-2 rounded-full bg-navy/10 overflow-hidden"><div class="h-full bg-gold" style="width:' + pct(otherH) + '%"></div></div>' +
+          adminBannerFor(c) + askBoxFor(c) +
           winnerCardHtml +
           (!isCompleted ? `<div class="flex items-center gap-2 pt-1 flex-wrap">
             ${acceptBtn}
@@ -5477,6 +5492,8 @@
           chatBoxHtml +
           '</div>';
       }).join('');
+      Object.keys(_keep).forEach(k => { const i = document.getElementById(k); if (i && el.contains(i)) i.value = _keep[k]; });
+      if (_focus) { const f = document.getElementById(_focus); if (f && el.contains(f)) f.focus(); }
     }
 
     window.sendChallenge = async function (e) {
@@ -5500,6 +5517,100 @@
       try { await updateDoc(doc(db, CHALLENGES_COL, id), { status: 'accepted' }); }
       catch (err) { alert('تعذر قبول التحدي: ' + (err.message || err)); }
     };
+
+    /* ===== دخول المشرف للجلسات + التحفيز + سؤال «شنو كملتو؟» ===== */
+    const seenSignals = {};
+    function peerHours(uid) { const p = state.peers.find(x => x.id === uid); return ((p && p.weekMin) || 0) / 60; }
+
+    // طالب: شريط يبين أن المشرف داخل الجلسة
+    function adminBannerFor(c) {
+      if (!c.adminIn) return '';
+      return '<div class="rounded-2xl px-3 py-2 bg-gold text-navyDeep text-xs font-black flex items-center gap-2">🎓 ' + esc(c.adminName || 'المشرف') + ' (المشرف) داخل الجلسة وياكم</div>';
+    }
+    // طالب: سؤال المشرف «شنو كملت؟»
+    function askBoxFor(c) {
+      if (isAdminUser() || !c.ask || (c.ask.answers && c.ask.answers[myUid])) return '';
+      const id = esc(c.id);
+      return '<div role="alert" class="rounded-2xl p-3 bg-navy text-white border-2 border-gold space-y-2">' +
+        '<div class="text-xs font-black text-goldBright">❓ ' + esc(c.ask.by || 'المشرف') + ' يسألك: شنو كملت لحد هسه؟</div>' +
+        '<div class="flex gap-2"><input id="ans_' + id + '" type="text" maxlength="160" placeholder="مثلاً: ملخص فيزياء + حليت ٥ أسئلة" class="flex-1 min-w-0 h-9 px-3 rounded-xl bg-cream text-navy text-xs font-bold" />' +
+        '<button type="button" onclick="answerProgress(\'' + id + '\')" class="h-9 px-3.5 rounded-xl bg-gold text-navyDeep font-black text-xs shrink-0">أرسل</button></div></div>';
+    }
+    window.answerProgress = async function (id) {
+      if (!myUid || !state.user) return;
+      const inp = document.getElementById('ans_' + id);
+      const text = inp ? inp.value.trim().slice(0, 160) : '';
+      if (!text) { alert('اكتب شنو كملت.'); return; }
+      try {
+        await updateDoc(doc(db, CHALLENGES_COL, id), { ['ask.answers.' + myUid]: { name: state.user.name, text: text, ts: Date.now() } });
+      } catch (err) { alert('تعذر إرسال الجواب: ' + (err.message || err)); }
+    };
+
+    // طالب: صوت + فتح الدردشة عند رسالة المشرف أو سؤاله أو دخوله
+    function watchAdminSignals() {
+      if (!myUid || isAdminUser()) return;
+      allChallenges.filter(c => c.fromUid === myUid || c.toUid === myUid).forEach(c => {
+        const ms = Array.isArray(c.messages) ? c.messages : [];
+        const lastAdm = ms.filter(m => m.isAdmin).pop();
+        const cur = { msg: lastAdm ? lastAdm.ts : 0, ask: c.ask ? c.ask.id : 0, adm: !!c.adminIn };
+        const old = seenSignals[c.id];
+        seenSignals[c.id] = cur;
+        if (!old) return;
+        const ring = cur.msg > old.msg || (cur.ask && cur.ask !== old.ask) || (cur.adm && !old.adm);
+        if (cur.msg > old.msg) openChatChallengeIds.add(c.id);
+        if (ring) {
+          try { playToneSequence([[880, 0.16, 0], [1175, 0.2, 0.2], [1568, 0.26, 0.42]]); } catch (e) {}
+          try { if (navigator.vibrate) navigator.vibrate([200, 100, 200]); } catch (e) {}
+        }
+      });
+    }
+
+    // مشرف: دخول/خروج وسؤال الإنجاز
+    window.adminEnterSession = async function (id, on) {
+      if (!isAdminUser()) return;
+      const upd = on ? { adminIn: true, adminName: state.user.name, adminUid: myUid, adminInAt: Date.now() } : { adminIn: false };
+      try { await updateDoc(doc(db, CHALLENGES_COL, id), upd); }
+      catch (err) { alert('تعذر تنفيذ العملية: ' + (err.message || err)); }
+    };
+    window.adminAskProgress = async function (id) {
+      if (!isAdminUser()) return;
+      try { await updateDoc(doc(db, CHALLENGES_COL, id), { ask: { id: Date.now(), by: state.user.name, answers: {} } }); }
+      catch (err) { alert('تعذر إرسال السؤال: ' + (err.message || err)); }
+    };
+
+    function renderAdminSessions() {
+      const box = document.getElementById('adminSessionsList');
+      if (!box || !isAdminUser()) return;
+      const list = allChallenges.filter(c => c.status === 'accepted' && !c.deleteAt);
+      const quick = ['عاشت ايدك 👏', 'كمّل لا توكف 💪', 'شد حيلك 🔥', 'نص الطريق خلص ⭐'];
+      const bar = (h, hrs, cls) => '<div class="h-2 rounded-full bg-white/15 overflow-hidden"><div class="h-full ' + cls + '" style="width:' + Math.min(100, Math.round(h / hrs * 100)) + '%"></div></div>';
+      const html = !list.length ? '<p class="text-xs font-bold opacity-70">ماكو جلسات جارية هسه.</p>' : list.map(c => {
+        const id = esc(c.id), a = peerHours(c.fromUid), b = peerHours(c.toUid), inn = !!c.adminIn;
+        const ms = (Array.isArray(c.messages) ? c.messages : []).slice(-6);
+        const ans = (c.ask && c.ask.answers) || {};
+        const ansRow = (uid, name) => '<div class="text-[11px] font-bold">' + esc(name) + ': ' + (ans[uid] ? '<span class="text-goldBright">' + esc(ans[uid].text) + '</span>' : '<span class="opacity-60">بعده ما جاوب</span>') + '</div>';
+        return '<div class="rounded-2xl p-3 bg-white/10 border border-gold/40 space-y-2 text-white">' +
+          '<div class="flex items-center justify-between gap-2 flex-wrap"><span class="text-sm font-black">' + esc(c.fromName) + ' ⚔️ ' + esc(c.toName) + ' · ' + c.hours + ' ساعة</span>' +
+          '<button type="button" onclick="adminEnterSession(\'' + id + '\', ' + (!inn) + ')" class="h-8 px-3 rounded-xl ' + (inn ? 'bg-rose-600/20 text-rose-200 border border-rose-300/50' : 'bg-gold text-navyDeep') + ' text-xs font-black">' + (inn ? 'اطلع من الجلسة' : '👁️ ادخل الجلسة') + '</button></div>' +
+          '<div class="text-[11px] font-bold">' + esc(c.fromName) + ': ' + a.toFixed(1) + ' س</div>' + bar(a, c.hours, 'bg-goldBright') +
+          '<div class="text-[11px] font-bold">' + esc(c.toName) + ': ' + b.toFixed(1) + ' س</div>' + bar(b, c.hours, 'bg-gold') +
+          (inn ? (
+            '<div class="flex flex-wrap gap-1.5">' + quick.map(q => '<button type="button" onclick="sendChallengeInteraction(\'' + id + '\', \'' + q + '\')" class="px-2.5 py-1 rounded-xl bg-white/10 hover:bg-gold/25 border border-gold/40 text-[11px] font-bold">' + q + '</button>').join('') + '</div>' +
+            '<div class="flex gap-2"><input id="chInput_' + id + '" type="text" maxlength="140" placeholder="احجي وياهم..." onkeydown="if(event.key===\'Enter\'){event.preventDefault();sendChallengeInteraction(\'' + id + '\');}" class="flex-1 min-w-0 h-9 px-3 rounded-xl bg-cream text-navy text-xs font-bold" />' +
+            '<button type="button" onclick="sendChallengeInteraction(\'' + id + '\')" class="h-9 px-3.5 rounded-xl bg-gold text-navyDeep font-black text-xs shrink-0">إرسال</button></div>' +
+            '<button type="button" onclick="adminAskProgress(\'' + id + '\')" class="w-full h-9 rounded-xl bg-navy text-goldBright border border-gold font-black text-xs">❓ اسألهم: شنو كملتو؟</button>' +
+            (c.ask ? '<div class="rounded-xl p-2 bg-black/20 space-y-1"><div class="text-[11px] font-black text-goldBright">أجوبة آخر سؤال</div>' + ansRow(c.fromUid, c.fromName) + ansRow(c.toUid, c.toName) + '</div>' : '') +
+            (ms.length ? '<div class="space-y-1 max-h-28 overflow-y-auto">' + ms.map(m => '<div class="text-[11px]"><b class="text-goldBright">' + esc(m.senderName) + ':</b> ' + esc(m.text) + '</div>').join('') + '</div>' : '')
+          ) : '') + '</div>';
+      }).join('');
+      if (box.dataset.sig === html) return;
+      const keep = {}; let focus = null;
+      box.querySelectorAll('input[id]').forEach(i => { keep[i.id] = i.value; if (document.activeElement === i) focus = i.id; });
+      box.innerHTML = html; box.dataset.sig = html;
+      Object.keys(keep).forEach(k => { const i = document.getElementById(k); if (i && box.contains(i)) i.value = keep[k]; });
+      if (focus) { const f = document.getElementById(focus); if (f) f.focus(); }
+    }
+    setInterval(() => { if (isAdminUser()) renderAdminSessions(); }, 15000);
 
     function simsimHappyJump() {
       const el = document.getElementById('simsimBodyMotion');
