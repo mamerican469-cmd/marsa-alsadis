@@ -1122,23 +1122,35 @@
         <div id="weeklyBoardList" class="space-y-2"></div>
       </div>
 
-      <div class="app-card p-5 space-y-3">
-        <div class="flex items-center justify-between gap-2">
-          <h3 class="text-base font-black">⚔️ تحدي بين صديقين</h3>
-          <span class="text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-cream text-navy border border-gold/50">حذف تلقائي بعد الانتهاء</span>
-        </div>
-        <form onsubmit="sendChallenge(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-          <div class="relative sm:col-span-3">
-          <input type="hidden" id="challengeTarget" value="" />
-          <div class="flex items-center justify-between gap-2 mb-2">
-            <span class="text-xs font-black">🔥 اختر من المتفاعلين الآن</span>
-            <span id="challengePickerLabel" class="text-[11px] font-black px-2.5 py-0.5 rounded-full bg-navy text-goldBright border border-gold">لم تختر أحداً</span>
+      <!-- ===== خانة التحدي الجديدة ===== -->
+      <div class="app-card p-5 space-y-4" id="newChallengeCard">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <h3 class="text-lg font-black">⚔️ ساحة التحدي</h3>
+            <p class="text-[11px] font-bold opacity-70 mt-0.5">تحدَّ صديقك بساعات الدراسة هذا الأسبوع</p>
           </div>
-          <div id="challengePickerPanel" class="grid grid-cols-2 gap-2 max-h-72 overflow-y-auto p-0.5"></div>
-          <p class="text-[11px] font-bold opacity-70 mt-2">🤝 يوصل التحدي للصديق، وما يبدأ إلا إذا وافق عليه.</p>
+          <span class="text-[10px] font-extrabold px-2.5 py-1 rounded-full bg-cream text-navy border border-gold/50 shrink-0">حذف تلقائي بعد الانتهاء</span>
         </div>
-          <input id="challengeHours" type="number" min="1" max="60" value="5" required class="h-10 px-2.5 rounded-xl bg-cream text-navy border border-gold/50 text-sm font-black text-center" />
-          <button type="submit" class="h-10 rounded-xl bg-navy text-goldBright border border-gold font-black text-sm">أرسل التحدي</button>
+        <form onsubmit="sendChallenge(event)" class="space-y-4">
+          <input type="hidden" id="challengeTarget" value="" />
+          <div class="space-y-2">
+            <div class="flex items-center justify-between gap-2">
+              <span class="flex items-center gap-2 text-sm font-black"><span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gold text-navyDeep text-xs font-black">1</span> اختر خصمك</span>
+              <span id="challengePickerLabel" class="text-[11px] font-black px-2.5 py-0.5 rounded-full bg-navy text-goldBright border border-gold">لم تختر أحداً</span>
+            </div>
+            <div id="challengePickerPanel" class="grid grid-cols-2 gap-2 max-h-72 overflow-y-auto p-0.5"></div>
+          </div>
+          <div class="space-y-2">
+            <span class="flex items-center gap-2 text-sm font-black"><span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gold text-navyDeep text-xs font-black">2</span> كم ساعة دراسة؟</span>
+            <div class="flex items-center gap-2">
+              <button type="button" aria-label="زيادة ساعة" onclick="(function(i){i.value=Math.min(60,(parseInt(i.value,10)||1)+1)})(document.getElementById('challengeHours'))" class="w-12 h-12 rounded-2xl bg-cream text-navy border border-gold/60 text-2xl font-black active:scale-95 transition">+</button>
+              <input id="challengeHours" type="number" inputmode="numeric" min="1" max="60" value="5" required aria-label="عدد الساعات" class="flex-1 min-w-0 h-12 px-2 rounded-2xl bg-cream text-navy border border-gold/60 text-2xl font-black text-center" />
+              <button type="button" aria-label="تنقيص ساعة" onclick="(function(i){i.value=Math.max(1,(parseInt(i.value,10)||2)-1)})(document.getElementById('challengeHours'))" class="w-12 h-12 rounded-2xl bg-cream text-navy border border-gold/60 text-2xl font-black active:scale-95 transition">−</button>
+            </div>
+            <div class="flex flex-wrap gap-2 justify-center"><button type="button" onclick="document.getElementById('challengeHours').value=3" class="h-9 px-4 rounded-full bg-cream text-navy border border-gold/60 text-sm font-black active:scale-95 transition">3 س</button><button type="button" onclick="document.getElementById('challengeHours').value=5" class="h-9 px-4 rounded-full bg-cream text-navy border border-gold/60 text-sm font-black active:scale-95 transition">5 س</button><button type="button" onclick="document.getElementById('challengeHours').value=8" class="h-9 px-4 rounded-full bg-cream text-navy border border-gold/60 text-sm font-black active:scale-95 transition">8 س</button><button type="button" onclick="document.getElementById('challengeHours').value=10" class="h-9 px-4 rounded-full bg-cream text-navy border border-gold/60 text-sm font-black active:scale-95 transition">10 س</button><button type="button" onclick="document.getElementById('challengeHours').value=15" class="h-9 px-4 rounded-full bg-cream text-navy border border-gold/60 text-sm font-black active:scale-95 transition">15 س</button></div>
+          </div>
+          <button type="submit" class="w-full h-12 rounded-2xl bg-gold text-navyDeep font-black text-base shadow active:scale-[0.98] transition">⚔️ أرسل التحدي</button>
+          <p class="text-[11px] font-bold opacity-70 text-center">🤝 يوصل التحدي للصديق، وما يبدأ إلا إذا وافق عليه.</p>
         </form>
         <div id="challengeList" class="space-y-3"></div>
       </div>
